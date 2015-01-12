@@ -7,6 +7,12 @@ package mmeent.java.main.connection;
  * - CHANGELOG -
  * -------------
  *
+ * Versie 1.2
+ *
+ * + Protocol.Features
+ * + Protocol.Settings
+ * * Protocol.Client.CHAT fixed
+ *
  * Versie 1.1
  *
  * + Package aangepas naar bruikbaar formaat
@@ -289,7 +295,7 @@ public class Protocol {
 		 *     </ul>
 		 **/
 
-		public static final String Chat = "CHAT";
+		public static final String CHAT = "CHAT";
 
 		/**
 		 * <p>Request Board <br>
@@ -488,5 +494,33 @@ public class Protocol {
 
 		public static final String LEADERBOARD = "LEADERBOARD";
 
+	}
+
+	public static class Features {
+
+		/**
+		 * <p>De verschillende features die geimplementeerd kunnen worden.</p>
+		 *
+		 * <p>Let op! Het protocol voor <code>SECURITY</code> en <code>MULTIPLAYER</code> is (nog) niet vastgelegd.</p>
+		 */
+
+		public static final String CHAT = "CHAT";
+		public static final String LEADERBOARD = "LEADERBOARD";
+		public static final String CUSTOM_BOARD_SIZE = "CUSTOM_BOARD";
+
+		public static final String SECURITY = "SECURITY";
+		public static final String MULTIPLAYER = "MULTIPLAYER";
+	}
+
+	public static class Settings {
+
+		/**
+		 * <p>De verschillende settings van het protocol.</p>
+		 */
+
+		/**
+		 * <p>Het protocol heeft characterencoding UTF-16. Dit is de standaard encoding van een string in java, dus daar zouden geen problemen mee moeten zijn.</p>
+		 */
+		public static final String ENCODING = "UTF-16";
 	}
 }
