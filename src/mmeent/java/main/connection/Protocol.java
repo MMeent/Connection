@@ -22,8 +22,7 @@ package mmeent.java.main.connection;
 /**
  * <h1 id="protocol-ti-2">Protocol TI-2</h1>
  *
- * <p>In dit bestand staat het protocol van werkgroep TI-2 zoals dat op do. 8 januari  <br>
- *     is afgesproken. </p>
+ * <p>In dit bestand staat het protocol van werkgroep TI-2 zoals dat op do. 8 januari is afgesproken. </p>
  *
  *
  * <h2 id="1-over-standaarden">1. Over Standaarden</h2>
@@ -95,6 +94,7 @@ package mmeent.java.main.connection;
  *
  * <p>Omdat niet alle datatypen voor iedereen gelijk zouden zijn, heb ik (Matthias) besloten enkele datatypen zelf vast te leggen. In veel gevallen is het wel mogelijk om het anders te implementeren, maar de typen die ik nu heb neergezet zijn er vanwege gebruiksgemak ingezet.</p>
  *
+ *
  * <h3 id="board">Board</h3>
  *
  * <p>Zoals later in dit document zal blijken wordt de boardgrootte doorgegeven met behulp van <code>short</code>s. Dit heb ik besloten zo te doen omdat de maximale array length van Java <code>Integer.MAX_SIZE - 8</code> is in veel JREs. </p>
@@ -103,7 +103,7 @@ package mmeent.java.main.connection;
  *
  * <p>Ook heb ik besloten om de waarden in het board in bytes op te slaan. Dit doe ik omdat ik me niet kan voorstellen dat meer dan 255 spelers tegelijk zo’n spel zullen spelen. </p>
  *
- * <p>Een board wordt verstuurd in 1 keer. Een leeg veld heeft de waarde 0. De velden die gevuld zijn hebben hun waarde van de speler die daar zijn/haar zet heeft gedaan, deze waarde is het startnummer. <code>Player1 = 1</code>, <code>Player2 = 2</code> … <code>PlayerN = N</code>.</p>
+ * <p>Een board wordt verstuurd in 1 keer. Een leeg veld heeft de waarde 0. De velden die gevuld zijn hebben de waarde van de speler die daar zijn/haar zet heeft gedaan, deze waarde is het startnummer. <code>Player1 = 1</code>, <code>Player2 = 2</code> … <code>PlayerN = N</code>.</p>
  *
  * <p>De telling van kolommen begint links, en start bij 0 (net als bij een <code>array</code>). Bij een bord van 7 breed heb je dus kolommen <code>0</code>, <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code>, <code>5</code> en <code>6</code> van links naar rechts.</p>
  *
@@ -447,7 +447,7 @@ public class Protocol {
 		 *     <ul>
 		 *         <li><code>BoardX</code>: <code>short</code> - De breedte van het bord</li>
 		 *         <li><code>BoardY</code>: <code>short</code> - De hoogte van het bord</li>
-		 *         <li><code>Board</code>: <code>byte[]</code> - Een array van (breedte * hoogte) getallen lang, waarin de nummers van de spelers staan. Start is links onderin, het wordt per rij ingevoerd, van links naar rechts op het bord, en dan de de rijen van onder naar boven.</li>
+		 *         <li><code>Board</code>: <code>byte[]</code> - Een array van (breedte * hoogte) getallen lang, waarin de nummers van de spelers staan. Start links onderin het bord, het wordt per rij weggeschreven, van links naar rechts in de rij, beginnend bij de onderste rij, naar boven..</li>
 		 *     </ul>
 		 **/
 
