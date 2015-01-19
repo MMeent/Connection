@@ -1,6 +1,7 @@
 package mmeent.java.main.connection;
 
 import mmeent.java.main.connection.connection.Connection;
+import mmeent.java.main.connection.exception.ConnectFourException;
 import mmeent.java.main.connection.render.Renderer;
 
 /**
@@ -16,6 +17,15 @@ public class ConnectClient {
         this.username = username;
         this.renderer = renderer;
         this.debug = debug;
+/**
+        try{
+            while(true){}
+        } catch (ConnectFourException e){
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+ */
     }
 
     public static void main(String[] args){
