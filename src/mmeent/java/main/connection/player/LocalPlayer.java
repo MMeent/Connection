@@ -7,6 +7,7 @@ import mmeent.java.main.connection.game.Move;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * Created by Matthias on 20/12/2014.
@@ -23,7 +24,7 @@ public class LocalPlayer {
     }
 
     public static LocalPlayer get(String name, byte id){
-        if(!LocalPlayer.players.containsKey(name)) return LocalPlayer.players.get(name);
+        if(LocalPlayer.players.containsKey(name)) return LocalPlayer.players.get(name);
         LocalPlayer p = new LocalPlayer(name, id);
         LocalPlayer.players.put(name, p);
         return p;
@@ -42,7 +43,24 @@ public class LocalPlayer {
         return this.name;
     }
 
-    public Move getMove(){
+    public Move getMove(int turn){
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Make a move: ");
+        String playerChoice = scanner.nextLine().toUpperCase();
+        Scanner input = new Scanner(System.in);
+        String string;
+        int number;
+        string = input.next();
+        number = Integer.parseInt(string);
+        Move move = new Move(this,number,turn);
+        if(move.isValid()) {
+            return move;
+        }
+        else {
+            System.out.println("Wrong choice!");
+            this.getMove(turn);
+        }
         return null;
     }
 
