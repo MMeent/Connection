@@ -30,7 +30,17 @@ public class Chat {
      * @param msg The message that is sent to the currently active chatroom
      */
     public void addMessage(String msg){
+        String pattern = "#.*?[ ]";
+        if(msg.matches(pattern)) {
+            this.activeRoom = this.getRoom(msg.split("#(.*?)[ ]")[0]);
+            msg = msg.replaceFirst("#.*?[ ]", "");
+        }
         this.activeRoom.addMessage(msg);
+    }
+
+    public ChatRoom getRoom(String name){
+        if(!this.rooms.containsKey(name)) this.rooms.put(name, new ChatRoom(name));
+        return this.rooms.get(name);
     }
 
     /**
