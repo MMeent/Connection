@@ -92,6 +92,10 @@ public class ServerPacket implements Packet {
         public static AcceptConnectPacket read(Connection c, String[] args){
             return new AcceptConnectPacket(c);
         }
+
+        public synchronized void write(Connection c){
+            super.write(c);
+        }
     }
 
     public static class LobbyPacket extends ServerPacket{
@@ -100,7 +104,7 @@ public class ServerPacket implements Packet {
         public static LobbyPacket read(Connection c, String[] args){
             LocalPlayer[] players = new LocalPlayer[args.length - 1];
             for(int i = 1; i < args.length; i++){
-                players[i - 1] = new LocalPlayer(args[i]);
+                players[i - 1] = LocalPlayer.get(args[i]);
             }
             return new LobbyPacket(c, players);
         }
@@ -191,7 +195,7 @@ public class ServerPacket implements Packet {
     public static class InvitePacket extends ServerPacket{
         private LocalPlayer player;
         public static InvitePacket read(Connection c, String[] args){
-            LocalPlayer player = new LocalPlayer(args[1]);
+            LocalPlayer player = LocalPlayer.get(args[1]);
             return new InvitePacket(c, player);
         }
 
@@ -199,16 +203,48 @@ public class ServerPacket implements Packet {
             super(c, Protocol.Server.INVITE);
             this.player = player;
         }
+
+        public synchronized void write(Connection c){
+            super.write(c);
+            c.writePartial(this.player.getName());
+            c.stopPacket();
+            c.sendBuffer();
+        }
     }
 
     public static class GameStartPacket extends ServerPacket{
         private LocalPlayer player1;
         private LocalPlayer player2;
+        private String options = "";
+
+        public static GameStartPacket read(Connection c, String[] args){
+            LocalPlayer p1 = LocalPlayer.get(args[1]);
+            LocalPlayer p2 = LocalPlayer.get(args[2]);
+            StringBuilder options = new StringBuilder();
+            for(int i = 3; i < args.length; i++){
+                options.append(' ').append(args[i]);
+            }
+            return new GameStartPacket(c, p1, p2, options.toString());
+        }
 
         public GameStartPacket(Connection c, LocalPlayer p1, LocalPlayer p2){
             super(c, Protocol.Server.GAME_START);
             this.player1 = p1;
             this.player2 = p2;
+        }
+
+        public GameStartPacket(Connection c, LocalPlayer p1, LocalPlayer p2, String options){
+            this(c, p1, p2);
+            this.options = options;
+        }
+
+        public synchronized void write(Connection c){
+            super.write(c);
+            c.writePartial(this.player1.getName());
+            c.writePartial(this.player2.getName());
+            c.writePartial(this.options);
+            c.stopPacket();
+            c.sendBuffer();
         }
     }
 
@@ -216,10 +252,67 @@ public class ServerPacket implements Packet {
         private String reason;
         private String extra;
 
+        public static GameEndPacket read(Connection c, String[] args){
+            return new GameEndPacket(c, args[1], args[2]);
+        }
+
         public GameEndPacket(Connection c, String reason, String extra){
             super(c, Protocol.Server.GAME_END);
             this.reason = reason;
             this.extra = extra;
         }
+
+        public synchronized void write(Connection c){
+            super.write(c);
+            c.writePartial(this.reason);
+            c.writePartial(this.extra);
+            c.stopPacket();
+            c.sendBuffer();
+        }
     }
+
+    public static class RequestMovePacket extends ServerPacket{
+        public static RequestMovePacket read(Connection c, String[] args){
+            return new RequestMovePacket(c);
+        }
+
+        public RequestMovePacket(Connection c){
+            super(c, Protocol.Server.REQUEST_MOVE);
+        }
+
+        public synchronized void write(Connection c){
+            super.write(c);
+            c.stopPacket();
+            c.sendBuffer();
+        }
+    }
+
+    public static class MoveOkPacket extends ServerPacket{
+        byte playerid;
+        private short column;
+        LocalPlayer player;
+
+        public static MoveOkPacket read(Connection c, String[] args){
+            byte player_number = Byte.valueOf(args[1]);
+            short column = Short.valueOf(args[2]);
+            LocalPlayer player = args.length >= 3 ? LocalPlayer.get(args[3]) : null;
+            return new MoveOkPacket(c, player_number, column, player);
+        }
+
+        public MoveOkPacket(Connection c, byte playerid, short column, LocalPlayer player){
+            super(c, Protocol.Server.MOVE_OK);
+            this.playerid = playerid;
+            this.column = column;
+            this.player = player;
+        }
+
+        public synchronized void write(Connection c){
+            super.write(c);
+            c.writePartial(Byte.toString(this.playerid));
+            c.writePartial(Short.toString(this.column));
+            c.writePartial(this.player.getName());
+        }
+    }
+
+    
 }
