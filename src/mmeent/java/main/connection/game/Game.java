@@ -1,6 +1,6 @@
 package mmeent.java.main.connection.game;
 
-import mmeent.java.main.connection.player.Player;
+import mmeent.java.main.connection.player.LocalPlayer;
 import mmeent.java.main.connection.board.Board;
 
 import java.util.ArrayList;
@@ -11,28 +11,28 @@ import java.util.List;
  */
 public class Game {
     private Board board;
-    private Player[] players;
+    private LocalPlayer[] players;
     private int playerAmount;
     private int turn = 0;
-    private List<Player> spectators = new ArrayList<Player>();
+    private List<LocalPlayer> spectators = new ArrayList<LocalPlayer>();
 
-    public Game(Player[] players){
+    public Game(LocalPlayer[] players){
         this.board = new Board();
         this.players = players;
         this.playerAmount = players.length;
     }
 
-    public Game(Player[] players, short height, short width){
+    public Game(LocalPlayer[] players, short height, short width){
         this.board = new Board(height, width);
         this.players = players;
     }
 
-    public Game(Player[] players, short height, short widht, short lenght){
+    public Game(LocalPlayer[] players, short height, short widht, short lenght){
         this.board = new Board(height, widht, lenght);
         this.players = players;
     }
 
-    public Game(Player[] players, Board board){
+    public Game(LocalPlayer[] players, Board board){
         this.players = players;
         this.board = board.deepCopy();
     }

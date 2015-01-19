@@ -50,7 +50,7 @@ public class Board {
     }
 
     public byte getField(int x, int y){
-        return this.isField(x, y) ? this.fields[x + (y - 1) * this.width] : 0;
+        return this.isField(x, y) ? this.fields[x + (y) * this.width] : 0;
     }
 
     public boolean isField(int x, int y){

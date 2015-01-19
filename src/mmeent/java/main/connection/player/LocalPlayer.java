@@ -8,16 +8,16 @@ import mmeent.java.main.connection.game.Move;
 /**
  * Created by Matthias on 20/12/2014.
  */
-public class Player{
+public class LocalPlayer {
     private String name;
     private byte id = 0;
     private Game game = null;
 
-    public Player(String name){
+    public LocalPlayer(String name){
         this.name = name;
     }
 
-    public Player(String name, byte id){
+    public LocalPlayer(String name, byte id){
         this(name);
         this.id = id;
     }

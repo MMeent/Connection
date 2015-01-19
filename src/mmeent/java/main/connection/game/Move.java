@@ -1,6 +1,6 @@
 package mmeent.java.main.connection.game;
 
-import mmeent.java.main.connection.player.Player;
+import mmeent.java.main.connection.player.LocalPlayer;
 
 /**
  * Created by Matthias on 20/12/2014.
@@ -9,22 +9,22 @@ public class Move {
     private int column;
     private int turn;
 
-    private Player player;
+    private LocalPlayer localPlayer;
     private byte symbol;
 
-    public Move(Player player, int column, int turn){
+    public Move(LocalPlayer localPlayer, int column, int turn){
         this.column = column;
         this.turn = turn;
-        this.player = player;
-        this.symbol = player.getId();
+        this.localPlayer = localPlayer;
+        this.symbol = localPlayer.getId();
     }
 
     public byte getSymbol(){
         return this.symbol;
     }
 
-    public Player getPlayer(){
-        return this.player;
+    public LocalPlayer getLocalPlayer(){
+        return this.localPlayer;
     }
 
     public int getTurn(){

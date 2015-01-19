@@ -4,7 +4,7 @@ import mmeent.java.main.connection.Protocol;
 import mmeent.java.main.connection.board.Board;
 import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
-import mmeent.java.main.connection.player.Player;
+import mmeent.java.main.connection.player.LocalPlayer;
 
 /**
  * Created by Matthias on 14/01/2015.
@@ -86,25 +86,25 @@ public class ServerPacket implements Packet {
     }
 
     public static class LobbyPacket extends ServerPacket{
-        private Player[] players;
+        private LocalPlayer[] players;
 
         public static LobbyPacket read(Connection c, String[] args){
-            Player[] players = new Player[args.length - 1];
+            LocalPlayer[] players = new LocalPlayer[args.length - 1];
             for(int i = 1; i < args.length; i++){
-                players[i - 1] = new Player(args[i]);
+                players[i - 1] = new LocalPlayer(args[i]);
             }
             return new LobbyPacket(c, players);
         }
 
-        public LobbyPacket(Connection c, Player[] players){
+        public LobbyPacket(Connection c, LocalPlayer[] players){
             super(c, Protocol.Server.LOBBY);
             this.players = players;
         }
 
         public synchronized void write(Connection c){
             super.write(c);
-            for(Player player: this.players){
-                c.writePartial(player.getName());
+            for(LocalPlayer localPlayer : this.players){
+                c.writePartial(localPlayer.getName());
             }
             c.stopPacket();
             c.sendBuffer();
