@@ -12,20 +12,22 @@ import java.util.List;
 public class Game {
     private Board board;
     private Player[] players;
+    private int playerAmount;
     private int turn = 0;
     private List<Player> spectators = new ArrayList<Player>();
 
     public Game(Player[] players){
         this.board = new Board();
         this.players = players;
+        this.playerAmount = players.length;
     }
 
-    public Game(Player[] players, int height, int width){
+    public Game(Player[] players, short height, short width){
         this.board = new Board(height, width);
         this.players = players;
     }
 
-    public Game(Player[] players, int height, int widht, int lenght){
+    public Game(Player[] players, short height, short widht, short lenght){
         this.board = new Board(height, widht, lenght);
         this.players = players;
     }

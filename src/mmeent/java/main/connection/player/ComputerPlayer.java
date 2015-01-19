@@ -9,40 +9,15 @@ import mmeent.java.main.connection.game.Move;
 /**
  * Created by Matthias on 20/12/2014.
  */
-public class ComputerPlayer implements Player {
-    private String name;
-    private byte id;
+public class ComputerPlayer extends Player {
     private AI ai;
-    private Game game;
 
     public ComputerPlayer(String name, byte id){
         this(name, id, null);
     }
 
     public ComputerPlayer(String name, byte id, AI ai){
-        this.name = name;
-        this.id = id;
+        super(name, id);
         this.ai = ai;
-    }
-
-    public Move getMove(){
-        return null;
-    }
-
-    public String getName(){
-        return this.name;
-    }
-
-    public byte getId(){
-        return this.id;
-    }
-
-    @Nullable
-    public Game getGame(){
-        return this.game;
-    }
-
-    public void setGame(Game game){
-        this.game = game;
     }
 }

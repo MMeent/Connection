@@ -324,6 +324,27 @@ public class Protocol {
 
 		public static final String REQUEST_LEADERBOARD = "LEADERBOARD";
 
+		/**
+		 * <p>Error <br>
+		 *     Name: <code>ERROR</code><br/>
+		 *     Descriptie: Zend een error naar de server toe.<br/>
+		 *     Content: <code>&lt;Error Code&gt;</code></p>
+		 *     <ul>
+		 *         <li><code>Error Code</code>: <code>int</code> - De code van de error</li>
+		 *     </ul>
+		 */
+
+		public static final String ERROR = "ERROR";
+
+		/**
+		 * <p>Ping <br>
+		 *     Name: <code>PING</code><br/>
+		 *     Descriptie: Vraag een respons van de server aan, om te kijken hoe snel deze reageert en om te kijken of de verbinding nog bestaat.<br/>
+		 *     Content: none</p>
+		 */
+
+		public static final String PING = "PING";
+
 	}
 
 	public static class Server {
@@ -494,6 +515,14 @@ public class Protocol {
 
 		public static final String LEADERBOARD = "LEADERBOARD";
 
+		/**
+		 * <p>Pong <br>
+		 *     Name: <code>PONG</code><br/>
+		 *     Descriptie: De respons van de server op een <code>PING</code>-packet.<br/>
+		 *     Content: none</p>
+		 */
+
+		public static final String PONG = "PONG";
 	}
 
 	public static class Features {
@@ -509,7 +538,7 @@ public class Protocol {
 		public static final String CUSTOM_BOARD_SIZE = "CUSTOM_BOARD";
 
 		public static final String SECURITY = "SECURITY";
-		public static final String MULTIPLAYER = "MULTIPLAYER";
+		public static final String MULTIPLAYER = "MULTIPLAYER"; // Deze functie wordt niet door het protocol gespecificeerd.
 	}
 
 	public static class Settings {
@@ -521,6 +550,29 @@ public class Protocol {
 		/**
 		 * <p>Het protocol heeft characterencoding UTF-16. Dit is de standaard encoding van een string in java, dus daar zouden geen problemen mee moeten zijn.</p>
 		 */
+
 		public static final String ENCODING = "UTF-16";
+
+		/**
+		 * <p>Het aantal seconden voordat een client timeout. Dit is in de opdracht vastgesteld, en zal dus niet veranderen.</p>
+		 */
+
+		public static final int TIMEOUTSECONDS = 15;
+
+		/**
+		 * <p>Default server port nummer. <br>
+		 *     <b>BELANGRIJK:</b> In de opdracht staat dat je bij het opstarten van de server een poortnummer moet invoeren. De waarde hier is dus niet een waarde die altijd opgaat. </p>
+		 */
+
+		public static final short DEFAULT_PORT = 2707;
+
+		public static final char DELIMITER = ' ';
+
+		public static final char PACKET_END = '\n';
+	}
+
+	public static class ErrorCodes {
+		public static int NONE  = 0;
+		public static int HELLO = 0;
 	}
 }

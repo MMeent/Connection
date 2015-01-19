@@ -1,14 +1,16 @@
 package mmeent.java.main.connection.board;
 
+import mmeent.java.main.connection.Protocol;
+
 /**
  * Created by Matthias on 20/12/2014.
  */
 public class Board {
-    public static final int STANDARD_WIDTH = 7;
-    public static final int STANDARD_HEIGHT = 6;
-    public static final int STANDARD_LENGTH = 4;
-    private final int width;
-    private final int height;
+    public static final short STANDARD_WIDTH = 7;
+    public static final short STANDARD_HEIGHT = 6;
+    public static final short STANDARD_LENGTH = 4;
+    private final short width;
+    private final short height;
 
     private byte[] fields;
     private int[] heights;
@@ -17,7 +19,7 @@ public class Board {
 
     private final int rowLength;
 
-    public Board(int width, int height, int rowLength){
+    public Board(short width, short height, int rowLength){
         this.width = width;
         this.height = height;
 
@@ -27,7 +29,7 @@ public class Board {
         this.rowLength = rowLength;
     }
 
-    public Board(int width, int height){
+    public Board(short width, short height){
         this(width, height, STANDARD_LENGTH);
     }
 
@@ -35,11 +37,11 @@ public class Board {
         this(STANDARD_WIDTH, STANDARD_HEIGHT, STANDARD_LENGTH);
     }
 
-    public int getWidth(){
+    public short getWidth(){
         return this.width;
     }
 
-    public int getHeight(){
+    public short getHeight(){
         return this.height;
     }
 
@@ -76,7 +78,7 @@ public class Board {
         return this.fields;
     }
 
-    public boolean setField(int x, byte player){
+    public boolean move(int x, byte player){
         if(this.heights[x] >= this.height) return false;
         int y = this.heights[x];
         this.fields[x + (y * this.height)] = player;
@@ -108,5 +110,9 @@ public class Board {
             board.setField(i, this.fields[i]);
         }
         return board;
+    }
+
+    public void setField(int i, byte val){
+        if(isField(i)) this.fields[i] = val;
     }
 }
