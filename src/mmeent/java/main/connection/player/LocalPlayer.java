@@ -22,8 +22,15 @@ public class LocalPlayer {
         this.name = name;
     }
 
+    public static LocalPlayer get(String name, byte id){
+        if(LocalPlayer.players.get(name) != null) return LocalPlayer.players.get(name);
+        LocalPlayer p = new LocalPlayer(name, id);
+        LocalPlayer.players.put(name, p);
+        return p;
+    }
+
     public static LocalPlayer get(String name){
-        return LocalPlayer.players.get(name);
+        return LocalPlayer.get(name, (byte) 0);
     }
 
     public LocalPlayer(String name, byte id){
