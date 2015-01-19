@@ -127,11 +127,11 @@ public class ServerPacket implements Packet {
     public static class BoardPacket extends ServerPacket{
         private Board board;
         public static BoardPacket read(Connection c, String[] args){
-            short width = Short.parseShort(args[1]);
-            short height = Short.parseShort(args[2]);
-            Board board = new Board(width, height);
-            for(int i = 0; i < width * height; i++){
-                if(!args[i + 3].equals("0")) board.move(i % width, Byte.parseByte(args[i + 3]));
+            int width = Short.parseShort(args[1]);
+            int height = Short.parseShort(args[2]);
+            Board board = new Board((short) width, (short) height);
+            for(int i = 0; i <width * height; i++){
+                if(!args[i + 3].equals("0")) board.move((short) (i % width), Byte.parseByte(args[i + 3]));
             }
             return new BoardPacket(c, board);
         }

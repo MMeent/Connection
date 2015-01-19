@@ -566,7 +566,15 @@ public class Protocol {
 
 		public static final short DEFAULT_PORT = 2707;
 
+		/**
+		 * <p>Default delimiter tussen header en content, en tussen twee waarden in de content</p>
+		 */
+
 		public static final char DELIMITER = ' ';
+
+		/**
+		 * <p>Teken dat aan het einde van elke packet moet zitten, en dus niet in de rest van de waarden mag zitten.</p>
+		 */
 
 		public static final char PACKET_END = '\n';
 	}

@@ -24,6 +24,9 @@ public class Game {
         this.players = players;
         this.playerAmount = players.length;
         this.renderer = new TextBoardRenderer(board);
+        for(LocalPlayer player: players){
+            player.setGame(this);
+        }
     }
 
     public Game(LocalPlayer[] players, short width, short height){
@@ -54,14 +57,13 @@ public class Game {
         while(a) {
             renderer.render();
             players[turn % 2].getMove(turn).makeMove();
-            renderer.render();
             turn ++;
         }
     }
 
     public static void main(String[] args) {
-        LocalPlayer player1 = LocalPlayer.get("Henk");
-        LocalPlayer player2 = LocalPlayer.get("Sjaak");
+        LocalPlayer player1 = LocalPlayer.get("Henk", (byte) 1);
+        LocalPlayer player2 = LocalPlayer.get("Sjaak", (byte) 2);
         LocalPlayer[] players = {player1,player2};
         Game game = new Game(players);
         game.play();

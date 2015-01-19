@@ -6,13 +6,13 @@ import mmeent.java.main.connection.player.LocalPlayer;
  * Created by Matthias on 20/12/2014.
  */
 public class Move {
-    private int column;
+    private short column;
     private int turn;
 
     private LocalPlayer localPlayer;
     private byte symbol;
 
-    public Move(LocalPlayer localPlayer, int column, int turn){
+    public Move(LocalPlayer localPlayer, short column, int turn){
         this.column = column;
         this.turn = turn;
         this.localPlayer = localPlayer;
@@ -36,12 +36,10 @@ public class Move {
     }
 
     public boolean isValid() {
-        return (column >= 0 && column < localPlayer.getGame().getBoard().getWidth() && !localPlayer.getGame().getBoard().rowIsFull(column));
+        return (this.column >= 0 && this.column < this.localPlayer.getGame().getBoard().getWidth() && !this.localPlayer.getGame().getBoard().rowIsFull(this.column));
     }
 
     public void makeMove() {
-        for (int i = 0; i < localPlayer.getGame().getBoard().getHeight(); i++) {
-                localPlayer.getGame().getBoard().move(column,localPlayer.getId());
-        }
+        localPlayer.getGame().getBoard().move((short) column,localPlayer.getId());
     }
 }

@@ -32,10 +32,8 @@ public class TextBoardRenderer implements Renderer {
         for (int i = 0; i < screen_height; i ++) {
             String row = "| ";
             for (int j = 0; j < screen_width; j ++) {
-                row += board.getField(i,j);
-                if(j - 2 < screen_width) {
-                    row += " | ";
-                }
+                row += board.getField(j, i);
+                row += " | ";
             }
             s += row + "\n";
         }

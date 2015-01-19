@@ -48,7 +48,8 @@ public class LocalPlayer {
 
         System.out.println("Make a move: ");
         Scanner input = new Scanner(System.in);
-        int number = input.nextInt();
+        String in = input.next();
+        short number = in.matches("[0-9]*") ? Short.valueOf(in) : -1;
         Move move = new Move(this,number,turn);
         if(move.isValid()) {
             return move;

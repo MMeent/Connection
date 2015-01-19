@@ -48,7 +48,7 @@ public class Board {
     }
 
     public byte getField(int x, int y){
-        return this.isField(x, y) ? this.fields[x + (y) * this.width] : 0;
+        return this.isField(x, y) ? this.fields[x + y * this.width] : 0;
     }
 
     public int getIndex(int x, int y) {
@@ -56,7 +56,7 @@ public class Board {
     }
 
     public boolean rowIsFull(int column) {
-        if(getField(column,STANDARD_HEIGHT) != 0) {
+        if(this.heights[column] == this.height) {
             return true;
         }
         return false;
@@ -87,10 +87,10 @@ public class Board {
         return this.fields;
     }
 
-    public boolean move(int x, byte player){
+    public boolean move(short x, byte player){
         if(this.heights[x] >= this.height) return false;
         int y = this.heights[x];
-        this.fields[x + (y * this.height)] = player;
+        this.fields[x + (y * this.width)] = player;
         this.heights[x] += 1;
         this.checkAround(x, y, player);
         return true;
@@ -126,16 +126,12 @@ public class Board {
     public Board deepCopy(){
         Board board = new Board(this.width, this.height, this.rowLength);
         for (int i = 0; i < this.fields.length; i++) {
-            board.setField(i, this.fields[i]);
+            board.move(i, this.fields[i]);
         }
         return board;
     }
 
-    public void setField(int i, byte val){
+    public void move(int i, byte val){
         if(isField(i)) this.fields[i] = val;
-    }
-
-    public void setField(int x, int y, byte val) {
-        setField(getIndex(x,y),val);
     }
 }
