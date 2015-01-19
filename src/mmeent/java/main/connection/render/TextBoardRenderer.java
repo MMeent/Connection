@@ -29,7 +29,7 @@ public class TextBoardRenderer implements Renderer {
     @Override
     public void render() {
         String s = "";
-        for (int i = 0; i < screen_height; i ++) {
+        for (int i = screen_height - 1; i >= 0; i--) {
             String row = "| ";
             for (int j = 0; j < screen_width; j ++) {
                 row += board.getField(j, i);
