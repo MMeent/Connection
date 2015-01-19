@@ -26,14 +26,14 @@ public class Game {
         this.renderer = new TextBoardRenderer(board);
     }
 
-    public Game(LocalPlayer[] players, short height, short width){
-        this.board = new Board(height, width);
+    public Game(LocalPlayer[] players, short width, short height){
+        this.board = new Board(width, height);
         this.players = players;
         this.renderer = new TextBoardRenderer(board);
     }
 
-    public Game(LocalPlayer[] players, short height, short width, short length){
-        this.board = new Board(height, width, length);
+    public Game(LocalPlayer[] players, short width, short height, short length){
+        this.board = new Board(width, height, length);
         this.players = players;
         this.renderer = new TextBoardRenderer(board);
     }
