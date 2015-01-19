@@ -36,14 +36,12 @@ public class Move {
     }
 
     public boolean isValid() {
-        return (column <= 0 && column < localPlayer.getGame().getBoard().getWidth() && !localPlayer.getGame().getBoard().rowIsFull(column));
+        return (column >= 0 && column < localPlayer.getGame().getBoard().getWidth() && !localPlayer.getGame().getBoard().rowIsFull(column));
     }
 
     public void makeMove() {
         for (int i = 0; i < localPlayer.getGame().getBoard().getHeight(); i++) {
-            if(localPlayer.getGame().getBoard().getField(column,i) == 0) {
-                localPlayer.getGame().getBoard().setField(column,i,localPlayer.getId());
-            }
+                localPlayer.getGame().getBoard().move(column,localPlayer.getId());
         }
     }
 }

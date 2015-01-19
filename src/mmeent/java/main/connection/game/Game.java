@@ -53,10 +53,9 @@ public class Game {
         boolean a = true;
         while(a) {
             renderer.render();
-            if(players[0].getName() != null) {
-                System.out.println("aaa");
-            }
-            a = false;
+            players[turn % 2].getMove(turn).makeMove();
+            renderer.render();
+            turn ++;
         }
     }
 

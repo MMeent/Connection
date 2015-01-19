@@ -47,21 +47,16 @@ public class LocalPlayer {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Make a move: ");
-        String playerChoice = scanner.nextLine().toUpperCase();
         Scanner input = new Scanner(System.in);
-        String string;
-        int number;
-        string = input.next();
-        number = Integer.parseInt(string);
+        int number = input.nextInt();
         Move move = new Move(this,number,turn);
         if(move.isValid()) {
             return move;
         }
         else {
             System.out.println("Wrong choice!");
-            this.getMove(turn);
+            return this.getMove(turn);
         }
-        return null;
     }
 
     public byte getId(){
