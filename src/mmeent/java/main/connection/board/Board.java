@@ -1,14 +1,12 @@
 package mmeent.java.main.connection.board;
 
-import mmeent.java.main.connection.Protocol;
-
 /**
  * Created by Matthias on 20/12/2014.
  */
 public class Board {
     public static final short STANDARD_WIDTH = 7;
     public static final short STANDARD_HEIGHT = 6;
-    public static final short STANDARD_LENGTH = 4;
+    public static final int STANDARD_LENGTH = 4;
     private final short width;
     private final short height;
 
@@ -95,9 +93,9 @@ public class Board {
         int[] towin = {this.rowLength,this.rowLength,this.rowLength,this.rowLength};
         for(int i = -this.rowLength + 1; i < this.rowLength; i++){
             towin[0] = this.getField(x + i,y) == player || towin[0] <= 0 ? --towin[0] : this.rowLength;
-            towin[1] = this.getField(x, y) == player || towin[0] <= 0 ? --towin[1] : this.rowLength;
+            towin[1] = this.getField(x + i, y + i) == player || towin[0] <= 0 ? --towin[1] : this.rowLength;
             towin[2] = this.getField(x, y + i) == player || towin[0] <= 0 ? --towin[2] : this.rowLength;
-            towin[3] = this.getField(x + i, y + i) == player || towin[0] <= 0 ? --towin[3] : this.rowLength;
+            towin[3] = this.getField(x - i, y + i) == player || towin[0] <= 0 ? --towin[3] : this.rowLength;
         }
         for(int i: towin){
             if(i < 0) this.hasFour = true;

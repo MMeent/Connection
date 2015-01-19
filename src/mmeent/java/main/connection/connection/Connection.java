@@ -2,7 +2,6 @@ package mmeent.java.main.connection.connection;
 
 import mmeent.java.main.connection.Protocol;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
 /**
@@ -32,6 +31,10 @@ public class Connection {
 
     public synchronized void sendBuffer(){
         this.sendCharSequence(this.privBuffer);
+    }
+
+    public synchronized void clearBuffer(){
+        this.privBuffer = new StringBuilder();
     }
 
     public synchronized void sendCharSequence(CharSequence chars){

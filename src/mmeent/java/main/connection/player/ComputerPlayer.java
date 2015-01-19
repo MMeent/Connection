@@ -20,4 +20,8 @@ public class ComputerPlayer extends Player {
         super(name, id);
         this.ai = ai;
     }
+
+    public ComputerPlayer(byte id, AI ai){
+        this(ai.getName(), id);
+    }
 }
