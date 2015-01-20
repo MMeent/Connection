@@ -10,6 +10,7 @@ public interface Player {
     public Move getMove(int turn);
     public String getName();
     public byte getId();
+    public void setId(byte id);
     public Game getGame();
     public void setGame(Game game);
 }
