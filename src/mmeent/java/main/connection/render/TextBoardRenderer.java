@@ -29,14 +29,16 @@ public class TextBoardRenderer implements Renderer {
     @Override
     public void render() {
         String s = "";
-        for (int i = screen_height - 1; i >= 0; i--) {
+        byte[] fields = this.board.getFields();
+        for (int i = this.screen_height - 1; i >= 0; i--) {
             String row = "| ";
-            for (int j = 0; j < screen_width; j ++) {
-                row += board.getField(j, i);
+            for (int j = 0; j < this.screen_width; j ++) {
+                row += fields[j + i*screen_width];
                 row += " | ";
             }
             s += row + "\n";
         }
+
         System.out.println(s);
     }
 

@@ -1,19 +1,22 @@
 package mmeent.java.main.connection.game;
 
+import mmeent.java.main.connection.Protocol;
 import mmeent.java.main.connection.player.LocalPlayer;
 import mmeent.java.main.connection.board.Board;
 import mmeent.java.main.connection.render.Renderer;
 import mmeent.java.main.connection.render.TextBoardRenderer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Matthias on 20/12/2014.
  */
 public class Game {
     private Board board;
-    private LocalPlayer[] players;
+    private Map<Byte, LocalPlayer> players;
     private int playerAmount;
     private int turn = 0;
     private List<LocalPlayer> spectators = new ArrayList<LocalPlayer>();
@@ -24,13 +27,7 @@ public class Game {
      * @param players Array of players that will join the <code>Game</code>
      */
     public Game(LocalPlayer[] players){
-        this.board = new Board();
-        this.players = players;
-        this.playerAmount = players.length;
-        this.renderer = new TextBoardRenderer(board);
-        for(LocalPlayer player: players){
-            player.setGame(this);
-        }
+        this(players, (short) 7, (short) 6);
     }
 
     /**
@@ -40,9 +37,7 @@ public class Game {
      * @param height Height of the board
      */
     public Game(LocalPlayer[] players, short width, short height){
-        this.board = new Board(width, height);
-        this.players = players;
-        this.renderer = new TextBoardRenderer(board);
+        this(players, width, height, (short) 4);
     }
 
     /**
@@ -53,9 +48,7 @@ public class Game {
      * @param length Length of the row needed to win the <code>Game</code>
      */
     public Game(LocalPlayer[] players, short width, short height, short length){
-        this.board = new Board(width, height, length);
-        this.players = players;
-        this.renderer = new TextBoardRenderer(board);
+        this(players, new Board(width, height, length));
     }
 
     /**
@@ -64,9 +57,16 @@ public class Game {
      * @param board The <code>Board</code> on which the <code>Game</code> will be played
      */
     public Game(LocalPlayer[] players, Board board){
-        this.players = players;
         this.board = board.deepCopy();
-        this.renderer = new TextBoardRenderer(board);
+        this.renderer = new TextBoardRenderer(this.board);
+        this.players = new HashMap<Byte, LocalPlayer>();
+        this.playerAmount = players.length;
+        byte i = 0;
+        for(LocalPlayer player: players){
+            player.setId(++i);
+            player.setGame(this);
+            this.players.put(i, player);
+        }
     }
 
     /**
@@ -74,26 +74,22 @@ public class Game {
      * @return Return the <code>Board</code> of this <code>Game</code>
      */
     public Board getBoard() {
-        return board;
+        return this.board;
     }
 
     /**
      * Function that starts the <code>Game</code.>
      */
     public void play() {
-        int turn = -1;
+        int turn = 0;
         boolean a = true;
         while(a) {
-            turn ++;
-            renderer.render();
-            players[turn % 2].getMove(turn).makeMove();
-            for(LocalPlayer p : players) {
-                if(board.hasFour(p.getId())){
-                    a = false;
-                }
-            }
+            this.renderer.render();
+            this.players.get((byte) (turn % this.playerAmount + 1)).getMove(turn++).makeMove();
+            a = a && !this.getBoard().hasWinner();
         }
-        System.out.println("The winner of the game is: " + players[turn % 2].getName());
+        this.renderer.render();
+        System.out.println("The winner of the game is: " + players.get(this.board.getWinner()).getName());
     }
 
     public static void main(String[] args) {

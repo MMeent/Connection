@@ -64,6 +64,10 @@ public class LocalPlayer {
         return this.id;
     }
 
+    public void setId(byte id){
+        this.id = id;
+    }
+
     @Nullable
     public Game getGame(){
         return this.game;

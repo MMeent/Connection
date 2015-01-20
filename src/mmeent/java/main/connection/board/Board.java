@@ -10,6 +10,8 @@ public class Board {
     private final short width;
     private final short height;
 
+    private byte winner;
+
     private byte[] fields;
     private int[] heights;
 
@@ -29,6 +31,7 @@ public class Board {
 
         this.heights = new int[width];
         this.rowLength = rowLength;
+        this.winner = 0;
     }
 
     /**
@@ -89,7 +92,7 @@ public class Board {
      * @return The index of the field.
      */
     public int getIndex(int x, int y) {
-        return x + (y) * this.width;
+        return x + y * this.width;
     }
 
     /**
@@ -194,15 +197,18 @@ public class Board {
         int[] towin = {this.rowLength,this.rowLength,this.rowLength,this.rowLength};
         for(int i = -this.rowLength + 1; i < this.rowLength; i++){
             towin[0] = this.getField(x + i,y) == player || towin[0] <= 0 ? --towin[0] : this.rowLength;
-            towin[1] = this.getField(x + i, y + i) == player || towin[0] <= 0 ? --towin[1] : this.rowLength;
-            towin[2] = this.getField(x, y + i) == player || towin[0] <= 0 ? --towin[2] : this.rowLength;
-            towin[3] = this.getField(x - i, y + i) == player || towin[0] <= 0 ? --towin[3] : this.rowLength;
+            towin[1] = this.getField(x + i, y + i) == player || towin[1] <= 0 ? --towin[1] : this.rowLength;
+            towin[2] = this.getField(x, y + i) == player || towin[2] <= 0 ? --towin[2] : this.rowLength;
+            towin[3] = this.getField(x - i, y + i) == player || towin[3] <= 0 ? --towin[3] : this.rowLength;
         }
+        System.out.println(player);
         for(int i: towin){
-            if(i < 0) {
+            if(i <= 0) {
+                this.winner = player;
                 return true;
             }
         }
+
         return false;
     }
 
@@ -225,5 +231,21 @@ public class Board {
      */
     public void move(int i, byte val){
         if(isField(i)) this.fields[i] = val;
+    }
+
+    /**
+     * Check whether there is a winner or not
+     * @return true if there is a winner;
+     */
+    public boolean hasWinner(){
+        return this.winner != 0;
+    }
+
+    /**
+     * Check who the winner is
+     * @return the id of the player
+     */
+    public byte getWinner(){
+        return this.winner;
     }
 }
