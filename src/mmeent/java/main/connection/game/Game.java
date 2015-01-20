@@ -19,6 +19,10 @@ public class Game {
     private List<LocalPlayer> spectators = new ArrayList<LocalPlayer>();
     private Renderer renderer;
 
+    /**
+     * Constructor of <code>Game</code>
+     * @param players Array of players that will join the <code>Game</code>
+     */
     public Game(LocalPlayer[] players){
         this.board = new Board();
         this.players = players;
@@ -29,36 +33,67 @@ public class Game {
         }
     }
 
+    /**
+     * Constructor of <code>Game</code> with custom <code>Board</code> size
+     * @param players Array Players that will join the <code>Game</code>
+     * @param width Width of the board
+     * @param height Height of the board
+     */
     public Game(LocalPlayer[] players, short width, short height){
         this.board = new Board(width, height);
         this.players = players;
         this.renderer = new TextBoardRenderer(board);
     }
 
+    /**
+     * Constructor of <code>Game</code> with custom <code>Board</code> size en custom row length
+     * @param players Array of Players that will join the game
+     * @param width WIdth of the <code>Board</code>
+     * @param height Height of the <code>Board</code>
+     * @param length Length of the row needed to win the <code>Game</code>
+     */
     public Game(LocalPlayer[] players, short width, short height, short length){
         this.board = new Board(width, height, length);
         this.players = players;
         this.renderer = new TextBoardRenderer(board);
     }
 
+    /**
+     * Constructor of <code>Game</code> with a <code>Board</code> as parameter
+     * @param players Array of players that will join the <code>Game</code>
+     * @param board The <code>Board</code> on which the <code>Game</code> will be played
+     */
     public Game(LocalPlayer[] players, Board board){
         this.players = players;
         this.board = board.deepCopy();
         this.renderer = new TextBoardRenderer(board);
     }
 
+    /**
+     * Functions that returns the <code>Board</code> of this <code>Game</code>
+     * @return Return the <code>Board</code> of this <code>Game</code>
+     */
     public Board getBoard() {
         return board;
     }
 
+    /**
+     * Function that starts the <code>Game</code.>
+     */
     public void play() {
-        int turn = 0;
+        int turn = -1;
         boolean a = true;
         while(a) {
+            turn ++;
             renderer.render();
             players[turn % 2].getMove(turn).makeMove();
-            turn ++;
+            for(LocalPlayer p : players) {
+                if(board.hasFour(p.getId())){
+                    a = false;
+                }
+            }
         }
+        System.out.println("The winner of the game is: " + players[turn % 2].getName());
     }
 
     public static void main(String[] args) {
