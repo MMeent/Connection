@@ -12,7 +12,7 @@ import java.util.Scanner;
 /**
  * Created by Matthias on 20/12/2014.
  */
-public class LocalPlayer {
+public class LocalPlayer implements Player {
     private String name;
     private byte id = 0;
     private Game game = null;
