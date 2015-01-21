@@ -47,4 +47,28 @@ public class Packets {
         Packets.clientpackets.put(Protocol.Client.REQUEST_LEADERBOARD, ClientPacket.RequestLeaderboardPacket.class);
         Packets.clientpackets.put(Protocol.Client.REQUEST_LOBBY, ClientPacket.RequestLobbyPacket.class);
     }
+
+    public static ServerPacket readServerPacket(Connection c, String msg){
+        try {
+            String[] args = msg.split(" ");
+            return (ServerPacket) Packets.serverpackets.get(args[0]).getMethod("read", Connection.class, String[].class).invoke(c, args);
+        } catch (NoSuchMethodException e){
+            e.printStackTrace(System.out);
+        } catch (Exception e){
+            e.printStackTrace(System.out);
+        }
+        return null;
+    }
+
+    public static ClientPacket readClientPacket(Connection c, String msg){
+        try {
+            String[] args = msg.split(" ");
+            return (ClientPacket) Packets.clientpackets.get(args[0]).getMethod("read", Connection.class, String[].class).invoke(c, args);
+        } catch (NoSuchMethodException e){
+            e.printStackTrace(System.out);
+        } catch (Exception e){
+            e.printStackTrace(System.out);
+        }
+        return null;
+    }
 }

@@ -1,5 +1,6 @@
 package mmeent.java.main.connection.connection;
 
+import mmeent.java.main.connection.ConnectClient;
 import mmeent.java.main.connection.ConnectServer;
 import mmeent.java.main.connection.Protocol;
 
@@ -15,6 +16,7 @@ public class Connection {
     private PrintWriter out;
     private StringBuilder privBuffer;
     private Side side;
+    private Connection connection = this;
 
     public Connection(Socket socket, Side side) throws IOException{
         this.socket = socket;
@@ -22,19 +24,37 @@ public class Connection {
         this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
         this.out = new PrintWriter(this.socket.getOutputStream());
 
-       /* Thread read = (this.side == Side.SERVER) ? new Thread(){
+        Thread read = (this.side == Side.SERVER) ? new Thread(){
             public void run(){
                 while(true){
                     try{
                         String msg = in.readLine();
-                        ConnectServer.packets.add(Packets.clientpackets.get(msg.split(" ")[0].read(this, msg.split(" "))));
+                        ConnectServer.packets.put(Packets.readClientPacket(connection, msg));
                     } catch (IOException e){
-                        e.printStackTrace();
+                        e.printStackTrace(System.out);
+                    } catch (Exception e) {
+                        e.printStackTrace(System.out);
+                    }
+                }
+            }
+        }: new Thread(){
+            public void run(){
+                while(true){
+                    try{
+                        String msg = in.readLine();
+                        ConnectClient.packets.put(Packets.readServerPacket(connection, msg));
+                    } catch (IOException e){
+                        e.printStackTrace(System.out);
+                    } catch (Exception e){
+                        e.printStackTrace(System.out);
                     }
                 }
             }
         };
-        */
+
+        read.setDaemon(true);
+        read.start();
+
     }
 
     public synchronized void startPacket(){
