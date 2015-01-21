@@ -1,5 +1,6 @@
 package mmeent.java.main.connection.game;
 
+import mmeent.java.main.connection.board.Board;
 import mmeent.java.main.connection.player.LocalPlayer;
 import mmeent.java.main.connection.player.Player;
 
@@ -50,6 +51,6 @@ public class Move {
     }
 
     public void makeMove() {
-        board.move((short) column,player.getId());
+        board.move((short) column, player.getId());
     }
 }

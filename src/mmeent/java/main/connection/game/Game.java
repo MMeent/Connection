@@ -2,11 +2,8 @@ package mmeent.java.main.connection.game;
 
 import mmeent.java.main.connection.Protocol;
 import mmeent.java.main.connection.exception.ConnectFourException;
-import mmeent.java.main.connection.player.ComputerPlayer;
-import mmeent.java.main.connection.player.ComputerPlayerRandom;
-import mmeent.java.main.connection.player.LocalPlayer;
+import mmeent.java.main.connection.player.*;
 import mmeent.java.main.connection.board.Board;
-import mmeent.java.main.connection.player.Player;
 import mmeent.java.main.connection.render.Renderer;
 import mmeent.java.main.connection.render.TextBoardRenderer;
 
@@ -106,7 +103,7 @@ public class Game extends Thread{
 
     public static void main(String[] args) {
         Player player1 = new LocalPlayer("Henk", (byte) 1);
-        Player player2 = new ComputerPlayerRandom("Sjaak", (byte) 2);
+        Player player2 = new ComputerPlayerSmart("Sjaak", (byte) 2);
         Player[] players = {player1,player2};
         Game game = new Game(players);
         game.play();

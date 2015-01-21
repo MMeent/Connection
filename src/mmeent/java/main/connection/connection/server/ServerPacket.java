@@ -209,7 +209,7 @@ public class ServerPacket implements Packet {
         private short boardheight;
 
         public static InvitePacket read(Connection c, String[] args){
-            LocalPlayer player = LocalPlayer.get(args[1]);
+            Player player = Player.get(args[1]);
             return new InvitePacket(c, player);
         }
 
