@@ -1,8 +1,11 @@
 package mmeent.java.main.connection;
 
 import mmeent.java.main.connection.connection.Connection;
+import mmeent.java.main.connection.connection.Packet;
 import mmeent.java.main.connection.exception.ConnectFourException;
 import mmeent.java.main.connection.render.Renderer;
+
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Matthias on 20/12/2014.
@@ -13,20 +16,27 @@ public class ConnectClient {
     private Boolean debug;
     public static Connection connection = null;
     public static boolean isClient = false;
+    public static LinkedBlockingQueue<Packet> packets = new LinkedBlockingQueue<Packet>();
 
     public ConnectClient(String username, Renderer renderer, Boolean debug){
         this.username = username;
         this.renderer = renderer;
         this.debug = debug;
-/**
-        try{
-            while(true){}
-        } catch (ConnectFourException e){
-            e.printStackTrace();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
- */
+
+        Thread packetHandler = new Thread(){
+            public void run(){
+                while(true){
+                    try{
+                        Packet p = packets.take();
+                        p.onReceive();
+                    } catch (InterruptedException e){
+                        e.printStackTrace(System.out);
+                    }
+                }
+            }
+        };
+        packetHandler.setDaemon(true);
+        packetHandler.start();
     }
 
     public static void main(String[] args){

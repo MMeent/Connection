@@ -2,6 +2,7 @@ package mmeent.java.main.connection;
 
 import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
+import mmeent.java.main.connection.connection.Side;
 import mmeent.java.main.connection.player.Player;
 
 import java.io.IOException;
@@ -33,7 +34,7 @@ public class ConnectServer {
                 while(true){
                     try{
                         Socket s = socket.accept();
-                        connections.add(new Connection(s));
+                        connections.add(new Connection(s, Side.SERVER));
                     } catch(IOException e){
                         e.printStackTrace();
                     }
@@ -48,17 +49,28 @@ public class ConnectServer {
             public void run(){
                 while(true){
                     try{
-
+                        Packet p = ConnectServer.packets.take();
+                        p.onReceive();
+                    } catch (InterruptedException e){
+                        e.printStackTrace(System.out);
                     }
                 }
             }
-        }
+        };
+
+
+        handling.setDaemon(true);
+        handling.start();
     }
 
     public static void main(String[] args){
         ConnectServer.isServer = true;
         int port = Protocol.Settings.DEFAULT_PORT;
-        new ConnectServer(port);
+        try{
+            new ConnectServer(port);
+        } catch (IOException e){
+            e.printStackTrace(System.out);
+        }
     }
 
     public Player getPlayer(String name){
