@@ -81,6 +81,10 @@ public class Game extends Thread{
         return this.board;
     }
 
+    public Map<Byte,Player> getPlayers() {
+        return players;
+    }
+
     /**
      * Function that starts the <code>Game</code.>
      */

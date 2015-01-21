@@ -11,7 +11,7 @@ public class LeaderboardEntry {
     private int ranking;
 
     public LeaderboardEntry(String name, int wins, int loss, int total, int ranking){
-        this.player = Player.get(name,(byte) 1);
+        this.player = Player.get(name);
         this.wins = wins;
         this.loss = loss;
         this.total = total;

@@ -9,6 +9,7 @@ import mmeent.java.main.connection.player.Player;
 public class Move {
     private short column;
     private int turn;
+    private Board board;
 
     private Player player;
     private byte symbol;
@@ -18,6 +19,14 @@ public class Move {
         this.turn = turn;
         this.player = player;
         this.symbol = player.getId();
+        this.board = player.getGame().getBoard();
+    }
+
+    public Move(byte id, short column, int turn, Board board){
+        this.column = column;
+        this.turn = turn;
+        this.symbol = id;
+        this.board = board;
     }
 
     public byte getSymbol(){
@@ -37,10 +46,10 @@ public class Move {
     }
 
     public boolean isValid() {
-        return (this.column >= 0 && this.column < this.player.getGame().getBoard().getWidth() && !this.player.getGame().getBoard().rowIsFull(this.column) && this.player.getGame().getActivePlayer() == this.player);
+        return (this.column >= 0 && this.column < this.board.getWidth() && !this.board.rowIsFull(this.column));
     }
 
     public void makeMove() {
-        this.player.getGame().getBoard().move((short) this.column, this.player.getId());
+        board.move((short) column,player.getId());
     }
 }

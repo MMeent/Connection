@@ -1,5 +1,7 @@
 package mmeent.java.main.connection.board;
 
+import mmeent.java.main.connection.game.Move;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -172,8 +174,12 @@ public class Board {
         return this.fields;
     }
 
+    public void move(Move move) {
+        move(move.getColumn(),move.getSymbol());
+    }
+
     /**
-     * Function that takes a <code>Move</code> and changes to board accordingly.
+     * Function that takes a <code>Move</code> and changes the board accordingly.
      * @param x column where a <code>Move</code> has to be put.
      * @param player The ID of the player
      * @return Returns true if the operation has succeeded.

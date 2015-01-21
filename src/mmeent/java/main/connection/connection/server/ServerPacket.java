@@ -5,6 +5,7 @@ import mmeent.java.main.connection.board.Board;
 import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
 import mmeent.java.main.connection.player.LeaderboardEntry;
+import mmeent.java.main.connection.player.LocalPlayer;
 import mmeent.java.main.connection.player.Player;
 
 import java.util.ArrayList;
@@ -208,8 +209,8 @@ public class ServerPacket implements Packet {
         private short boardheight;
 
         public static InvitePacket read(Connection c, String[] args){
-            Player player = Player.get(args[1]);
-            return new InvitePacket(c, player, Short.parseShort(args[2]), Short.parseShort(args[3]));
+            LocalPlayer player = LocalPlayer.get(args[1]);
+            return new InvitePacket(c, player);
         }
 
         public InvitePacket(Connection c, Player player, short boardwidth, short boardheight){
