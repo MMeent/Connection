@@ -1,6 +1,8 @@
 package mmeent.java.main.connection.game;
 
 import mmeent.java.main.connection.Protocol;
+import mmeent.java.main.connection.player.ComputerPlayer;
+import mmeent.java.main.connection.player.ComputerPlayerRandom;
 import mmeent.java.main.connection.player.LocalPlayer;
 import mmeent.java.main.connection.board.Board;
 import mmeent.java.main.connection.player.Player;
@@ -17,17 +19,17 @@ import java.util.Map;
  */
 public class Game {
     private Board board;
-    private HashMap<Byte, LocalPlayer> players;
+    private Map<Byte, Player> players;
     private int playerAmount;
     private int turn = 0;
-    private List<LocalPlayer> spectators = new ArrayList<LocalPlayer>();
+    private List<Player> spectators = new ArrayList<Player>();
     private Renderer renderer;
 
     /**
      * Constructor of <code>Game</code>
      * @param players Array of players that will join the <code>Game</code>
      */
-    public Game(LocalPlayer[] players){
+    public Game(Player[] players){
         this(players, (short) 7, (short) 6);
     }
 
@@ -37,7 +39,7 @@ public class Game {
      * @param width Width of the board
      * @param height Height of the board
      */
-    public Game(LocalPlayer[] players, short width, short height){
+    public Game(Player[] players, short width, short height){
         this(players, width, height, (short) 4);
     }
 
@@ -48,7 +50,7 @@ public class Game {
      * @param height Height of the <code>Board</code>
      * @param length Length of the row needed to win the <code>Game</code>
      */
-    public Game(LocalPlayer[] players, short width, short height, short length){
+    public Game(Player[] players, short width, short height, short length){
         this(players, new Board(width, height, length));
     }
 
@@ -57,21 +59,17 @@ public class Game {
      * @param players Array of players that will join the <code>Game</code>
      * @param board The <code>Board</code> on which the <code>Game</code> will be played
      */
-    public Game(LocalPlayer[] players, Board board){
+    public Game(Player[] players, Board board){
         this.board = board.deepCopy();
         this.renderer = new TextBoardRenderer(this.board);
-        this.players = new HashMap<Byte, LocalPlayer>();
+        this.players = new HashMap<Byte, Player>();
         this.playerAmount = players.length;
         byte i = 0;
-        for(LocalPlayer player: players){
+        for(Player player: players){
             player.setId(++i);
             player.setGame(this);
             this.players.put(i, player);
         }
-    }
-
-    public Player[] getPlayers(){
-        return this.players.values().toArray(new Player[this.players.size()]);
     }
 
     /**
@@ -98,9 +96,9 @@ public class Game {
     }
 
     public static void main(String[] args) {
-        LocalPlayer player1 = LocalPlayer.get("Henk", (byte) 1);
-        LocalPlayer player2 = LocalPlayer.get("Sjaak", (byte) 2);
-        LocalPlayer[] players = {player1,player2};
+        Player player1 = new LocalPlayer("Henk", (byte) 1);
+        Player player2 = new ComputerPlayerRandom("Sjaak", (byte) 2);
+        Player[] players = {player1,player2};
         Game game = new Game(players);
         game.play();
     }

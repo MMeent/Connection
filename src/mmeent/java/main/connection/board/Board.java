@@ -1,5 +1,8 @@
 package mmeent.java.main.connection.board;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by Matthias on 20/12/2014.
  */
@@ -105,6 +108,20 @@ public class Board {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Function that returns a list containing the indexes of the columns in the <code>Board</code> that are not full.
+     * @return Returns a list containing the indexes of the columns in the <code>Board</code> that are not full
+     */
+    public List<Integer> availableRows() {
+        List<Integer> result = new LinkedList<Integer>();
+        for(int i = 0; i < width; i  ++) {
+            if(!rowIsFull(i)) {
+                result.add(i);
+            }
+        }
+        return result;
     }
 
     /**

@@ -18,27 +18,14 @@ import java.util.Scanner;
 public class LocalPlayer implements Player {
     private String name;
     private byte id = 0;
-    private Game game = null;
+    private Game game;
 
-    public static Map<String, LocalPlayer> players = new HashMap<String, LocalPlayer>();
-
-    public LocalPlayer(String name){
-        this.name = name;
-    }
-
-    public static LocalPlayer get(String name, byte id){
-        if(LocalPlayer.players.containsKey(name)) return LocalPlayer.players.get(name);
-        LocalPlayer p = new LocalPlayer(name, id);
-        LocalPlayer.players.put(name, p);
-        return p;
-    }
-
-    public static LocalPlayer get(String name){
-        return LocalPlayer.get(name, (byte) 0);
+    public static Player get(String name){
+        return Player.get(name, (byte) 0);
     }
 
     public LocalPlayer(String name, byte id){
-        this(name);
+        this.name = name;
         this.id = id;
     }
 

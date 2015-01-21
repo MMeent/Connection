@@ -1,6 +1,5 @@
 package mmeent.java.main.connection.player;
 
-import com.sun.istack.internal.Nullable;
 import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.game.Game;
 import mmeent.java.main.connection.game.Move;
@@ -11,53 +10,43 @@ import java.util.Random;
 /**
  * Created by Matthias on 20/12/2014.
  */
-public class ComputerPlayer implements Player {
+
+public class ComputerPlayerRandom implements Player{
     private String name;
+    private byte id = 0;
     private Game game;
-    private byte id;
 
-    public ComputerPlayer(String name, Game game, byte id){
-        this.id = id;
+    public ComputerPlayerRandom(String name, byte id) {
         this.name = name;
-        this.game = game;
-    }
-
-    public ComputerPlayer(String name, Game game){
-        this(name, game, (byte) 0);
-    }
-
-    public ComputerPlayer(String name){
-        this(name, null, (byte) 0);
+        this.id = id;
     }
 
     @Override
     public Move getMove(int turn) {
         Random randomGenerator = new Random();
-        List<Integer> availableRows = game.getBoard().availableRows();
-        int index = randomGenerator.nextInt(availableRows.size());
-        int choice= availableRows.get(index);
-        return new Move(this,(short) choice,turn);
+        List<Integer> rows = game.getBoard().availableRows();
+        short index = (short) randomGenerator.nextInt(rows.size());
+        return new Move(this,index,turn);
     }
 
     @Override
     public String getName() {
-        return this.name;
+        return name;
     }
 
     @Override
     public byte getId() {
-        return this.id;
+        return id;
     }
 
     @Override
-    public void setId(byte id){
-        this.id = id;
+    public void setId(byte id) {
+
     }
 
     @Override
-    @Nullable
     public Game getGame() {
-        return this.game;
+        return game;
     }
 
     @Override
