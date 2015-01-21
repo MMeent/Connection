@@ -3,6 +3,7 @@ package mmeent.java.main.connection.game;
 import mmeent.java.main.connection.Protocol;
 import mmeent.java.main.connection.player.LocalPlayer;
 import mmeent.java.main.connection.board.Board;
+import mmeent.java.main.connection.player.Player;
 import mmeent.java.main.connection.render.Renderer;
 import mmeent.java.main.connection.render.TextBoardRenderer;
 
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public class Game {
     private Board board;
-    private Map<Byte, LocalPlayer> players;
+    private HashMap<Byte, LocalPlayer> players;
     private int playerAmount;
     private int turn = 0;
     private List<LocalPlayer> spectators = new ArrayList<LocalPlayer>();
@@ -67,6 +68,10 @@ public class Game {
             player.setGame(this);
             this.players.put(i, player);
         }
+    }
+
+    public Player[] getPlayers(){
+        return this.players.values().toArray(new Player[this.players.size()]);
     }
 
     /**

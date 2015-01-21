@@ -2,19 +2,22 @@ package mmeent.java.main.connection.connection;
 
 import mmeent.java.main.connection.Protocol;
 
-import java.io.StringWriter;
+import java.io.*;
+import java.net.Socket;
 
 /**
  * Created by Matthias on 14/01/2015.
  */
 public class Connection {
-    private StringBuffer in;
-    private StringWriter out;
+    private Socket socket;
+    private BufferedReader in;
+    private PrintWriter out;
     private StringBuilder privBuffer;
 
-    public Connection(StringBuffer in, StringWriter out){
-        this.in = in;
-        this.out = out;
+    public Connection(Socket socket) throws IOException{
+        this.socket = socket
+        this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+        this.out = new PrintWriter(this.socket.getOutputStream());
     }
 
     public synchronized void startPacket(){

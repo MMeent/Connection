@@ -288,7 +288,7 @@ public class ServerPacket implements Packet {
     }
 
     public static class MoveOkPacket extends ServerPacket{
-        byte playerid;
+        private byte playerid;
         private short column;
         LocalPlayer player;
 
@@ -314,5 +314,20 @@ public class ServerPacket implements Packet {
         }
     }
 
-    
+    public static class ChatPacket extends ServerPacket{
+        private String msg;
+
+        public static ChatPacket read(Connection c, String[] args){
+            StringBuilder msg = new StringBuilder();
+            for(int i = 1; i < args.length; i++){
+                
+            }
+            return new ChatPacket(c, msg.toString());
+        }
+
+        public ChatPacket(Connection c, String msg){
+            super(c, Protocol.Server.CHAT);
+            this.msg = msg;
+        }
+    }
 }

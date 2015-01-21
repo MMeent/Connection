@@ -1,5 +1,6 @@
 package mmeent.java.main.connection.player;
 
+import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.game.Game;
 import mmeent.java.main.connection.game.Move;
 
@@ -13,4 +14,5 @@ public interface Player {
     public void setId(byte id);
     public Game getGame();
     public void setGame(Game game);
+    public Connection getConnection();
 }

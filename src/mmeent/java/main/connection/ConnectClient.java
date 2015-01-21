@@ -11,7 +11,8 @@ public class ConnectClient {
     private String username;
     private Renderer renderer;
     private Boolean debug;
-    private Connection connection = null;
+    public static Connection connection = null;
+    public static boolean isClient = false;
 
     public ConnectClient(String username, Renderer renderer, Boolean debug){
         this.username = username;
@@ -39,6 +40,7 @@ public class ConnectClient {
                 case "-g": graphical = true;
             }
         }
+        ConnectClient.isClient = true;
         new ConnectClient(username, (Renderer) null, debug);
     }
 }

@@ -1,6 +1,9 @@
 package mmeent.java.main.connection.player;
 
 import com.sun.istack.internal.Nullable;
+import mmeent.java.main.connection.ConnectClient;
+import mmeent.java.main.connection.ConnectServer;
+import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.game.Game;
 
 import mmeent.java.main.connection.game.Move;
@@ -75,5 +78,10 @@ public class LocalPlayer implements Player {
 
     public void setGame(Game game){
         this.game = game;
+    }
+
+    public Connection getConnection(){
+        if(ConnectServer.isServer) return ConnectServer.getConnection(this);
+        if(ConnectClient.isClient) return ConnectClient.connection;
     }
 }
