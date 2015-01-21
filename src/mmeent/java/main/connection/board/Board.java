@@ -106,10 +106,7 @@ public class Board {
      * @return Returns true if the row is full. False if it is not.
      */
     public boolean rowIsFull(int column) {
-        if(this.heights[column] == this.height) {
-            return true;
-        }
-        return false;
+        return (this.heights[column] == this.height);
     }
 
     /**

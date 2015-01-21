@@ -1,6 +1,5 @@
 package mmeent.java.main.connection.server;
 
-import mmeent.java.main.connection.connection.client.ClientPacket;
 import mmeent.java.main.connection.connection.server.ServerPacket;
 import mmeent.java.main.connection.player.LocalPlayer;
 import mmeent.java.main.connection.player.Player;

@@ -210,7 +210,7 @@ public class ServerPacket implements Packet {
 
         public static InvitePacket read(Connection c, String[] args){
             Player player = Player.get(args[1]);
-            return new InvitePacket(c, player);
+            return new InvitePacket(c, player, Short.parseShort(args[2]), Short.parseShort(args[3]));
         }
 
         public InvitePacket(Connection c, Player player, short boardwidth, short boardheight){
