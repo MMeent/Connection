@@ -3,6 +3,7 @@ package mmeent.java.main.connection.connection;
 import mmeent.java.main.connection.ConnectClient;
 import mmeent.java.main.connection.ConnectServer;
 import mmeent.java.main.connection.Protocol;
+import mmeent.java.main.connection.player.Player;
 
 import java.io.*;
 import java.net.Socket;
@@ -17,6 +18,7 @@ public class Connection {
     private StringBuilder privBuffer;
     private Side side;
     private Connection connection = this;
+    private Player player = null;
 
     public Connection(Socket socket, Side side) throws IOException{
         this.socket = socket;
@@ -83,5 +85,13 @@ public class Connection {
 
     public void send(Packet packet){
         packet.write(this);
+    }
+
+    public void setPlayer(Player player){
+        this.player = player;
+    }
+
+    public Player getPlayer(){
+        return this.player;
     }
 }

@@ -1,9 +1,14 @@
 package mmeent.java.main.connection.connection.client;
 
+import mmeent.java.main.connection.ConnectServer;
 import mmeent.java.main.connection.Protocol;
 import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
 import mmeent.java.main.connection.connection.server.ServerPacket;
+import mmeent.java.main.connection.exception.ConnectFourException;
+import mmeent.java.main.connection.game.Invite;
+import mmeent.java.main.connection.game.Move;
+import mmeent.java.main.connection.player.Player;
 
 import java.util.Arrays;
 
@@ -13,9 +18,11 @@ import java.util.Arrays;
 public class ClientPacket implements Packet {
     private Connection connection;
     private String prefix;
+    private Player sender = null;
 
     public ClientPacket(Connection connection, String prefix){
         this.connection = connection;
+        this.sender = connection.getPlayer();
         this.prefix = prefix;
     }
 
@@ -24,15 +31,15 @@ public class ClientPacket implements Packet {
     }
 
     public void returnError(String e){
-        this.connection.send(new ClientPacket.ErrorPacket(this.connection, 0, e));
+        this.connection.send(new ClientPacket.ErrorPacket(this.connection, this.prefix, e));
     }
 
     public synchronized void write(Connection c){
         c.writePartial(this.prefix);
     }
 
-    public void returnError(int id, String e){
-        this.connection.send(new ClientPacket.ErrorPacket(this.connection, id, e));
+    public void returnError(String prefix, String e){
+        this.connection.send(new ClientPacket.ErrorPacket(this.connection, this.prefix, e));
     }
 
     public void respond(Packet packet){
@@ -41,6 +48,14 @@ public class ClientPacket implements Packet {
 
     public void onReceive(){
 
+    }
+
+    public Connection getConnection(){
+        return this.connection;
+    }
+
+    public Player getSender(){
+        return this.sender;
     }
 
     public static class ChatPacket extends ClientPacket{
@@ -64,6 +79,10 @@ public class ClientPacket implements Packet {
             c.writePartial(message);
             c.stopPacket();
             c.sendBuffer();
+        }
+
+        public void onReceive(){
+            ConnectServer.server.chat.addMessage(this.message);
         }
     }
 
@@ -91,6 +110,11 @@ public class ClientPacket implements Packet {
             }
             c.stopPacket();
             c.sendBuffer();
+        }
+
+        public void onReceive(){
+            this.getConnection().setPlayer(Player.get(this.username));
+            ConnectServer.server.addPlayerConnection(Player.get(this.username), this.getConnection());
         }
     }
 
@@ -122,6 +146,13 @@ public class ClientPacket implements Packet {
             c.writePartial(Integer.toString(this.boardwidth));
             c.writePartial(Integer.toString(this.boardheight));
         }
+
+        public void onReceive(){
+            Player invited = Player.get(this.playername);
+            Player inviter = this.getSender();
+            new Invite(inviter, invited, this.boardwidth, this.boardheight);
+            invited.getConnection().send(new ServerPacket.InvitePacket(invited.getConnection(), inviter, this.boardwidth, this.boardheight));
+        }
     }
 
     public static class AcceptInvitePacket extends ClientPacket{
@@ -135,6 +166,12 @@ public class ClientPacket implements Packet {
         public AcceptInvitePacket(Connection c, String username){
             super(c, Protocol.Client.ACCEPT_INVITE);
             this.username = username;
+        }
+
+        public void onReceive(){
+            Player invited = this.getSender();
+            Player inviter = Player.get(this.username);
+            ((Invite) Invite.invites.get(inviter).get(invited)).startGame().start();
         }
     }
 
@@ -150,6 +187,12 @@ public class ClientPacket implements Packet {
             super(c, Protocol.Client.DECLINE_INVITE);
             this.username = username;
         }
+
+        public void onReceive(){
+            Player inviter = Player.get(username);
+            Player invited = this.getSender();
+            Invite.invites.get(inviter).remove(invited);
+        }
     }
 
     public static class MovePacket extends ClientPacket{
@@ -163,6 +206,16 @@ public class ClientPacket implements Packet {
         public MovePacket(Connection c, short column){
             super(c, Protocol.Client.MOVE);
             this.column = column;
+        }
+
+        public void onReceive(){
+            Player sender = this.getSender();
+            if(sender.getGame() == null) return;
+            try{
+                sender.getGame().move(new Move(sender, column, sender.getGame().getTurn()));
+            } catch (ConnectFourException e){
+                this.returnError(e.getMessage());
+            }
         }
     }
 
@@ -181,6 +234,10 @@ public class ClientPacket implements Packet {
             super(c, Protocol.Client.QUIT);
             this.reason = reason;
         }
+
+        public void onReceive(){
+            ConnectServer.server.removePlayer(this.getSender());
+        }
     }
 
     public static class RequestBoardPacket extends ClientPacket{
@@ -190,6 +247,11 @@ public class ClientPacket implements Packet {
 
         public RequestBoardPacket(Connection c){
             super(c, Protocol.Client.REQUEST_BOARD);
+        }
+
+        public void onReceive(){
+            if(this.getSender().getGame() != null) this.respond(new ServerPacket.BoardPacket(this.getConnection(), this.getSender().getGame().getBoard()));
+            else this.returnError("You have to be in a game to get a board");
         }
     }
 
@@ -211,14 +273,18 @@ public class ClientPacket implements Packet {
         public RequestLobbyPacket(Connection c){
             super(c, Protocol.Client.REQUEST_LOBBY);
         }
+
+        public void onReceive(){
+            this.respond(new ServerPacket.LobbyPacket(this.getConnection(), (Player[]) ConnectServer.server.getPlayers().toArray()));
+        }
     }
 
     public static class ErrorPacket extends ClientPacket{
-        private int code;
+        private String code;
         private String message;
 
         public static ErrorPacket read(Connection c, String[] args){
-            int code = Integer.valueOf(args[1]);
+            String code = args[1];
             String message = "";
             for(int i = 2; i < args.length; i++){
                 message += args[i];
@@ -226,10 +292,14 @@ public class ClientPacket implements Packet {
             return new ErrorPacket(c, code, message);
         }
 
-        public ErrorPacket(Connection c, int code, String message){
+        public ErrorPacket(Connection c, String prefix, String message){
             super(c, Protocol.Client.ERROR);
-            this.code = code;
+            this.code = prefix;
             this.message = message;
+        }
+
+        public void onReceive(){
+            System.out.println("Error received from client: " + this.code + " : " + message);
         }
     }
 
@@ -243,7 +313,7 @@ public class ClientPacket implements Packet {
         }
 
         public void onReceive(){
-            super.respond(new ServerPacket.PongPacket(null));
+            this.respond(new ServerPacket.PongPacket(this.getConnection()));
         }
     }
 }

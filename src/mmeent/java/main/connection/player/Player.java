@@ -22,6 +22,10 @@ public interface Player {
         return p;
     }
 
+    public static Player get(String name){
+        return Player.get(name, (byte) 0);
+    }
+
     public Move getMove(int turn);
     public String getName();
     public byte getId();

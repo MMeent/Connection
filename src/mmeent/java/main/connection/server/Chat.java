@@ -1,6 +1,9 @@
 package mmeent.java.main.connection.server;
 
+import mmeent.java.main.connection.connection.client.ClientPacket;
+import mmeent.java.main.connection.connection.server.ServerPacket;
 import mmeent.java.main.connection.player.LocalPlayer;
+import mmeent.java.main.connection.player.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +59,7 @@ public class Chat {
     public static class ChatRoom{
         private List<String> msgs;
         public final String name;
-        private List<LocalPlayer> players;
+        private List<Player> players;
 
         /**
          * A chatroom constructor.
@@ -82,6 +85,10 @@ public class Chat {
          */
         public void addMessage(String msg){
             this.msgs.add(msg);
+            ServerPacket.ChatPacket p = new ServerPacket.ChatPacket(null, msg);
+            for(Player player: this.players){
+                player.getConnection().send(p);
+            }
         }
     }
 

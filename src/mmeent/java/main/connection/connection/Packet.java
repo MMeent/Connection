@@ -1,5 +1,7 @@
 package mmeent.java.main.connection.connection;
 
+import mmeent.java.main.connection.player.Player;
+
 /**
  * Created by Matthias on 14/01/2015.
  */
@@ -11,7 +13,7 @@ public interface Packet {
      * @param id the error id of the error
      * @param extras some extra stuff that can be sent back
      */
-    public void returnError(int id, String extras);
+    public void returnError(String extras);
 
     /**
      * Write a packet to the given Connection
@@ -31,4 +33,13 @@ public interface Packet {
      * A method that is called once the packet has been received and read.
      */
     public void onReceive();
+
+    /**
+     * Get the connection of the packet.
+     *
+     * @return the connection the packet was sent over;
+     */
+    public Connection getConnection();
+
+    public Player getSender();
 }

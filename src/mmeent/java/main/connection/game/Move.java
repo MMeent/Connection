@@ -10,22 +10,22 @@ public class Move {
     private short column;
     private int turn;
 
-    private LocalPlayer localPlayer;
+    private Player player;
     private byte symbol;
 
     public Move(Player player, short column, int turn){
         this.column = column;
         this.turn = turn;
-        this.localPlayer = localPlayer;
-        this.symbol = localPlayer.getId();
+        this.player = player;
+        this.symbol = player.getId();
     }
 
     public byte getSymbol(){
         return this.symbol;
     }
 
-    public LocalPlayer getLocalPlayer(){
-        return this.localPlayer;
+    public Player getPlayer(){
+        return this.player;
     }
 
     public int getTurn(){
@@ -37,10 +37,10 @@ public class Move {
     }
 
     public boolean isValid() {
-        return (this.column >= 0 && this.column < this.localPlayer.getGame().getBoard().getWidth() && !this.localPlayer.getGame().getBoard().rowIsFull(this.column));
+        return (this.column >= 0 && this.column < this.player.getGame().getBoard().getWidth() && !this.player.getGame().getBoard().rowIsFull(this.column) && this.player.getGame().getActivePlayer() == this.player);
     }
 
     public void makeMove() {
-        localPlayer.getGame().getBoard().move((short) column,localPlayer.getId());
+        this.player.getGame().getBoard().move((short) this.column, this.player.getId());
     }
 }

@@ -1,6 +1,7 @@
 package mmeent.java.main.connection.game;
 
 import mmeent.java.main.connection.Protocol;
+import mmeent.java.main.connection.exception.ConnectFourException;
 import mmeent.java.main.connection.player.ComputerPlayer;
 import mmeent.java.main.connection.player.ComputerPlayerRandom;
 import mmeent.java.main.connection.player.LocalPlayer;
@@ -17,7 +18,7 @@ import java.util.Map;
 /**
  * Created by Matthias on 20/12/2014.
  */
-public class Game {
+public class Game extends Thread{
     private Board board;
     private Map<Byte, Player> players;
     private int playerAmount;
@@ -95,11 +96,28 @@ public class Game {
         System.out.println("The winner of the game is: " + players.get(this.board.getWinner()).getName());
     }
 
+    public void run(){
+        this.play();
+    }
+
     public static void main(String[] args) {
         Player player1 = new LocalPlayer("Henk", (byte) 1);
         Player player2 = new ComputerPlayerRandom("Sjaak", (byte) 2);
         Player[] players = {player1,player2};
         Game game = new Game(players);
         game.play();
+    }
+
+    public int getTurn(){
+        return this.turn;
+    }
+
+    public void move(Move move) throws ConnectFourException{
+        if(!move.isValid()) throw new ConnectFourException("You have to be the active player");
+        move.makeMove();
+    }
+
+    public Player getActivePlayer(){
+        return this.players.get((byte) (this.turn % this.playerAmount));
     }
 }
