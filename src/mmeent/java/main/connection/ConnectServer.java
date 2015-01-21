@@ -4,9 +4,13 @@ import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
 import mmeent.java.main.connection.player.Player;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Matthias on 20/01/2015.
@@ -14,13 +18,41 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class ConnectServer {
     public static boolean isServer = false;
     public static ConnectServer server = null;
+    private ServerSocket socket;
     private HashMap<String, Player> players = new HashMap<String, Player>();
-    private HashMap<Player, Connection> connections = new HashMap<Player, Connection>();
-    private BlockingQueue<Packet> packets = new LinkedBlockingDeque<Packet>();
+    private HashMap<Player, Connection> playerconnections = new HashMap<Player, Connection>();
+    private List<Connection> connections = new ArrayList<Connection>();
+    public static LinkedBlockingQueue<Packet> packets = new LinkedBlockingQueue<Packet>();
 
-    public ConnectServer(int port){
+    public ConnectServer(int port) throws IOException{
         ConnectServer.server = this;
+        socket = new ServerSocket(port);
 
+        Thread accept = new Thread() {
+            public void run(){
+                while(true){
+                    try{
+                        Socket s = socket.accept();
+                        connections.add(new Connection(s));
+                    } catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        accept.setDaemon(true);
+        accept.start();
+
+        Thread handling = new Thread(){
+            public void run(){
+                while(true){
+                    try{
+
+                    }
+                }
+            }
+        }
     }
 
     public static void main(String[] args){
@@ -34,7 +66,7 @@ public class ConnectServer {
     }
 
     public Connection getConnection(Player player){
-        return this.connections.get(player);
+        return this.playerconnections.get(player);
     }
 
     public Connection getConnection(String name){

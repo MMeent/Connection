@@ -1,5 +1,6 @@
 package mmeent.java.main.connection.connection;
 
+import mmeent.java.main.connection.ConnectServer;
 import mmeent.java.main.connection.Protocol;
 
 import java.io.*;
@@ -13,11 +14,27 @@ public class Connection {
     private BufferedReader in;
     private PrintWriter out;
     private StringBuilder privBuffer;
+    private Side side;
 
-    public Connection(Socket socket) throws IOException{
-        this.socket = socket
+    public Connection(Socket socket, Side side) throws IOException{
+        this.socket = socket;
+        this.side = side;
         this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
         this.out = new PrintWriter(this.socket.getOutputStream());
+
+       /* Thread read = (this.side == Side.SERVER) ? new Thread(){
+            public void run(){
+                while(true){
+                    try{
+                        String msg = in.readLine();
+                        ConnectServer.packets.add(Packets.clientpackets.get(msg.split(" ")[0].read(this, msg.split(" "))));
+                    } catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        */
     }
 
     public synchronized void startPacket(){

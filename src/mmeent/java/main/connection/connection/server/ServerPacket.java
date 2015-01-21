@@ -320,7 +320,7 @@ public class ServerPacket implements Packet {
         public static ChatPacket read(Connection c, String[] args){
             StringBuilder msg = new StringBuilder();
             for(int i = 1; i < args.length; i++){
-                
+                msg.append(args[i]).append(' ');
             }
             return new ChatPacket(c, msg.toString());
         }
@@ -328,6 +328,13 @@ public class ServerPacket implements Packet {
         public ChatPacket(Connection c, String msg){
             super(c, Protocol.Server.CHAT);
             this.msg = msg;
+        }
+
+        public synchronized void write(Connection c){
+            super.write(c);
+            c.writePartial(this.msg);
+            c.stopPacket();
+            c.sendBuffer();
         }
     }
 }

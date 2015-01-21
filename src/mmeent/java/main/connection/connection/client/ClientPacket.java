@@ -19,6 +19,10 @@ public class ClientPacket implements Packet {
         this.prefix = prefix;
     }
 
+    public static ClientPacket read(Connection c, String[] args){
+        return new ClientPacket(c, "CLIENTPACKET");
+    }
+
     public void returnError(String e){
         this.connection.send(new ClientPacket.ErrorPacket(this.connection, 0, e));
     }

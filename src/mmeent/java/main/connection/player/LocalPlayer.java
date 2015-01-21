@@ -81,7 +81,8 @@ public class LocalPlayer implements Player {
     }
 
     public Connection getConnection(){
-        if(ConnectServer.isServer) return ConnectServer.getConnection(this);
+        if(ConnectServer.isServer) return ConnectServer.server.getConnection(this);
         if(ConnectClient.isClient) return ConnectClient.connection;
+        return null;
     }
 }
