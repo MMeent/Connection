@@ -6,6 +6,7 @@ import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
 import mmeent.java.main.connection.player.LeaderboardEntry;
 import mmeent.java.main.connection.player.LocalPlayer;
+import mmeent.java.main.connection.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +105,7 @@ public class ServerPacket implements Packet {
         public static LobbyPacket read(Connection c, String[] args){
             LocalPlayer[] players = new LocalPlayer[args.length - 1];
             for(int i = 1; i < args.length; i++){
-                players[i - 1] = LocalPlayer.get(args[i]);
+                players[i - 1] = (LocalPlayer) LocalPlayer.get(args[i]);
             }
             return new LobbyPacket(c, players);
         }
@@ -193,13 +194,13 @@ public class ServerPacket implements Packet {
     }
 
     public static class InvitePacket extends ServerPacket{
-        private LocalPlayer player;
+        private Player player;
         public static InvitePacket read(Connection c, String[] args){
-            LocalPlayer player = LocalPlayer.get(args[1]);
+            Player player = LocalPlayer.get(args[1]);
             return new InvitePacket(c, player);
         }
 
-        public InvitePacket(Connection c, LocalPlayer player){
+        public InvitePacket(Connection c, Player player){
             super(c, Protocol.Server.INVITE);
             this.player = player;
         }
@@ -213,13 +214,13 @@ public class ServerPacket implements Packet {
     }
 
     public static class GameStartPacket extends ServerPacket{
-        private LocalPlayer player1;
-        private LocalPlayer player2;
+        private Player player1;
+        private Player player2;
         private String options = "";
 
         public static GameStartPacket read(Connection c, String[] args){
-            LocalPlayer p1 = LocalPlayer.get(args[1]);
-            LocalPlayer p2 = LocalPlayer.get(args[2]);
+            Player p1 = LocalPlayer.get(args[1]);
+            Player p2 = LocalPlayer.get(args[2]);
             StringBuilder options = new StringBuilder();
             for(int i = 3; i < args.length; i++){
                 options.append(' ').append(args[i]);
@@ -227,13 +228,13 @@ public class ServerPacket implements Packet {
             return new GameStartPacket(c, p1, p2, options.toString());
         }
 
-        public GameStartPacket(Connection c, LocalPlayer p1, LocalPlayer p2){
+        public GameStartPacket(Connection c, Player p1, Player p2){
             super(c, Protocol.Server.GAME_START);
             this.player1 = p1;
             this.player2 = p2;
         }
 
-        public GameStartPacket(Connection c, LocalPlayer p1, LocalPlayer p2, String options){
+        public GameStartPacket(Connection c, Player p1, Player p2, String options){
             this(c, p1, p2);
             this.options = options;
         }
@@ -290,16 +291,16 @@ public class ServerPacket implements Packet {
     public static class MoveOkPacket extends ServerPacket{
         private byte playerid;
         private short column;
-        LocalPlayer player;
+        Player player;
 
         public static MoveOkPacket read(Connection c, String[] args){
             byte player_number = Byte.valueOf(args[1]);
             short column = Short.valueOf(args[2]);
-            LocalPlayer player = args.length >= 3 ? LocalPlayer.get(args[3]) : null;
+            Player player = args.length >= 3 ? LocalPlayer.get(args[3]) : null;
             return new MoveOkPacket(c, player_number, column, player);
         }
 
-        public MoveOkPacket(Connection c, byte playerid, short column, LocalPlayer player){
+        public MoveOkPacket(Connection c, byte playerid, short column, Player player){
             super(c, Protocol.Server.MOVE_OK);
             this.playerid = playerid;
             this.column = column;

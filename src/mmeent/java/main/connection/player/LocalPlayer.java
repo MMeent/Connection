@@ -5,11 +5,8 @@ import mmeent.java.main.connection.ConnectClient;
 import mmeent.java.main.connection.ConnectServer;
 import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.game.Game;
-
 import mmeent.java.main.connection.game.Move;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -21,7 +18,7 @@ public class LocalPlayer implements Player {
     private Game game;
 
     public static Player get(String name){
-        return Player.get(name, (byte) 0);
+        return Player.get(name);
     }
 
     public LocalPlayer(String name, byte id){

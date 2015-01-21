@@ -13,11 +13,11 @@ import java.util.Map;
 public interface Player {
     public static Map<String, Player> players = new HashMap<String, Player>();
 
-    public static Player get(String name, byte id) {
+    public static Player get(String name) {
         if(LocalPlayer.players.containsKey(name)) {
             return LocalPlayer.players.get(name);
         }
-        LocalPlayer p = new LocalPlayer(name, id);
+        LocalPlayer p = new LocalPlayer(name, (byte) (players.size() + 1));
         LocalPlayer.players.put(name, p);
         return p;
     }

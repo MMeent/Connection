@@ -1,5 +1,6 @@
 package mmeent.java.main.connection.game;
 
+import mmeent.java.main.connection.board.Board;
 import mmeent.java.main.connection.player.LocalPlayer;
 import mmeent.java.main.connection.player.Player;
 
@@ -9,23 +10,32 @@ import mmeent.java.main.connection.player.Player;
 public class Move {
     private short column;
     private int turn;
+    private Board board;
 
-    private LocalPlayer localPlayer;
+    private Player player;
     private byte symbol;
 
     public Move(Player player, short column, int turn){
         this.column = column;
         this.turn = turn;
-        this.localPlayer = localPlayer;
-        this.symbol = localPlayer.getId();
+        this.player = player;
+        this.symbol = player.getId();
+        this.board = player.getGame().getBoard();
+    }
+
+    public Move(byte id, short column, int turn, Board board){
+        this.column = column;
+        this.turn = turn;
+        this.symbol = id;
+        this.board = board;
     }
 
     public byte getSymbol(){
         return this.symbol;
     }
 
-    public LocalPlayer getLocalPlayer(){
-        return this.localPlayer;
+    public Player getLocalPlayer(){
+        return this.player;
     }
 
     public int getTurn(){
@@ -37,10 +47,10 @@ public class Move {
     }
 
     public boolean isValid() {
-        return (this.column >= 0 && this.column < this.localPlayer.getGame().getBoard().getWidth() && !this.localPlayer.getGame().getBoard().rowIsFull(this.column));
+        return (this.column >= 0 && this.column < this.board.getWidth() && !this.board.rowIsFull(this.column));
     }
 
     public void makeMove() {
-        localPlayer.getGame().getBoard().move((short) column,localPlayer.getId());
+        board.move((short) column,player.getId());
     }
 }

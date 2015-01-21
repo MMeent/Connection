@@ -80,6 +80,10 @@ public class Game {
         return this.board;
     }
 
+    public Map<Byte,Player> getPlayers() {
+        return players;
+    }
+
     /**
      * Function that starts the <code>Game</code.>
      */
