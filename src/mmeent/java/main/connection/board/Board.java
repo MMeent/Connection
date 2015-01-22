@@ -2,6 +2,7 @@ package mmeent.java.main.connection.board;
 
 import mmeent.java.main.connection.game.Move;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,6 +15,8 @@ public class Board {
     public static final int STANDARD_LENGTH = 4;
     private final short width;
     private final short height;
+
+    private int usedSpaces;
 
     private byte winner;
 
@@ -33,6 +36,8 @@ public class Board {
         this.height = height;
 
         this.fields = new byte[width * height];
+
+        this.usedSpaces = 0;
 
         this.heights = new int[width];
         this.rowLength = rowLength;
@@ -105,7 +110,7 @@ public class Board {
      * @param column The column that has to be checked whether it is full or not.
      * @return Returns true if the row is full. False if it is not.
      */
-    public boolean rowIsFull(int column) {
+    public boolean colIsFull(int column) {
         return (this.heights[column] == this.height);
     }
 
@@ -113,10 +118,10 @@ public class Board {
      * Function that returns a list containing the indexes of the columns in the <code>Board</code> that are not full.
      * @return Returns a list containing the indexes of the columns in the <code>Board</code> that are not full
      */
-    public List<Integer> availableRows() {
-        List<Integer> result = new LinkedList<Integer>();
-        for(int i = 0; i < width; i  ++) {
-            if(!rowIsFull(i)) {
+    public List<Short> availableCols() {
+        List<Short> result = new ArrayList<Short>();
+        for(short i = 0; i < width; i  ++) {
+            if(!colIsFull(i)) {
                 result.add(i);
             }
         }
@@ -172,7 +177,7 @@ public class Board {
     }
 
     public void move(Move move) {
-        move(move.getColumn(),move.getSymbol());
+        this.move(move.getColumn(),move.getSymbol());
     }
 
     /**
@@ -186,6 +191,7 @@ public class Board {
         int y = this.heights[x];
         this.fields[x + (y * this.width)] = player;
         this.heights[x] += 1;
+        this.usedSpaces++;
         this.checkAround(x, y, player);
         return true;
     }
@@ -221,7 +227,6 @@ public class Board {
             towin[2] = this.getField(x, y + i) == player || towin[2] <= 0 ? --towin[2] : this.rowLength;
             towin[3] = this.getField(x - i, y + i) == player || towin[3] <= 0 ? --towin[3] : this.rowLength;
         }
-        System.out.println(player);
         for(int i: towin){
             if(i <= 0) {
                 this.winner = player;
@@ -246,11 +251,19 @@ public class Board {
 
     /**
      * Function that makes a move in the given column.
-     * @param i Column where the move has to be put.
+     * @param i Field where the move has to be put.
      * @param val Mark of the player that makes the move.
      */
     public void move(int i, byte val){
         if(isField(i)) this.fields[i] = val;
+    }
+
+    /**
+     * Function that undoes a move.
+     * @param i Field of the move to be removed.
+     */
+    public void remove(int i){
+        if(isField(i)) this.fields[i] = 1;
     }
 
     /**
@@ -267,5 +280,17 @@ public class Board {
      */
     public byte getWinner(){
         return this.winner;
+    }
+
+    /**
+     * Check the amount of clear spaces
+     * @return the amount of clear spaces
+     */
+    public int getUsedSpaces(){
+        return this.usedSpaces;
+    }
+
+    public int getColumnHeight(short column){
+        return this.heights[column];
     }
 }

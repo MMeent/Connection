@@ -101,6 +101,12 @@ public class Game extends Thread{
         this.play();
     }
 
+    public synchronized void setBoard(Board board){
+        synchronized (this.board){
+            this.board = board;
+        }
+    }
+
     public static void main(String[] args) {
         Player player1 = new LocalPlayer("Henk", (byte) 1);
         Player player2 = new ComputerPlayerSmart("Sjaak", (byte) 2);

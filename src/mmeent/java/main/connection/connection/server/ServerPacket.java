@@ -1,12 +1,17 @@
 package mmeent.java.main.connection.connection.server;
 
+import mmeent.java.main.connection.ConnectClient;
 import mmeent.java.main.connection.Protocol;
 import mmeent.java.main.connection.board.Board;
 import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
+import mmeent.java.main.connection.connection.client.ClientPacket;
+import mmeent.java.main.connection.exception.ConnectFourException;
+import mmeent.java.main.connection.game.Game;
+import mmeent.java.main.connection.game.Move;
 import mmeent.java.main.connection.player.LeaderboardEntry;
-import mmeent.java.main.connection.player.LocalPlayer;
 import mmeent.java.main.connection.player.Player;
+import mmeent.java.main.connection.render.Renderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +22,12 @@ import java.util.List;
  */
 public class ServerPacket implements Packet {
     private Connection connection;
-    private Player sender;
+    private Player client;
     private String prefix;
 
     public ServerPacket(Connection c, String prefix){
         this.connection = c;
-        this.sender = c.getPlayer();
+        this.client = c.getPlayer();
         this.prefix = prefix;
     }
 
@@ -51,8 +56,8 @@ public class ServerPacket implements Packet {
         return this.connection;
     }
 
-    public Player getSender(){
-        return this.sender;
+    public Player getClient(){
+        return this.client;
     }
 
     public static class PongPacket extends ServerPacket{
@@ -64,6 +69,7 @@ public class ServerPacket implements Packet {
             return new PongPacket(c);
         }
 
+        @Override
         public synchronized void write(Connection c){
             super.write(c);
             c.stopPacket();
@@ -88,10 +94,16 @@ public class ServerPacket implements Packet {
             return new ErrorPacket(c, args[1], msg);
         }
 
+        @Override
         public synchronized void write(Connection c){
             super.write(c);
             c.writePartial(this.id);
             c.writePartial(this.msg);
+        }
+
+        @Override
+        public void onReceive(){
+            ConnectClient.get().getRenderer().addErrorMessage(this.id, this.msg);
         }
     }
 
@@ -104,8 +116,14 @@ public class ServerPacket implements Packet {
             return new AcceptConnectPacket(c);
         }
 
+        @Override
         public synchronized void write(Connection c){
             super.write(c);
+        }
+
+        @Override
+        public void onReceive(){
+            ConnectClient.get().getRenderer().addMessage("Connected");
         }
     }
 
@@ -125,6 +143,7 @@ public class ServerPacket implements Packet {
             this.players = players;
         }
 
+        @Override
         public synchronized void write(Connection c){
             super.write(c);
             for(Player localPlayer : this.players){
@@ -132,6 +151,28 @@ public class ServerPacket implements Packet {
             }
             c.stopPacket();
             c.sendBuffer();
+        }
+
+        @Override
+        public void onReceive(){
+            ConnectClient c = ConnectClient.get();
+            Renderer r = c.getRenderer();
+            r.addMessage("There are now " + this.players.length + " players online: ");
+            StringBuilder b = new StringBuilder();
+            List<char[]> playernames = new ArrayList<char[]>();
+            for(Player player: this.players){
+                if(b.length() > 0) b.append(", ");
+                if(b.length() > 155){
+                    char[] pnames = new char[b.length()];
+                    b.getChars(0, b.length() - 1, pnames, 0);
+                    playernames.add(pnames);
+                    b.delete(0, b.length() - 1);
+                }
+                b.append(player.getName());
+            }
+            for(char[] chars: playernames){
+                r.addMessage(String.valueOf(chars));
+            }
         }
     }
 
@@ -152,6 +193,7 @@ public class ServerPacket implements Packet {
             this.board = board;
         }
 
+        @Override
         public synchronized void write(Connection c){
             super.write(c);
             c.writePartial(Short.toString(this.board.getWidth()));
@@ -161,6 +203,12 @@ public class ServerPacket implements Packet {
             }
             c.stopPacket();
             c.sendBuffer();
+        }
+
+        @Override
+        public void onReceive(){
+            ConnectClient.get().getRenderer().setBoard(this.board);
+            if(ConnectClient.connection.getPlayer().getGame() != null) ConnectClient.connection.getPlayer().getGame().setBoard(this.board);
         }
     }
 
@@ -189,6 +237,7 @@ public class ServerPacket implements Packet {
             this.entries = entries;
         }
 
+        @Override
         public synchronized void write(Connection c){
             super.write(c);
             for(LeaderboardEntry entry: this.entries){
@@ -200,6 +249,20 @@ public class ServerPacket implements Packet {
             }
             c.stopPacket();
             c.sendBuffer();
+        }
+
+        @Override
+        public void onReceive(){
+            Renderer r = ConnectClient.get().getRenderer();
+            r.addMessage("   Player name   | Wins | Loss | Play | Rank ");
+            for(LeaderboardEntry e: this.entries){
+                StringBuilder s = new StringBuilder();
+                s.append(e.getPlayer().getName()).setLength(16);
+                s.append("| ").append(e.getWins()).setLength(23);
+                s.append("| ").append(e.getLoss()).setLength(30);
+                s.append("| ").append(e.getTotal()).setLength(37);
+                r.addMessage(s.append("| ").append(e.getRanking()).toString());
+            }
         }
     }
 
@@ -220,6 +283,7 @@ public class ServerPacket implements Packet {
             this.boardheight = boardheight;
         }
 
+        @Override
         public synchronized void write(Connection c){
             super.write(c);
             c.writePartial(this.player.getName());
@@ -227,6 +291,12 @@ public class ServerPacket implements Packet {
             c.writePartial(Short.toString(this.boardheight));
             c.stopPacket();
             c.sendBuffer();
+        }
+
+        @Override
+        public void onReceive(){
+            Renderer r = ConnectClient.get().getRenderer();
+            r.addMessage("You have been invited to a game by " + this.player.getName());
         }
     }
 
@@ -256,6 +326,7 @@ public class ServerPacket implements Packet {
             this.options = options;
         }
 
+        @Override
         public synchronized void write(Connection c){
             super.write(c);
             c.writePartial(this.player1.getName());
@@ -263,6 +334,15 @@ public class ServerPacket implements Packet {
             c.writePartial(this.options);
             c.stopPacket();
             c.sendBuffer();
+        }
+
+        @Override
+        public void onReceive(){
+            Player[] players = {this.player1, this.player2};
+            Game game = new Game(players);
+            Renderer r = ConnectClient.get().getRenderer();
+            r.addMessage("A Game has started between " + this.player1.getName() + " and " + this.player2.getName());
+            this.getClient().setGame(game);
         }
     }
 
@@ -280,12 +360,21 @@ public class ServerPacket implements Packet {
             this.extra = extra;
         }
 
+        @Override
         public synchronized void write(Connection c){
             super.write(c);
             c.writePartial(this.reason);
             c.writePartial(this.extra);
             c.stopPacket();
             c.sendBuffer();
+        }
+
+        @Override
+        public void onReceive(){
+            if(reason.equals("DISCONNECT")) ConnectClient.get().getRenderer().addMessage("You won: other client disconnected");
+            if(reason.equals("WIN")) ConnectClient.get().getRenderer().addMessage(extra + " won the game");
+            if(reason.equals("DRAW")) ConnectClient.get().getRenderer().addMessage("You both didn't win, it's a draw.");
+            this.getClient().setGame(null);
         }
     }
 
@@ -298,10 +387,16 @@ public class ServerPacket implements Packet {
             super(c, Protocol.Server.REQUEST_MOVE);
         }
 
+        @Override
         public synchronized void write(Connection c){
             super.write(c);
             c.stopPacket();
             c.sendBuffer();
+        }
+
+        @Override
+        public void onReceive() {
+            this.respond(new ClientPacket.MovePacket(this.getConnection(), this.getClient().getMove(this.getClient().getGame().getTurn()).getColumn()));
         }
     }
 
@@ -324,35 +419,51 @@ public class ServerPacket implements Packet {
             this.player = player;
         }
 
+        @Override
         public synchronized void write(Connection c){
             super.write(c);
             c.writePartial(Byte.toString(this.playerid));
             c.writePartial(Short.toString(this.column));
             c.writePartial(this.player.getName());
         }
+
+        @Override
+        public void onReceive(){
+            try{
+                this.getClient().getGame().move(new Move(this.player, this.column, this.getClient().getGame().getTurn()));
+            } catch(ConnectFourException e){
+                e.printStackTrace(System.out);
+            }
+        }
     }
 
-    public static class ChatPacket extends ServerPacket{
+    public static class ChatPacket extends ServerPacket {
         private String msg;
 
-        public static ChatPacket read(Connection c, String[] args){
+        public static ChatPacket read(Connection c, String[] args) {
             StringBuilder msg = new StringBuilder();
-            for(int i = 1; i < args.length; i++){
+            for (int i = 1; i < args.length; i++) {
                 msg.append(args[i]).append(' ');
             }
             return new ChatPacket(c, msg.toString());
         }
 
-        public ChatPacket(Connection c, String msg){
+        public ChatPacket(Connection c, String msg) {
             super(c, Protocol.Server.CHAT);
             this.msg = msg;
         }
 
-        public synchronized void write(Connection c){
+        @Override
+        public synchronized void write(Connection c) {
             super.write(c);
             c.writePartial(this.msg);
             c.stopPacket();
             c.sendBuffer();
+        }
+
+        @Override
+        public void onReceive(){
+            ConnectClient.get().getRenderer().addChatMessage(this.msg);
         }
     }
 }

@@ -14,7 +14,7 @@ import java.text.NumberFormat;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-
+/*
 public class GUIRenderer {
     public static void main(String[] args) {
         SecondFrame f = new SecondFrame("Draw and Fill");
@@ -89,4 +89,4 @@ class SecondFrame extends JFrame{
 
         circle1.drawImage(yellowButton,1,1,null);
     }
-}
+}*/

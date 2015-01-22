@@ -9,5 +9,6 @@ public interface Renderer {
     public void setBoard(Board board);
     public void addChatMessage(String msg);
     public void render();
-    public void addErrorMessage(String msg);
+    public void addErrorMessage(String id, String msg);
+    public void addMessage(String msg);
 }

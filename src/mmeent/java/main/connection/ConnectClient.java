@@ -3,7 +3,9 @@ package mmeent.java.main.connection;
 import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
 import mmeent.java.main.connection.exception.ConnectFourException;
+import mmeent.java.main.connection.game.Game;
 import mmeent.java.main.connection.render.Renderer;
+import mmeent.java.main.connection.render.TextBoardRenderer;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -14,6 +16,7 @@ public class ConnectClient {
     private String username;
     private Renderer renderer;
     private Boolean debug;
+    private static ConnectClient get;
     public static Connection connection = null;
     public static boolean isClient = false;
     public static LinkedBlockingQueue<Packet> packets = new LinkedBlockingQueue<Packet>();
@@ -39,6 +42,10 @@ public class ConnectClient {
         packetHandler.start();
     }
 
+    public Renderer getRenderer(){
+        return this.renderer;
+    }
+
     public static void main(String[] args){
         String username = null;
         Boolean debug = false;
@@ -51,6 +58,10 @@ public class ConnectClient {
             }
         }
         ConnectClient.isClient = true;
-        new ConnectClient(username, (Renderer) null, debug);
+        ConnectClient.get = new ConnectClient(username, new TextBoardRenderer(null), debug);
+    }
+
+    public static ConnectClient get(){
+        return ConnectClient.get;
     }
 }

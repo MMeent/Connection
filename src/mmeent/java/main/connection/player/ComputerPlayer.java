@@ -34,7 +34,7 @@ public class ComputerPlayer implements Player {
     @Override
     public Move getMove(int turn) {
         Random randomGenerator = new Random();
-        List<Integer> availableRows = game.getBoard().availableRows();
+        List<Short> availableRows = game.getBoard().availableCols();
         int index = randomGenerator.nextInt(availableRows.size());
         int choice= availableRows.get(index);
         return new Move(this,(short) choice,turn);

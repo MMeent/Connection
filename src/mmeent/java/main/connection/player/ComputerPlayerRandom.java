@@ -36,7 +36,7 @@ public class ComputerPlayerRandom implements Player{
     @Override
     public Move getMove(int turn) {
         Random randomGenerator = new Random();
-        List<Integer> rows = game.getBoard().availableRows();
+        List<Short> rows = game.getBoard().availableCols();
         short index = (short) randomGenerator.nextInt(rows.size());
         return new Move(this,index,turn);
     }

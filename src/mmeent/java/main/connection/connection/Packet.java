@@ -10,7 +10,6 @@ public interface Packet {
     /**
      * Return an error coused by the packet to the player that sent the message.
      *
-     * @param id the error id of the error
      * @param extras some extra stuff that can be sent back
      */
     public void returnError(String extras);
@@ -41,5 +40,10 @@ public interface Packet {
      */
     public Connection getConnection();
 
-    public Player getSender();
+    /**
+     * Easy way to get the player that sent the packet
+     *
+     * @return the player that sent the packet
+     */
+    public Player getClient();
 }

@@ -16,7 +16,8 @@ public class ComputerPlayerSmart implements Player {
     private String name;
     private byte id;
     private Game game;
-    private static final int searchDepth = 5;
+    private static final int searchDepth = 13;
+    private static final int outputDepth = 3;
 
     public ComputerPlayerSmart(String name, byte id) {
         this.name = name;
@@ -27,53 +28,66 @@ public class ComputerPlayerSmart implements Player {
     public Move getMove(int turn) {
         Board boardCopy = this.getGame().getBoard().deepCopy();
         List<Byte> players = new ArrayList<Byte>(game.getPlayers().keySet());
-        List<Integer> rows = this.getGame().getBoard().availableRows();
-        Map<Integer, WinLoss> options = new HashMap<Integer, WinLoss>();
+        List<Short> rows = this.getGame().getBoard().availableCols();
+
+        int best = Integer.MIN_VALUE;
+        short v = 0;
+        System.out.println(rows.size());
         for(int i = 0; i < rows.size(); i++) {
-            options.put(i,determineMove(players, turn, boardCopy, searchDepth));
+            Board b = boardCopy.deepCopy();
+            Move move = new Move(players.get(turn % players.size()), rows.get(i), turn, b);
+            move.makeMove();
+            int score = -negamax(move, 0, 1, this.game.getPlayers().values().toArray(new Player[this.game.getPlayers().size()]), this.game.getTurn() + 1);
+            System.out.println("Score: " + score +  " for col " + rows.get(i));
+            if(score >= best){
+                best = score;
+                v = rows.get(i);
+            }
         }
-        int best = 0;
-        for(int i = 0; i < rows.size(); i++) {
-            if(options.get(i).betterThan(options.get(best))) best = i;
-        }
-        return new Move(this.game.getPlayers().get(this.id), (short) best, turn);
+
+        Move move = new Move(this.game.getPlayers().get(this.id), v,  turn);
+        return move.isValid() ? move : null;
     }
 
-    public WinLoss determineMove(List<Byte> players, int turn, Board board, int depth) {
+    public int negamax(Move move, int depth, int color, Player[] ps, int turn){
+        Board board = move.getBoard();
+        if(depth >= searchDepth || board.hasWinner()){
+            return color * move.getValue(ps[turn % ps.length].getId());
+        }
+        Board bc = board.deepCopy();
+        List<Short> cols = board.availableCols();
+        if(cols.size() == 0) return color * move.getValue(ps[turn % ps.length].getId());
+        int b = Integer.MIN_VALUE;
+        ++depth;
+        for(short i: cols){
+            Move m = new Move(ps[turn % ps.length].getId(), i, turn, bc);
+            if(!m.isValid()) continue;
+            m.makeMove();
+            int val = -negamax(m, depth, -color, ps, turn + 1);
+            if(val >= b) b = val;
+        }
+        if(depth < outputDepth) System.out.println("R: " + b + " at depth " + depth);
+        return b;
+    }
+/*
+    public int determineMove(List<Byte> players, int turn, Board board, int depth) {
         Board boardCopy = board.deepCopy();
-        WinLoss wl = new WinLoss(0, 0);
+        int in = 0;
+
         for(int i = 0; i < board.getWidth(); i ++) {
             Move move = new Move(players.get(turn % players.size()), (short) i, turn, boardCopy);
             if(!move.isValid()) continue;
             move.makeMove();
-            if(boardCopy.hasWinner()){
-                if(boardCopy.getWinner() == players.get(turn % players.size())) wl = wl.add(new WinLoss(1, 0));
-                wl = wl.add(new WinLoss(0, 1));
+            if(boardCopy.hasWinner() || depth == 0){
+
             } else if(depth > 0){
-                wl = wl.add(determineMove(players, ++turn, boardCopy, --depth));
+                in += determineMove(players, ++turn, boardCopy, --depth);
             }
             boardCopy = board.deepCopy();
         }
-        return wl;
+        return -in;
     }
-
-    private class WinLoss{
-        public final int win;
-        public final int loss;
-        public WinLoss(int win, int loss){
-            this.win = win;
-            this.loss = loss;
-        }
-
-        public WinLoss add(WinLoss w){
-            return new WinLoss(this.win + w.win, this.loss + w.loss);
-        }
-
-        public boolean betterThan(WinLoss w){
-            return this.loss <= w.loss && this.win >= w.win;
-        }
-    }
-
+*/
     @Override
     public String getName() {
         return name;

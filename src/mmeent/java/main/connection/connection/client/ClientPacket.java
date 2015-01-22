@@ -18,11 +18,11 @@ import java.util.Arrays;
 public class ClientPacket implements Packet {
     private Connection connection;
     private String prefix;
-    private Player sender = null;
+    private Player client = null;
 
     public ClientPacket(Connection connection, String prefix){
         this.connection = connection;
-        this.sender = connection.getPlayer();
+        this.client = connection.getPlayer();
         this.prefix = prefix;
     }
 
@@ -54,8 +54,8 @@ public class ClientPacket implements Packet {
         return this.connection;
     }
 
-    public Player getSender(){
-        return this.sender;
+    public Player getClient(){
+        return this.client;
     }
 
     public static class ChatPacket extends ClientPacket{
@@ -100,6 +100,7 @@ public class ClientPacket implements Packet {
             super(c, Protocol.Client.CONNECT);
             this.username = username;
             this.options = options;
+            c.setPlayer(Player.get(username));
         }
 
         public synchronized void write(Connection c){
@@ -149,7 +150,7 @@ public class ClientPacket implements Packet {
 
         public void onReceive(){
             Player invited = Player.get(this.playername);
-            Player inviter = this.getSender();
+            Player inviter = this.getClient();
             new Invite(inviter, invited, this.boardwidth, this.boardheight);
             invited.getConnection().send(new ServerPacket.InvitePacket(invited.getConnection(), inviter, this.boardwidth, this.boardheight));
         }
@@ -169,7 +170,7 @@ public class ClientPacket implements Packet {
         }
 
         public void onReceive(){
-            Player invited = this.getSender();
+            Player invited = this.getClient();
             Player inviter = Player.get(this.username);
             ((Invite) Invite.invites.get(inviter).get(invited)).startGame().start();
         }
@@ -190,7 +191,7 @@ public class ClientPacket implements Packet {
 
         public void onReceive(){
             Player inviter = Player.get(username);
-            Player invited = this.getSender();
+            Player invited = this.getClient();
             Invite.invites.get(inviter).remove(invited);
         }
     }
@@ -209,7 +210,7 @@ public class ClientPacket implements Packet {
         }
 
         public void onReceive(){
-            Player sender = this.getSender();
+            Player sender = this.getClient();
             if(sender.getGame() == null) return;
             try{
                 sender.getGame().move(new Move(sender, column, sender.getGame().getTurn()));
@@ -236,7 +237,7 @@ public class ClientPacket implements Packet {
         }
 
         public void onReceive(){
-            ConnectServer.server.removePlayer(this.getSender());
+            ConnectServer.server.removePlayer(this.getClient());
         }
     }
 
@@ -250,7 +251,7 @@ public class ClientPacket implements Packet {
         }
 
         public void onReceive(){
-            if(this.getSender().getGame() != null) this.respond(new ServerPacket.BoardPacket(this.getConnection(), this.getSender().getGame().getBoard()));
+            if(this.getClient().getGame() != null) this.respond(new ServerPacket.BoardPacket(this.getConnection(), this.getClient().getGame().getBoard()));
             else this.returnError("You have to be in a game to get a board");
         }
     }

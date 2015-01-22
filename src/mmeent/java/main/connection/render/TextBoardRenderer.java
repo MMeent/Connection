@@ -43,7 +43,12 @@ public class TextBoardRenderer implements Renderer {
     }
 
     @Override
-    public void addErrorMessage(String msg) {
+    public void addErrorMessage(String id, String msg) {
+        System.out.println("Error at " + id + " : " + msg);
+    }
+
+    @Override
+    public void addMessage(String msg){
         System.out.println(msg);
     }
 
