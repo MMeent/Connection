@@ -51,6 +51,6 @@ public class Move {
     }
 
     public void makeMove() {
-        board.move((short) column, player.getId());
+        board.move((short) column, symbol);
     }
 }
