@@ -18,8 +18,14 @@ public class Connection {
     private StringBuilder privBuffer;
     private Side side;
     private Connection connection = this;
-    private Player player = null;
+    private Player client = null;
 
+    /**
+     * Default constructor for a connection.
+     * @param socket the socket over which the connection is sent
+     * @param side the side this part of the connection is on
+     * @throws IOException
+     */
     public Connection(Socket socket, Side side) throws IOException{
         this.socket = socket;
         this.side = side;
@@ -27,6 +33,9 @@ public class Connection {
         this.out = new PrintWriter(this.socket.getOutputStream());
 
         Thread read = (this.side == Side.SERVER) ? new Thread(){
+            /**
+             * This is a thread that puts all incoming packets into the server packet stack. Only if the connection side is server
+             */
             public void run(){
                 while(true){
                     try{
@@ -34,12 +43,15 @@ public class Connection {
                         ConnectServer.packets.put(Packets.readClientPacket(connection, msg));
                     } catch (IOException e){
                         e.printStackTrace(System.out);
-                    } catch (Exception e) {
+                    } catch (InterruptedException e){
                         e.printStackTrace(System.out);
                     }
                 }
             }
         }: new Thread(){
+            /**
+             * This thread puts all incoming packets into the client packet stack. Only if the connection side is client.
+             */
             public void run(){
                 while(true){
                     try{
@@ -59,39 +71,71 @@ public class Connection {
 
     }
 
+    /**
+     * Start a new packet. This is done with a new <code>StringBuilder</code> to optimize the string handling.
+     */
     public synchronized void startPacket(){
         this.privBuffer = new StringBuilder();
     }
 
+    /**
+     * Write a string to the packet buffer, and add the delimiter.
+     * @param string the string to append to the packet buffer.
+     */
     public synchronized void writePartial(String string){
-        this.privBuffer.append(Protocol.Settings.DELIMITER).append(string);
+        if(!string.equals("")) this.privBuffer.append(Protocol.Settings.DELIMITER).append(string);
     }
 
+    /**
+     * End the packet. Write the PACKET_END to the buffer.
+     */
     public synchronized void stopPacket(){
         this.privBuffer.append(Protocol.Settings.PACKET_END);
     }
 
+    /**
+     * Send the current packet buffer to the other side.
+     */
     public synchronized void sendBuffer(){
         this.sendCharSequence(this.privBuffer);
     }
 
+    /**
+     * Clears the current packet buffer.
+     */
     public synchronized void clearBuffer(){
         this.privBuffer = new StringBuilder();
     }
 
+    /**
+     * Sends the charsequence
+     * @param chars the CharSequence that has to be sent.
+     */
     public synchronized void sendCharSequence(CharSequence chars){
         if(chars.charAt(chars.length() - 1) == Protocol.Settings.PACKET_END) this.out.append(chars);
     }
 
+    /**
+     * Sent the given packet over this connection
+     * @param packet the packet to be sent.
+     */
     public void send(Packet packet){
         packet.write(this);
     }
 
-    public void setPlayer(Player player){
-        this.player = player;
+    /**
+     * Set the corresponding player to the given player
+     * @param client the player that will be the owner of the connection.
+     */
+    public void setClient(Player client){
+        this.client = client;
     }
 
-    public Player getPlayer(){
-        return this.player;
+    /**
+     * Get the player that corresponds with this
+     * @return the player that corresponds to the client side of this connection
+     */
+    public Player getClient(){
+        return this.client;
     }
 }
