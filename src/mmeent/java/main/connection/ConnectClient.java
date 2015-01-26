@@ -2,6 +2,7 @@ package mmeent.java.main.connection;
 
 import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
+import mmeent.java.main.connection.connection.Packets;
 import mmeent.java.main.connection.exception.ConnectFourException;
 import mmeent.java.main.connection.game.Game;
 import mmeent.java.main.connection.render.Renderer;
@@ -25,6 +26,9 @@ public class ConnectClient {
         this.username = username;
         this.renderer = renderer;
         this.debug = debug;
+
+        Packets.registerServerPackets();
+        Packets.registerClientPackets();
 
         Thread packetHandler = new Thread(){
             public void run(){

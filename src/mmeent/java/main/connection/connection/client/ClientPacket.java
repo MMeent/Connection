@@ -6,6 +6,7 @@ import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
 import mmeent.java.main.connection.connection.server.ServerPacket;
 import mmeent.java.main.connection.exception.ConnectFourException;
+import mmeent.java.main.connection.exception.InvalidPacketException;
 import mmeent.java.main.connection.game.Invite;
 import mmeent.java.main.connection.game.Move;
 import mmeent.java.main.connection.player.Player;
@@ -26,7 +27,7 @@ public class ClientPacket implements Packet {
         this.prefix = prefix;
     }
 
-    public static ClientPacket read(Connection c, String[] args){
+    public static ClientPacket read(Connection c, String[] args) throws InvalidPacketException{
         return new ClientPacket(c, "CLIENTPACKET");
     }
 
@@ -61,7 +62,7 @@ public class ClientPacket implements Packet {
     public static class ChatPacket extends ClientPacket{
         private String message = "";
 
-        public static ChatPacket read(Connection c, String[] args){
+        public static ChatPacket read(Connection c, String[] args) throws InvalidPacketException{
             String message = "";
             for (int i = 1; i < args.length; i++) {
                 message += " " + args[i];
@@ -90,7 +91,7 @@ public class ClientPacket implements Packet {
         private String username;
         private String[] options;
 
-        public static ConnectPacket read(Connection c, String[] args){
+        public static ConnectPacket read(Connection c, String[] args) throws InvalidPacketException{
             String username = args[1];
             String[] options = (args.length > 1) ? Arrays.copyOfRange(args, 2, args.length) : new String[0];
             return new ConnectPacket(c, username, options);
@@ -124,7 +125,7 @@ public class ClientPacket implements Packet {
         private short boardwidth;
         private short boardheight;
 
-        public static InvitePacket read(Connection c, String[] args){
+        public static InvitePacket read(Connection c, String[] args) throws InvalidPacketException{
             String playername = args[1];
             if(args.length == 2) return new InvitePacket(c, playername);
             return new InvitePacket(c, playername, Short.parseShort(args[2]), Short.parseShort(args[3]));
@@ -159,7 +160,7 @@ public class ClientPacket implements Packet {
     public static class AcceptInvitePacket extends ClientPacket{
         private String username;
 
-        public static AcceptInvitePacket read(Connection c, String[] args){
+        public static AcceptInvitePacket read(Connection c, String[] args) throws InvalidPacketException{
             String username = args[1];
             return new AcceptInvitePacket(c, username);
         }
@@ -179,7 +180,7 @@ public class ClientPacket implements Packet {
     public static class DeclineInvitePacket extends ClientPacket{
         private String username;
 
-        public static DeclineInvitePacket read(Connection c, String[] args){
+        public static DeclineInvitePacket read(Connection c, String[] args) throws InvalidPacketException{
             String username = args[1];
             return new DeclineInvitePacket(c, username);
         }
@@ -199,7 +200,7 @@ public class ClientPacket implements Packet {
     public static class MovePacket extends ClientPacket{
         private short column;
 
-        public static MovePacket read(Connection c, String[] args){
+        public static MovePacket read(Connection c, String[] args) throws InvalidPacketException{
             short column = Short.valueOf(args[1]);
             return new MovePacket(c, column);
         }
@@ -223,7 +224,7 @@ public class ClientPacket implements Packet {
     public static class QuitPacket extends ClientPacket{
         private String reason = "";
 
-        public static QuitPacket read(Connection c, String[] args){
+        public static QuitPacket read(Connection c, String[] args) throws InvalidPacketException{
             String reason = "";
             if(args.length > 1) for (int i = 1; i < args.length; i++) {
                 reason += args[i];
@@ -242,7 +243,7 @@ public class ClientPacket implements Packet {
     }
 
     public static class RequestBoardPacket extends ClientPacket{
-        public static RequestBoardPacket read(Connection c, String[] args){
+        public static RequestBoardPacket read(Connection c, String[] args) throws InvalidPacketException{
             return new RequestBoardPacket(c);
         }
 
@@ -257,7 +258,7 @@ public class ClientPacket implements Packet {
     }
 
     public static class RequestLeaderboardPacket extends ClientPacket{
-        public static RequestLeaderboardPacket read(Connection c, String[] args){
+        public static RequestLeaderboardPacket read(Connection c, String[] args) throws InvalidPacketException {
             return new RequestLeaderboardPacket(c);
         }
 
@@ -267,7 +268,7 @@ public class ClientPacket implements Packet {
     }
 
     public static class RequestLobbyPacket extends ClientPacket{
-        public static RequestLobbyPacket read(Connection c, String[] args){
+        public static RequestLobbyPacket read(Connection c, String[] args) throws InvalidPacketException{
             return new RequestLobbyPacket(c);
         }
 
@@ -284,7 +285,7 @@ public class ClientPacket implements Packet {
         private String code;
         private String message;
 
-        public static ErrorPacket read(Connection c, String[] args){
+        public static ErrorPacket read(Connection c, String[] args) throws InvalidPacketException{
             String code = args[1];
             String message = "";
             for(int i = 2; i < args.length; i++){
@@ -305,7 +306,7 @@ public class ClientPacket implements Packet {
     }
 
     public static class PingPacket extends ClientPacket{
-        public static PingPacket read(Connection c, String[] args){
+        public static PingPacket read(Connection c, String[] args) throws InvalidPacketException{
             return new PingPacket(c);
         }
 

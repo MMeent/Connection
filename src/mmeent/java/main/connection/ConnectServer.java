@@ -2,6 +2,7 @@ package mmeent.java.main.connection;
 
 import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
+import mmeent.java.main.connection.connection.Packets;
 import mmeent.java.main.connection.connection.Side;
 import mmeent.java.main.connection.connection.server.ServerPacket;
 import mmeent.java.main.connection.game.Invite;
@@ -22,6 +23,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class ConnectServer {
     public static boolean isServer = false;
+    public static boolean debug = false;
     public static ConnectServer server = null;
     public static LinkedBlockingQueue<Packet> packets = new LinkedBlockingQueue<Packet>();
 
@@ -32,9 +34,14 @@ public class ConnectServer {
     private HashMap<Player, Connection> playerconnections = new HashMap<Player, Connection>();
     private List<Connection> connections = new ArrayList<Connection>();
 
-    public ConnectServer(int port) throws IOException{
+    public ConnectServer(int port, boolean debug) throws IOException{
         ConnectServer.server = this;
-        socket = new ServerSocket(port);
+        ConnectServer.debug = debug;
+
+        Packets.registerServerPackets();
+        Packets.registerClientPackets();
+
+        this.socket = new ServerSocket(port);
 
         Thread accept = new Thread() {
             public void run(){
@@ -71,14 +78,18 @@ public class ConnectServer {
     }
 
     public static void main(String[] args){
+        boolean debug = false;
         ConnectServer.isServer = true;
+        for(String arg: args) {
+            if(arg.equals("-d")) debug = true;
+        }
         int port = Protocol.Settings.DEFAULT_PORT;
         Scanner input = new Scanner(System.in);
         String next = input.next();
         int i = Integer.getInteger(next, -1);
         port = (i > 0) ? i : port;
         try{
-            new ConnectServer(port);
+            new ConnectServer(port, debug);
         } catch (IOException e){
             e.printStackTrace(System.out);
         }
