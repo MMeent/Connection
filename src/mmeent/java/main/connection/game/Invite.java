@@ -6,14 +6,28 @@ import java.util.HashMap;
 
 /**
  * Created by Matthias on 21/01/2015.
+ * @author mmeent
+ *
+ * A class to represent an invite, and general registry for invites.
  */
 public class Invite {
+    /**
+     * This registers all invites.
+     */
     public static HashMap<Player, HashMap<Player, Invite>> invites = new HashMap<Player, HashMap<Player, Invite>>();
+
     private Player player1;
     private Player player2;
     private short boardWidth;
     private short boardHeight;
 
+    /**
+     * An general invite object
+     * @param player1 the player that invites player 2
+     * @param player2 the player that is invited to a game
+     * @param boardHeight the height of the board
+     * @param boardWidth the width of the board
+     */
     public Invite(Player player1, Player player2, short boardHeight, short boardWidth){
         this.player1 = player1;
         this.player2 = player2;
@@ -23,6 +37,10 @@ public class Invite {
         Invite.invites.get(player1).put(player2, this);
     }
 
+    /**
+     * Start a game that has the properties given in the invite properties
+     * @return a <code>Game</code> object with preset values.
+     */
     public Game startGame(){
         Player[] players = new Player[2];
         players[0] = player1;

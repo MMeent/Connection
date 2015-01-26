@@ -33,15 +33,15 @@ public class ComputerPlayerSmart implements Player {
         int best = Integer.MIN_VALUE;
         short v = 0;
         System.out.println(rows.size());
-        for(int i = 0; i < rows.size(); i++) {
+        for(short row: rows) {
             Board b = boardCopy.deepCopy();
-            Move move = new Move(players.get(turn % players.size()), rows.get(i), turn, b);
+            Move move = new Move(players.get(turn % players.size()), row, turn, b);
             move.makeMove();
             int score = -negamax(move, 0, 1, this.game.getPlayers().values().toArray(new Player[this.game.getPlayers().size()]), this.game.getTurn() + 1);
-            System.out.println("Score: " + score +  " for col " + rows.get(i));
+            System.out.println("Score: " + score +  " for col " + row);
             if(score >= best){
                 best = score;
-                v = rows.get(i);
+                v = row;
             }
         }
 
@@ -66,7 +66,7 @@ public class ComputerPlayerSmart implements Player {
             int val = -negamax(m, depth, -color, ps, turn + 1);
             if(val >= b) b = val;
         }
-        if(depth < outputDepth) System.out.println("R: " + b + " at depth " + depth);
+        if(depth <= outputDepth) System.out.println("R: " + b + " at depth " + depth);
         return b;
     }
 /*

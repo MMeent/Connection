@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Created by Matthias on 20/12/2014.
  */
-public class Game extends Thread{
+public class Game{
     private Board board;
     private Map<Byte, Player> players;
     private int playerAmount;
@@ -78,12 +78,16 @@ public class Game extends Thread{
         return this.board;
     }
 
+    /**
+     * The function to return all the players that are participating in the game with their corresponding id's
+     * @return a Map<Byte, Player> containing the participating players
+     */
     public Map<Byte,Player> getPlayers() {
         return players;
     }
 
     /**
-     * Function that starts the <code>Game</code.>
+     * Function that starts the <code>Game</code> offline
      */
     public void play() {
         int turn = 0;
@@ -97,33 +101,50 @@ public class Game extends Thread{
         System.out.println("The winner of the game is: " + players.get(this.board.getWinner()).getName());
     }
 
-    public void run(){
-        this.play();
-    }
-
+    /**
+     * set the board to the given board.
+     * @param board the new board
+     */
     public synchronized void setBoard(Board board){
         synchronized (this.board){
             this.board = board;
         }
     }
 
+    /**
+     * A way to start a game locally
+     * @param args does nothing
+     */
     public static void main(String[] args) {
-        Player player1 = new LocalPlayer("Henk", (byte) 1);
+        Player player1 = new ComputerPlayerRandom("Henk", (byte) 1);
         Player player2 = new ComputerPlayerSmart("Sjaak", (byte) 2);
         Player[] players = {player1,player2};
         Game game = new Game(players);
         game.play();
     }
 
+    /**
+     * Get the current turn
+     * @return the number of the curren turn
+     */
     public int getTurn(){
         return this.turn;
     }
 
+    /**
+     * Make a move
+     * @param move the move to be made
+     * @throws ConnectFourException
+     */
     public void move(Move move) throws ConnectFourException{
         if(!move.isValid()) throw new ConnectFourException("You have to be the active player");
         move.makeMove();
     }
 
+    /**
+     * Get the active player
+     * @return the active player
+     */
     public Player getActivePlayer(){
         return this.players.get((byte) (this.turn % this.playerAmount));
     }
