@@ -17,6 +17,12 @@ public class ComputerPlayer implements Player {
     private Game game;
     private byte id;
 
+    /**
+     *
+     * @param name
+     * @param game
+     * @param id
+     */
     public ComputerPlayer(String name, Game game, byte id){
         this.id = id;
         this.name = name;

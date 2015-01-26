@@ -20,6 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Matthias on 20/01/2015.
+ * @author mmeent
  */
 public class ConnectServer {
     public static boolean isServer = false;
@@ -34,6 +35,12 @@ public class ConnectServer {
     private HashMap<Player, Connection> playerconnections = new HashMap<Player, Connection>();
     private List<Connection> connections = new ArrayList<Connection>();
 
+    /**
+     * Default constructor for Connectserver
+     * @param port the port the server is listening to
+     * @param debug whether to get debug or not
+     * @throws IOException
+     */
     public ConnectServer(int port, boolean debug) throws IOException{
         ConnectServer.server = this;
         ConnectServer.debug = debug;
@@ -77,6 +84,10 @@ public class ConnectServer {
         handling.start();
     }
 
+    /**
+     * Start the ConnectServer
+     * @param args -d for debug
+     */
     public static void main(String[] args){
         boolean debug = false;
         ConnectServer.isServer = true;
@@ -95,23 +106,47 @@ public class ConnectServer {
         }
     }
 
+    /**
+     * Get the player with name name
+     * @param name the name of the player that has to be returned
+     * @return player with name name
+     */
     public Player getPlayer(String name){
         return this.players.get(name);
     }
 
+    /**
+     * Get the connection of Player player
+     * @param player the player of whom the connection will be returned
+     * @return the connection of player
+     */
     public Connection getConnection(Player player){
         return this.playerconnections.get(player);
     }
 
+    /**
+     * Get the connection of the player with name name
+     * @param name the name of the player of whom you want the connection
+     * @return the connection of the player with name name
+     */
     public Connection getConnection(String name){
         return this.getConnection(this.players.get(name));
     }
 
+    /**
+     * Add a player with connection to the registries
+     * @param player the player that will be added
+     * @param connection the connection of that player
+     */
     public void addPlayerConnection(Player player, Connection connection){
         if(!this.playerconnections.containsKey(player)) this.playerconnections.put(player, connection);
         if(!this.players.containsKey(player.getName())) this.players.put(player.getName(), player);
     }
 
+    /**
+     * Remove player player from the registries
+     * @param player the player to be removed
+     */
     public void removePlayer(Player player){
         this.playerconnections.remove(player);
         this.players.remove(player.getName());
@@ -120,16 +155,28 @@ public class ConnectServer {
         this.notifyAll(new ServerPacket.LobbyPacket(null, (Player[]) this.players.values().toArray()));
     }
 
+    /**
+     * Notify all players with packet p
+     * @param packet the packet to be sent to all players
+     */
     public void notifyAll(Packet packet){
         for(Connection c: this.connections){
             c.send(packet);
         }
     }
 
+    /**
+     * Get all players currently online
+     * @return all players online
+     */
     public List<Player> getPlayers(){
         return new ArrayList<Player>(this.players.values());
     }
 
+    /**
+     * Get all the names of the players currently online
+     * @return a list of playernames
+     */
     public List<String> getPlayernames(){
         return new ArrayList<String>(this.players.keySet());
     }

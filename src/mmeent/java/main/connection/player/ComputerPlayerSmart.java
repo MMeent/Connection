@@ -19,11 +19,21 @@ public class ComputerPlayerSmart implements Player {
     private static final int searchDepth = 13;
     private static final int outputDepth = 3;
 
+    /**
+     * Default constructor for ComputerPlayerSmart
+     * @param name the name of the computerplayer
+     * @param id the id it has to play with
+     */
     public ComputerPlayerSmart(String name, byte id) {
         this.name = name;
         this.id = id;
     }
 
+    /**
+     * Get the move to play from the computerplayer
+     * @param turn the turn they are in now
+     * @return the move the computerplayer is doing
+     */
     @Override
     public Move getMove(int turn) {
         Board boardCopy = this.getGame().getBoard().deepCopy();
@@ -49,6 +59,16 @@ public class ComputerPlayerSmart implements Player {
         return move.isValid() ? move : null;
     }
 
+    /**
+     * Negamax the move, up do depth searchdepth;
+     *
+     * @param move the last move made
+     * @param depth the depth it has searched
+     * @param color the color the computerplayer is playing with
+     * @param ps an array with players
+     * @param turn the turn it is playing
+     * @return the value of the node
+     */
     public int negamax(Move move, int depth, int color, Player[] ps, int turn){
         Board board = move.getBoard();
         if(depth >= searchDepth || board.hasWinner()){
@@ -88,31 +108,56 @@ public class ComputerPlayerSmart implements Player {
         return -in;
     }
 */
+
+    /**
+     * Get the name of the computerplayer
+     * @return the name of the player
+     */
     @Override
     public String getName() {
         return name;
     }
 
+    /**
+     * Get the ID of the player
+     * @return the id of the player
+     */
     @Override
     public byte getId() {
         return id;
     }
 
+    /**
+     * set the ID of the player to <code>id</code>
+     * @param id the id that is being set
+     */
     @Override
     public void setId(byte id) {
         this.id = id;
     }
 
+    /**
+     * Get the game the computerplayer is currently playing
+     * @return the game the player is playing
+     */
     @Override
     public Game getGame() {
         return game;
     }
 
+    /**
+     * Set the game of the player to <code>game</code>
+     * @param game the game that the player will be playing
+     */
     @Override
     public void setGame(Game game) {
         this.game = game;
     }
 
+    /**
+     * Get the connection of this player
+     * @return the connection
+     */
     @Override
     public Connection getConnection(){
         if(ConnectServer.isServer) return ConnectServer.server.getConnection(this);

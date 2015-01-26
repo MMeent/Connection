@@ -12,6 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Matthias on 20/12/2014.
+ * @author mmeent
  */
 public class ConnectClient {
     private String username;
@@ -22,6 +23,12 @@ public class ConnectClient {
     public static boolean isClient = false;
     public static LinkedBlockingQueue<Packet> packets = new LinkedBlockingQueue<Packet>();
 
+    /**
+     * Default constructor of ConnectClient
+     * @param username the username of the player that will be playing
+     * @param renderer the renderer that will be used to render the different parts of client
+     * @param debug whether there has to be debug output or not
+     */
     public ConnectClient(String username, Renderer renderer, Boolean debug){
         this.username = username;
         this.renderer = renderer;
@@ -46,10 +53,18 @@ public class ConnectClient {
         packetHandler.start();
     }
 
+    /**
+     * Get the renderer used in the ConnectClient
+     * @return the renderer used
+     */
     public Renderer getRenderer(){
         return this.renderer;
     }
 
+    /**
+     * Start the ConnectClient
+     * @param args -u <username> for username, -d for debug, -g for GUI
+     */
     public static void main(String[] args){
         String username = null;
         Boolean debug = false;
@@ -65,6 +80,10 @@ public class ConnectClient {
         ConnectClient.get = new ConnectClient(username, new TextBoardRenderer(null), debug);
     }
 
+    /**
+     * Get the ConnectClient
+     * @return the connect client
+     */
     public static ConnectClient get(){
         return ConnectClient.get;
     }

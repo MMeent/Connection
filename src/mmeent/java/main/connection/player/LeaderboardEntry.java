@@ -2,6 +2,7 @@ package mmeent.java.main.connection.player;
 
 /**
  * Created by Matthias on 19/01/2015.
+ * @author mmeent
  */
 public class LeaderboardEntry {
     private Player player;

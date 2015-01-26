@@ -11,6 +11,7 @@ import java.util.Random;
 
 /**
  * Created by Matthias on 20/12/2014.
+ * @author mmeent
  */
 
 public class ComputerPlayerRandom implements Player{
