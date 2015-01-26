@@ -45,7 +45,7 @@ public class Chat {
      * @param name the name of the chatroom
      * @return a chatroom with name name
      */
-    public ChatRoom getRoom(String name){
+    public synchronized ChatRoom getRoom(String name){
         if(!this.rooms.containsKey(name)) this.rooms.put(name, new ChatRoom(name));
         return this.rooms.get(name);
     }

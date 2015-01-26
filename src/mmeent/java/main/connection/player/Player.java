@@ -24,12 +24,15 @@ public interface Player {
      * @return the player
      */
     public static Player get(String name, byte id) {
-        if(LocalPlayer.players.containsKey(name)) {
-            return LocalPlayer.players.get(name);
+        synchronized (Player.players) {
+            if (Player.players.containsKey(name)) {
+                return Player.players.get(name);
+            }
+
+            LocalPlayer p = new LocalPlayer(name, id);
+            Player.players.put(name, p);
+            return p;
         }
-        LocalPlayer p = new LocalPlayer(name, id);
-        LocalPlayer.players.put(name, p);
-        return p;
     }
 
     /**
