@@ -26,25 +26,42 @@ public class Connection {
      * @param side the side this part of the connection is on
      * @throws IOException
      */
-    public Connection(Socket socket, Side side) throws IOException{
+    public Connection(Socket socket, Side side){
         this.socket = socket;
         this.side = side;
-        this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-        this.out = new PrintWriter(this.socket.getOutputStream());
-
+        if(socket == null) return;
+        try {
+            this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+            this.out = new PrintWriter(this.socket.getOutputStream());
+        } catch(IOException e){
+            e.printStackTrace(System.out);
+        }
         Thread read = (this.side == Side.SERVER) ? new Thread(){
             /**
              * This is a thread that puts all incoming packets into the server packet stack. Only if the connection side is server
              */
             public void run(){
-                while(true){
+                boolean done = false;
+                while(!done){
                     try{
                         String msg = in.readLine();
                         ConnectServer.packets.put(Packets.readClientPacket(connection, msg));
                     } catch (IOException e){
                         e.printStackTrace(System.out);
-                    } catch (InterruptedException e){
+                        try{
+                            in.close();
+                        } catch (IOException f){
+                            f.printStackTrace();
+                        }
+                        done = true;
+                    } catch (Exception e){
                         e.printStackTrace(System.out);
+                        try{
+                            in.close();
+                        } catch (IOException f){
+                            f.printStackTrace();
+                        }
+                        done = true;
                     }
                 }
             }
@@ -53,14 +70,27 @@ public class Connection {
              * This thread puts all incoming packets into the client packet stack. Only if the connection side is client.
              */
             public void run(){
-                while(true){
+                boolean done = false;
+                while(!done){
                     try{
                         String msg = in.readLine();
                         ConnectClient.packets.put(Packets.readServerPacket(connection, msg));
                     } catch (IOException e){
                         e.printStackTrace(System.out);
+                        try{
+                            in.close();
+                        } catch (IOException f){
+                            f.printStackTrace();
+                        }
+                        done = true;
                     } catch (Exception e){
                         e.printStackTrace(System.out);
+                        try{
+                            in.close();
+                        } catch (IOException f){
+                            f.printStackTrace();
+                        }
+                        done = true;
                     }
                 }
             }
@@ -83,7 +113,8 @@ public class Connection {
      * @param string the string to append to the packet buffer.
      */
     public synchronized void writePartial(String string){
-        if(!string.equals("")) this.privBuffer.append(Protocol.Settings.DELIMITER).append(string);
+        if(!(this.privBuffer.length() == 0)) this.privBuffer.append(Protocol.Settings.DELIMITER);
+        if(!string.equals("")) this.privBuffer.append(string);
     }
 
     /**
@@ -112,7 +143,8 @@ public class Connection {
      * @param chars the CharSequence that has to be sent.
      */
     public synchronized void sendCharSequence(CharSequence chars){
-        if(chars.charAt(chars.length() - 1) == Protocol.Settings.PACKET_END) this.out.append(chars);
+        this.out.append(chars);
+        this.out.flush();
     }
 
     /**

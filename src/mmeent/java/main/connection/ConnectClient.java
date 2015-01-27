@@ -3,11 +3,16 @@ package mmeent.java.main.connection;
 import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
 import mmeent.java.main.connection.connection.Packets;
+import mmeent.java.main.connection.connection.Side;
+import mmeent.java.main.connection.connection.client.ClientPacket;
 import mmeent.java.main.connection.exception.ConnectFourException;
 import mmeent.java.main.connection.game.Game;
 import mmeent.java.main.connection.render.Renderer;
 import mmeent.java.main.connection.render.TextBoardRenderer;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Scanner;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -18,8 +23,9 @@ public class ConnectClient {
     private String username;
     private Renderer renderer;
     private Boolean debug;
+    public final Connection connection;
+    public boolean shutdown;
     private static ConnectClient get;
-    public static Connection connection = null;
     public static boolean isClient = false;
     public static LinkedBlockingQueue<Packet> packets = new LinkedBlockingQueue<Packet>();
 
@@ -37,6 +43,20 @@ public class ConnectClient {
         Packets.registerServerPackets();
         Packets.registerClientPackets();
 
+        Scanner in = new Scanner(System.in);
+        System.out.println("IP to connect to: ");
+        String IP = in.nextLine();
+        System.out.println("Port to connect to: ");
+        int port = in.hasNextInt() ? Integer.parseInt(in.nextLine()) : Protocol.Settings.DEFAULT_PORT;
+        System.out.println("Connecting to " + IP + " on port " + port);
+        Socket s = null;
+        try {
+            s = new Socket(IP, port);
+        } catch (IOException e) {
+            e.printStackTrace(System.out);
+        }
+        this.connection = new Connection(s, Side.CLIENT);
+
         Thread packetHandler = new Thread(){
             public void run(){
                 while(true){
@@ -49,8 +69,18 @@ public class ConnectClient {
                 }
             }
         };
+
         packetHandler.setDaemon(true);
         packetHandler.start();
+
+        String[] options = {Protocol.Features.CHAT, Protocol.Features.CUSTOM_BOARD_SIZE, Protocol.Features.LEADERBOARD};
+        this.connection.send(new ClientPacket.ConnectPacket(this.connection, username, options));
+    }
+
+    public void run(){
+        while(!this.shutdown){
+
+        }
     }
 
     /**
@@ -76,8 +106,15 @@ public class ConnectClient {
                 case "-g": graphical = true;
             }
         }
+        if(username == null){
+            Scanner s = new Scanner(System.in);
+            System.out.println("Username: ");
+            String un = s.next();
+            username = un.length() > 15 ? un.substring(0, 14) : un;
+        }
         ConnectClient.isClient = true;
         ConnectClient.get = new ConnectClient(username, new TextBoardRenderer(null), debug);
+        ConnectClient.get.run();
     }
 
     /**

@@ -4,6 +4,7 @@ import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
 import mmeent.java.main.connection.connection.Packets;
 import mmeent.java.main.connection.connection.Side;
+import mmeent.java.main.connection.connection.client.ClientPacket;
 import mmeent.java.main.connection.connection.server.ServerPacket;
 import mmeent.java.main.connection.game.Invite;
 import mmeent.java.main.connection.player.Player;
@@ -84,6 +85,17 @@ public class ConnectServer {
         handling.start();
     }
 
+    public void run(){
+        boolean stopping = false;
+        Scanner s = new Scanner(System.in);
+        while (!stopping) {
+            System.out.println("Input your thoughts here: ");
+            String inp = s.nextLine();
+            if(inp.toUpperCase().startsWith("STOP")) stopping = true;
+            else this.notifyAll(new ClientPacket.ChatPacket(null, inp));
+        }
+    }
+
     /**
      * Start the ConnectServer
      * @param args -d for debug
@@ -94,13 +106,12 @@ public class ConnectServer {
         for(String arg: args) {
             if(arg.equals("-d")) debug = true;
         }
-        int port = Protocol.Settings.DEFAULT_PORT;
+        System.out.println("Accept connections on port: ");
         Scanner input = new Scanner(System.in);
-        String next = input.next();
-        int i = Integer.getInteger(next, -1);
-        port = (i > 0) ? i : port;
+        int port = input.hasNextInt() ? input.nextInt() : Protocol.Settings.DEFAULT_PORT;
+        ConnectServer s;
         try{
-            new ConnectServer(port, debug);
+            new ConnectServer(port, debug).run();
         } catch (IOException e){
             e.printStackTrace(System.out);
         }

@@ -7,6 +7,7 @@ import mmeent.java.main.connection.connection.Packet;
 import mmeent.java.main.connection.connection.server.ServerPacket;
 import mmeent.java.main.connection.exception.ConnectFourException;
 import mmeent.java.main.connection.exception.InvalidPacketException;
+import mmeent.java.main.connection.game.Game;
 import mmeent.java.main.connection.game.Invite;
 import mmeent.java.main.connection.game.Move;
 import mmeent.java.main.connection.player.Player;
@@ -30,7 +31,7 @@ public class ClientPacket implements Packet {
      */
     public ClientPacket(Connection connection, String prefix){
         this.connection = connection;
-        this.client = connection.getClient();
+        if(connection != null) this.client = connection.getClient();
         this.prefix = prefix;
     }
 
@@ -159,6 +160,10 @@ public class ClientPacket implements Packet {
         public void onReceive(){
             this.getConnection().setClient(Player.get(this.username));
             ConnectServer.server.addPlayerConnection(Player.get(this.username), this.getConnection());
+            this.respond(new ServerPacket.AcceptConnectPacket(this.getConnection()));
+            Player[] players = new Player[ConnectServer.server.getPlayers().size()];
+            players = ConnectServer.server.getPlayers().toArray(players);
+            ConnectServer.server.notifyAll(new ServerPacket.LobbyPacket(this.getConnection(), players));
         }
     }
 
@@ -229,7 +234,8 @@ public class ClientPacket implements Packet {
         public void onReceive(){
             Player invited = this.getClient();
             Player inviter = Player.get(this.username);
-            ((Invite) Invite.invites.get(inviter).get(invited)).startGame().start();
+            Game g = ((Invite) Invite.invites.get(inviter).get(invited)).startGame();
+            g.getActivePlayer().getMove(g.getTurn());
         }
     }
 

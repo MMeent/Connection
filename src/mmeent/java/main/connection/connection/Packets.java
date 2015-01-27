@@ -65,10 +65,10 @@ public class Packets {
      * @return a packet if possible, otherwise null;
      */
     public static ServerPacket readServerPacket(Connection c, String msg){
-        System.out.println(msg);
+        System.out.println(":> " + msg);
         try {
             String[] args = msg.split(" ");
-            return (ServerPacket) Packets.serverpackets.get(args[0]).getMethod("read", Connection.class, String[].class).invoke(c, args);
+            return (ServerPacket) Packets.serverpackets.get(args[0]).getMethod("read", Connection.class, String[].class).invoke(null, c, args);
         } catch (NoSuchMethodException e) {
             e.printStackTrace(System.out);
         } catch (InvocationTargetException e){
@@ -88,10 +88,10 @@ public class Packets {
      * @return A packet instance that can be used by the system, if fail then null
      */
     public static ClientPacket readClientPacket(Connection c, String msg){
-        if(ConnectServer.debug) System.out.println(msg);
+        System.out.println(":> " + msg);
         try {
             String[] args = msg.split(" ");
-            return (ClientPacket) Packets.clientpackets.get(args[0]).getMethod("read", Connection.class, String[].class).invoke(c, args);
+            return (ClientPacket) Packets.clientpackets.get(args[0]).getMethod("read", Connection.class, String[].class).invoke(null, c, args);
         } catch (NoSuchMethodException e) {
             e.printStackTrace(System.out);
         } catch (InvocationTargetException e){

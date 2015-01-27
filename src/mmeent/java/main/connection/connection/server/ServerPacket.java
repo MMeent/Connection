@@ -217,6 +217,12 @@ public class ServerPacket implements Packet {
             Renderer r = c.getRenderer();
             r.addMessage("There are now " + this.players.length + " players online: ");
             StringBuilder b = new StringBuilder();
+            for(Player player: this.players){
+                if(b.length() > 0) b.append(", ");
+                b.append(player.getName());
+            }
+            r.addMessage(b.toString());
+            /*
             List<char[]> playernames = new ArrayList<char[]>();
             for(Player player: this.players){
                 if(b.length() > 0) b.append(", ");
@@ -228,9 +234,10 @@ public class ServerPacket implements Packet {
                 }
                 b.append(player.getName());
             }
+
             for(char[] chars: playernames){
                 r.addMessage(String.valueOf(chars));
-            }
+            }*/
         }
     }
 
@@ -270,7 +277,7 @@ public class ServerPacket implements Packet {
         @Override
         public void onReceive(){
             ConnectClient.get().getRenderer().setBoard(this.board);
-            if(ConnectClient.connection.getClient().getGame() != null) ConnectClient.connection.getClient().getGame().setBoard(this.board);
+            if(ConnectClient.get().connection.getClient().getGame() != null) ConnectClient.get().connection.getClient().getGame().setBoard(this.board);
         }
     }
 

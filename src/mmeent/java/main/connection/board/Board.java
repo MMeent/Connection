@@ -3,7 +3,6 @@ package mmeent.java.main.connection.board;
 import mmeent.java.main.connection.game.Move;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -148,15 +147,15 @@ public class Board {
     }
 
     /**
-     *
-     * @param start_x
-     * @param start_y
-     * @param dx
-     * @param dy
-     * @return
+     * Get all the fields whose x/y-coordinates lie within the given range.
+     * @param start_x the x-coordinate at which the new board should start
+     * @param start_y the y-coordinate at which the new board should start
+     * @param dx width of the new board
+     * @param dy height of the new board
+     * @return an array containing the new board
      */
     public byte[] getFieldsRange(int start_x, int start_y, int dx, int dy){
-        if(dx < 0 || dy < 0) return null;
+        if(dx < 0 || dy < 0) return new byte[0];
 
         byte[] r = new byte[(dx + 1) * (dy + 1)];
 
@@ -199,7 +198,7 @@ public class Board {
     /**
      * Function that checks whether the <code>Board</code> has a winning row of four
      * @param player Player of which it has to be checked whether he has a winning row.
-     * @return
+     * @return true if the player has four in a row
      */
     public boolean hasFour(byte player){
         for(int i = 0; i < width; i++) {

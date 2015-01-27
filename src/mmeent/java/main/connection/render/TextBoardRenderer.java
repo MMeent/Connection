@@ -8,8 +8,8 @@ import mmeent.java.main.connection.board.Board;
  */
 public class TextBoardRenderer implements Renderer {
     private Board board;
-    private int screen_width;
-    private int screen_height;
+    private int screen_width = 0;
+    private int screen_height = 0;
 
     /**
      * Default constructor for Textboardrenderer
@@ -17,9 +17,12 @@ public class TextBoardRenderer implements Renderer {
      */
     public TextBoardRenderer(Board board){
         this.board = board;
-        this.screen_width = board.getWidth();
-        this.screen_height = board.getHeight();
+        if(board != null) {
+            this.screen_width = board.getWidth();
+            this.screen_height = board.getHeight();
+        }
     }
+
 
     /**
      * Set the board it has to render to board
@@ -77,6 +80,9 @@ public class TextBoardRenderer implements Renderer {
         System.out.println(msg);
     }
 
+    public void addMessage(String msg, int color){
+        System.out.println(msg);
+    }
     /**
      * A way to run this class
      * @param args does nothing

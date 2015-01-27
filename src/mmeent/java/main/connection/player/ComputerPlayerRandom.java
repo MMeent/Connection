@@ -94,7 +94,7 @@ public class ComputerPlayerRandom implements Player{
     @Override
     public Connection getConnection(){
         if(ConnectServer.isServer) return ConnectServer.server.getConnection(this);
-        if(ConnectClient.isClient) return ConnectClient.connection;
+        if(ConnectClient.isClient) return ConnectClient.get().connection;
         return null;
     }
 }
