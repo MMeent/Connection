@@ -92,7 +92,7 @@ public class ConnectServer {
             System.out.println("Input your thoughts here: ");
             String inp = s.nextLine();
             if(inp.toUpperCase().startsWith("STOP")) stopping = true;
-            else this.notifyAll(new ClientPacket.ChatPacket(null, inp));
+            else this.notifyAll(new ServerPacket.ChatPacket(null, Player.get("Server"), inp));
         }
     }
 

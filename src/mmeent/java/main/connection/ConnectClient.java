@@ -78,9 +78,24 @@ public class ConnectClient {
     }
 
     public void run(){
+        Scanner in = new Scanner(System.in);
         while(!this.shutdown){
-
+            String s = in.nextLine();
+            this.shutdown = s.toUpperCase().startsWith("QUIT");
+            String[] args = s.toUpperCase().split(" ");
+            switch(args[0]) {
+                case "INVITE": this.connection.send(args.length > 2
+                        ? new ClientPacket.InvitePacket(this.connection, args[1], Short.parseShort(args[2]), Short.parseShort(args[3]))
+                        : new ClientPacket.InvitePacket(this.connection, args[1]));break;
+                case "ACCEPT": this.connection.send(new ClientPacket.AcceptInvitePacket(this.connection, args[1]));break;
+                case "DECLINE": this.connection.send(new ClientPacket.DeclineInvitePacket(this.connection, args[1]));break;
+                case "PING": this.connection.send(new ClientPacket.PingPacket(this.connection)); break;
+                case "QUIT": this.connection.send(new ClientPacket.QuitPacket(this.connection, s.replaceFirst(args[0], "")));break;
+                case "MOVE": this.connection.send(new ClientPacket.MovePacket(this.connection, Short.parseShort(args[1])));break;
+                default: this.connection.send(new ClientPacket.ChatPacket(this.connection, s));break;
+            }
         }
+        this.connection.send(new ClientPacket.QuitPacket(this.connection, "Leave"));
     }
 
     /**

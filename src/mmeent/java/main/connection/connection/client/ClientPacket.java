@@ -122,7 +122,7 @@ public class ClientPacket implements Packet {
         }
 
         public void onReceive(){
-            ConnectServer.server.chat.addMessage(this.message);
+            ConnectServer.server.chat.addMessage(this.getClient(), this.message);
         }
     }
 
@@ -198,6 +198,8 @@ public class ClientPacket implements Packet {
             c.writePartial(this.playername);
             c.writePartial(Integer.toString(this.boardwidth));
             c.writePartial(Integer.toString(this.boardheight));
+            c.stopPacket();
+            c.sendBuffer();
         }
 
         public void onReceive(){

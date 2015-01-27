@@ -33,7 +33,7 @@ public class ServerPacket implements Packet {
      */
     public ServerPacket(Connection c, String prefix){
         this.connection = c;
-        this.client = c.getClient();
+        if(c != null) this.client = c.getClient();
         this.prefix = prefix;
     }
 
@@ -538,23 +538,27 @@ public class ServerPacket implements Packet {
      */
     public static class ChatPacket extends ServerPacket {
         private String msg;
+        private Player player;
 
         public static ChatPacket read(Connection c, String[] args) throws InvalidPacketException{
             StringBuilder msg = new StringBuilder();
-            for (int i = 1; i < args.length; i++) {
+            Player p = Player.get(args[1]);
+            for (int i = 2; i < args.length; i++) {
                 msg.append(args[i]).append(' ');
             }
-            return new ChatPacket(c, msg.toString());
+            return new ChatPacket(c, p, msg.toString());
         }
 
-        public ChatPacket(Connection c, String msg) {
+        public ChatPacket(Connection c, Player p, String msg) {
             super(c, Protocol.Server.CHAT);
+            this.player = p;
             this.msg = msg;
         }
 
         @Override
         public synchronized void write(Connection c) {
             super.write(c);
+            c.writePartial(this.player.getName());
             c.writePartial(this.msg);
             c.stopPacket();
             c.sendBuffer();
@@ -562,7 +566,7 @@ public class ServerPacket implements Packet {
 
         @Override
         public void onReceive(){
-            ConnectClient.get().getRenderer().addChatMessage(this.msg);
+            ConnectClient.get().getRenderer().addChatMessage("<" + this.player.getName() + "> " + this.msg);
         }
     }
 }
