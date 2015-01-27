@@ -46,6 +46,9 @@ public class Move {
      * get the symbol (id) of the played move.
      * @return the id of the player that played the move
      */
+    /*@
+        ensures \result = this.symbol;
+     */
     public byte getSymbol(){
         return this.symbol;
     }
@@ -53,6 +56,9 @@ public class Move {
     /**
      * Get the player corresponding to the move
      * @return the player
+     */
+    /*@
+        ensures \result == this.player;
      */
     public Player getPlayer(){
         return this.player;
@@ -62,6 +68,9 @@ public class Move {
      * Get the number of the turn the move is made in
      * @return the number of the turn
      */
+    /*@
+        ensures \result == this.turn;
+     */
     public int getTurn(){
         return this.turn;
     }
@@ -69,6 +78,9 @@ public class Move {
     /**
      * get the column number the move is made in
      * @return the column number
+     */
+    /*@
+        ensures \result == this.column;
      */
     public short getColumn(){
         return this.column;
@@ -78,12 +90,18 @@ public class Move {
      * Check whether the move is valid or not
      * @return true if the move is valid
      */
+    /*@
+        ensures \result == (this.column >= 0 && this.column < this.board.getWidth() && !this.board.colIsFull(this.column));
+     */
     public boolean isValid() {
         return (this.column >= 0 && this.column < this.board.getWidth() && !this.board.colIsFull(this.column));
     }
 
     /**
      * Make the move on the board
+     */
+    /*@
+        ensures board.getField(column,board.getColumnHeight(column) - 1) == this.symbol;
      */
     public void makeMove() {
         board.move((short) column, this.symbol);
@@ -93,6 +111,9 @@ public class Move {
      * Get the value of the move, given ID id
      * @param id the id to calculate the value of the move with
      * @return the value of the move
+     */
+    /*@
+
      */
     public int getValue(byte id){
         Board b = this.board.deepCopy();

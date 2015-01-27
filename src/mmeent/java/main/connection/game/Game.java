@@ -15,7 +15,12 @@ import java.util.Map;
 /**
  * Created by Matthias on 20/12/2014.
  */
-public class Game{
+public class Game extends Thread{
+    /*@
+        public_invariant players.length >= 2;
+        public_invariant playerAmount >= 2;
+        public invariant turn >= 0;
+     */
     private Board board;
     private Map<Byte, Player> players;
     private int playerAmount;
@@ -27,6 +32,10 @@ public class Game{
      * Constructor of <code>Game</code>
      * @param players Array of players that will join the <code>Game</code>
      */
+    /*@
+        requires players.length == 2;
+        ensures this.players == players && board.getWidth() == 7 && board.getHeight() == 6;
+     */
     public Game(Player[] players){
         this(players, (short) 7, (short) 6);
     }
@@ -36,6 +45,10 @@ public class Game{
      * @param players Array Players that will join the <code>Game</code>
      * @param width Width of the board
      * @param height Height of the board
+     */
+     /*@
+        requires players.length == 2;
+        ensures this.players == players && board.getWidth() == width && board.getHeight() == height;
      */
     public Game(Player[] players, short width, short height){
         this(players, width, height, (short) 4);
@@ -48,6 +61,10 @@ public class Game{
      * @param height Height of the <code>Board</code>
      * @param length Length of the row needed to win the <code>Game</code>
      */
+     /*@
+        requires players.length == 2;
+        ensures this.players == players && board.getWidth() == width && board.getHeight() == height;
+     */
     public Game(Player[] players, short width, short height, short length){
         this(players, new Board(width, height, length));
     }
@@ -56,6 +73,10 @@ public class Game{
      * Constructor of <code>Game</code> with a <code>Board</code> as parameter
      * @param players Array of players that will join the <code>Game</code>
      * @param board The <code>Board</code> on which the <code>Game</code> will be played
+     */
+     /*@
+        requires players.length == 2;
+        ensures this.players == players && board.getWidth() == width && board.getHeight() == height;
      */
     public Game(Player[] players, Board board){
         this.board = board.deepCopy();
@@ -71,23 +92,33 @@ public class Game{
     }
 
     /**
-     * Functions that returns the <code>Board</code> of this <code>Game</code>
+     * Function that returns the <code>Board</code> of this <code>Game</code>
      * @return Return the <code>Board</code> of this <code>Game</code>
+     */
+    /*@
+        ensures \result = this.board;
      */
     public Board getBoard() {
         return this.board;
     }
 
     /**
-     * The function to return all the players that are participating in the game with their corresponding id's
-     * @return a Map<Byte, Player> containing the participating players
+     * Function that returns a map containg all the <code>Player</code>
+     * @return Returns a Map with the <code>Player</code>
+     */
+    /*@
+        ensures \result == this.players;
      */
     public Map<Byte,Player> getPlayers() {
         return players;
     }
 
     /**
-     * Function that starts the <code>Game</code> offline
+     * Function that starts the <code>Game</code.>
+     */
+    /*@
+        ensures turn >= 0;
+        ensures a == this.getBoard().hasWinner();
      */
     public void play() {
         int turn = 0;
@@ -101,32 +132,18 @@ public class Game{
         System.out.println("The winner of the game is: " + players.get(this.board.getWinner()).getName());
     }
 
-    /**
-     * set the board to the given board.
-     * @param board the new board
-     */
-    public synchronized void setBoard(Board board){
-        synchronized (this.board){
-            this.board = board;
-        }
+    public void run(){
+        this.play();
     }
 
-    /**
-     * A way to start a game locally
-     * @param args does nothing
-     */
     public static void main(String[] args) {
-        Player player1 = new ComputerPlayerRandom("Henk", (byte) 1);
+        Player player1 = new LocalPlayer("Henk", (byte) 1);
         Player player2 = new ComputerPlayerSmart("Sjaak", (byte) 2);
         Player[] players = {player1,player2};
         Game game = new Game(players);
         game.play();
     }
 
-    /**
-     * Get the current turn
-     * @return the number of the curren turn
-     */
     public int getTurn(){
         return this.turn;
     }
@@ -141,10 +158,6 @@ public class Game{
         move.makeMove();
     }
 
-    /**
-     * Get the active player
-     * @return the active player
-     */
     public Player getActivePlayer(){
         return this.players.get((byte) (this.turn % this.playerAmount));
     }

@@ -13,6 +13,11 @@ import java.util.Random;
  */
 
 public class ComputerPlayer implements Player {
+    /*@
+        public_invariant id >= 0;
+        public_invariant game != null;
+     */
+
     private String name;
     private Game game;
     private byte id;
@@ -29,10 +34,19 @@ public class ComputerPlayer implements Player {
         this.game = game;
     }
 
+    /**
+     *
+     * @param name
+     * @param game
+     */
     public ComputerPlayer(String name, Game game){
         this(name, game, (byte) 0);
     }
 
+    /**
+     *
+     * @param name
+     */
     public ComputerPlayer(String name){
         this(name, null, (byte) 0);
     }

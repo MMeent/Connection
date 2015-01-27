@@ -3,12 +3,20 @@ package mmeent.java.main.connection.board;
 import mmeent.java.main.connection.game.Move;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by Matthias on 20/12/2014.
  */
 public class Board {
+    /*@
+        public_invariant width > 3;
+        public_invariant height > 3;
+        public_invariant usedSpaces >= 0;
+        public invariant fields.length >= 9;
+        public invariant heights.length >= 9;
+     */
     public static final short STANDARD_WIDTH = 7;
     public static final short STANDARD_HEIGHT = 6;
     public static final int STANDARD_LENGTH = 4;
@@ -30,6 +38,11 @@ public class Board {
      * @param height Height of the <code>Board</code>.
      * @param rowLength Length of the continuous row needed to win.
      */
+    /*@
+        requires width != null && height != null && rowLength != null;
+        requires width > 0 && heigth > 0 && rowLength > 0;
+        ensures this.getWidth() == width && this.getHeight() == height;
+     */
     public Board(short width, short height, int rowLength){
         this.width = width;
         this.height = height;
@@ -48,12 +61,20 @@ public class Board {
      * @param width Width of the <code>Board</code>.
      * @param height of the <code>Board</code>.
      */
+    /*@
+       requires width != null && height != null;
+       requires height > 0 && width > 0;
+       ensures this.getWidth() == width && this.getHeight() == height;
+     */
     public Board(short width, short height){
         this(width, height, STANDARD_LENGTH);
     }
 
     /**
      * Constructor of <code>Board</code> for a <code>Board</code> with standard dimensions.
+     */
+    /*@
+        ensures this.getWidth() == STANDARD_WIDTH && this.getHeight() == height;
      */
     public Board(){
         this(STANDARD_WIDTH, STANDARD_HEIGHT, STANDARD_LENGTH);
@@ -63,7 +84,10 @@ public class Board {
      * Function that returns the width of the board.
      * @return returns the width of the board.
      */
-    public short getWidth(){
+    /*@
+        ensures \result > 0;
+     */
+    /*@ pure */public short getWidth(){
         return this.width;
     }
 
@@ -71,7 +95,10 @@ public class Board {
      * Function that returns the height of the board.
      * @return returns the height of the board.
      */
-    public short getHeight(){
+    /*@
+        ensures \result > 0;
+     */
+    /*@ pure */public short getHeight(){
         return this.height;
     }
 
@@ -80,7 +107,7 @@ public class Board {
      * @param i index of the field that has to be returned
      * @return The content of the field of which the index is given.
      */
-    public byte getField(int i){
+    /*@ pure */public byte getField(int i){
         return this.isField(i) ? this.fields[i] : 0;
     }
 
@@ -90,7 +117,7 @@ public class Board {
      * @param y The row of the field that has to be returned.
      * @return The contents of the field corresponding to the given coordinates.
      */
-    public byte getField(int x, int y){
+    /*@ pure */public byte getField(int x, int y){
         return this.isField(x, y) ? this.fields[x + y * this.width] : 0;
     }
 
@@ -100,7 +127,10 @@ public class Board {
      * @param y Row of which the index is requested.
      * @return The index of the field.
      */
-    public int getIndex(int x, int y) {
+    /*@
+        requires x >= 0 && y >= 0;
+     */
+    /*@ pure */public int getIndex(int x, int y) {
         return x + y * this.width;
     }
 
@@ -109,7 +139,7 @@ public class Board {
      * @param column The column that has to be checked whether it is full or not.
      * @return Returns true if the row is full. False if it is not.
      */
-    public boolean colIsFull(int column) {
+    /*@ pure */public boolean colIsFull(int column) {
         return (this.heights[column] == this.height);
     }
 
@@ -117,8 +147,9 @@ public class Board {
      * Function that returns a list containing the indexes of the columns in the <code>Board</code> that are not full.
      * @return Returns a list containing the indexes of the columns in the <code>Board</code> that are not full
      */
-    public List<Short> availableCols() {
+    /*@ pure */public List<Short> availableCols() {
         List<Short> result = new ArrayList<Short>();
+        //@loop_invariant 0 >= i && i < this.getWidth();
         for(short i = 0; i < width; i  ++) {
             if(!colIsFull(i)) {
                 result.add(i);
@@ -133,7 +164,10 @@ public class Board {
      * @param y row that has to be checked
      * @return Returns true if there is indeed a field on the board with those coordinates. Returns false if it is not.
      */
-    public boolean isField(int x, int y){
+    /*@
+        requires x >= 0 && y >= 0;
+     */
+    /*@ pure */public boolean isField(int x, int y){
         return 0 <= x && x < this.width && 0 <= y && y < this.height;
     }
 
@@ -142,20 +176,23 @@ public class Board {
      * @param i Index of the field which has to be validated
      * @return True if there is a field at index i. False if there is none.
      */
-    public boolean isField(int i){
+    /*@
+        requires i >= 0;
+     */
+    /*@ pure */public boolean isField(int i){
         return 0 <= i && i < this.fields.length;
     }
 
     /**
-     * Get all the fields whose x/y-coordinates lie within the given range.
-     * @param start_x the x-coordinate at which the new board should start
-     * @param start_y the y-coordinate at which the new board should start
-     * @param dx width of the new board
-     * @param dy height of the new board
-     * @return an array containing the new board
+     *
+     * @param start_x
+     * @param start_y
+     * @param dx
+     * @param dy
+     * @return
      */
     public byte[] getFieldsRange(int start_x, int start_y, int dx, int dy){
-        if(dx < 0 || dy < 0) return new byte[0];
+        if(dx < 0 || dy < 0) return null;
 
         byte[] r = new byte[(dx + 1) * (dy + 1)];
 
@@ -171,10 +208,15 @@ public class Board {
      * Function that returns the array with the fields of this <Code>Board</Code>.
      * @return Returns an array with the fields on this <code>Board</code>
      */
-    public byte[] getFields(){
+    //@ensures \result.length() == this.getWidth() * this.getHeight();
+    /*@ pure */public byte[] getFields(){
         return this.fields;
     }
 
+    /*@
+        requires move != null
+        requires move.getColumn() < this.getWidth();
+     */
     public void move(Move move) {
         this.move(move.getColumn(),move.getSymbol());
     }
@@ -184,6 +226,11 @@ public class Board {
      * @param x column where a <code>Move</code> has to be put.
      * @param player The ID of the player
      * @return Returns true if the operation has succeeded.
+     */
+    /*@
+        requires 0 <= x && x < this.getWidth();
+        requires player >= 0;
+        ensures this.getField(x,this.getColumnHeight(x) - 1) == player;
      */
     public boolean move(short x, byte player){
         if(this.heights[x] >= this.height) return false;
@@ -200,8 +247,14 @@ public class Board {
      * @param player Player of which it has to be checked whether he has a winning row.
      * @return true if the player has four in a row
      */
-    public boolean hasFour(byte player){
+    /*@
+        requires player >= 0
+        ensures \result == (\exists int i,j; 0 <= i && i < this.getWidth() && 0 <= j && j < this.getHeight(); checkAround(i,j,player) == true);
+     */
+    /*@ pure */public boolean hasFour(byte player){
+        //@loop_invariant 0 <= i && i <= this.getWidth();
         for(int i = 0; i < width; i++) {
+            //@loop_invariant 0 <= i <= this.getHeight();
             for(int j = 0; j < height; j++) {
                 if(checkAround(i,j,player)) {
                     return true;
@@ -218,7 +271,10 @@ public class Board {
      * @param player Player of which the winning row needs to be found.
      * @return Returns true if there is a winning row of the given player.
      */
-    public boolean checkAround(int x, int y, byte player){
+    /*@
+        requires x >= 0 && y >= 0 && player >= 0;
+     */
+    /*@ pure */public boolean checkAround(int x, int y, byte player){
         int[] towin = {this.rowLength,this.rowLength,this.rowLength,this.rowLength};
         for(int i = -this.rowLength + 1; i < this.rowLength; i++){
             towin[0] = this.getField(x + i,y) == player || towin[0] <= 0 ? --towin[0] : this.rowLength;
@@ -240,7 +296,11 @@ public class Board {
      * Function that makes a new <code>Board</code> that is a copy of this <code>Board</code>
      * @return Copy of the <code>Board</code>
      */
-    public Board deepCopy(){
+    /*@
+        ensures \result.getFields().length == this.getFields().length;
+        ensures \forall int i; 0 <= i && i < this.getFields().length; \result.getField(i) == this.getField(i);
+     */
+    /*@ pure */public Board deepCopy(){
         Board board = new Board(this.width, this.height, this.rowLength);
         for (int i = 0; i < this.fields.length; i++) {
             board.move(i, this.fields[i]);
@@ -253,6 +313,10 @@ public class Board {
      * @param i Field where the move has to be put.
      * @param val Mark of the player that makes the move.
      */
+    /*@
+        requires i >= 0 && val >= 0;
+        ensures this.getField(i) == val;
+     */
     public void move(int i, byte val){
         if(isField(i)) this.fields[i] = val;
     }
@@ -260,6 +324,10 @@ public class Board {
     /**
      * Function that undoes a move.
      * @param i Field of the move to be removed.
+     */
+    /*@
+        requires i >= 0 && isField(i);
+        ensures this.getField(i) == 0;
      */
     public void remove(int i){
         if(isField(i)) this.fields[i] = 1;
@@ -269,7 +337,7 @@ public class Board {
      * Check whether there is a winner or not
      * @return true if there is a winner;
      */
-    public boolean hasWinner(){
+    /*@ pure */public boolean hasWinner(){
         return this.winner != 0;
     }
 
@@ -277,19 +345,23 @@ public class Board {
      * Check who the winner is
      * @return the id of the player
      */
-    public byte getWinner(){
+    /*@
+        ensures \result == winner;
+     */
+    /*@ pure */public byte getWinner(){
         return this.winner;
     }
 
     /**
-     * Check the amount of clear spaces
-     * @return the amount of clear spaces
+     * Function that returns the number of fields which are occupied in the given column
+     * @param column Column of which the number of occupied fields must be returned
+     * @return Returns the number of occupied fields in the given column.
      */
-    public int getUsedSpaces(){
-        return this.usedSpaces;
-    }
-
-    public int getColumnHeight(short column){
+    /*@
+        requires 0 <= column && column < this.getWidth();
+        ensures \result = this.heights[column];
+     */
+    /*@ pure */public int getColumnHeight(short column){
         return this.heights[column];
     }
 }
