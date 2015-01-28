@@ -423,6 +423,7 @@ public class ServerPacket implements Packet {
             Game game = new Game(players);
             Renderer r = ConnectClient.get().getRenderer();
             r.addMessage("A Game has started between " + this.player1.getName() + " and " + this.player2.getName());
+            r.setBoard(game.getBoard());
             this.getClient().setGame(game);
         }
     }
@@ -499,10 +500,10 @@ public class ServerPacket implements Packet {
         Player player;
 
         public static MoveOkPacket read(Connection c, String[] args) throws InvalidPacketException{
-            byte player_number = Byte.valueOf(args[1]);
+            byte playerid = Byte.valueOf(args[1]);
             short column = Short.valueOf(args[2]);
             Player player = args.length >= 3 ? Player.get(args[3]) : null;
-            return new MoveOkPacket(c, player_number, column, player);
+            return new MoveOkPacket(c, playerid, column, player);
         }
 
         public MoveOkPacket(Connection c, byte playerid, short column, Player player){
@@ -525,7 +526,8 @@ public class ServerPacket implements Packet {
         @Override
         public void onReceive(){
             try{
-                this.getClient().getGame().move(new Move(this.player, this.column, this.getClient().getGame().getTurn()));
+                this.getClient().getGame().move(new Move(this.playerid, this.column, this.getClient().getGame().getTurn(), this.getClient().getGame().getBoard()));
+                ConnectClient.get().getRenderer().render();
             } catch(ConnectFourException e){
                 e.printStackTrace(System.out);
             }

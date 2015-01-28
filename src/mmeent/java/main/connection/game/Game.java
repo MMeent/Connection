@@ -1,5 +1,6 @@
 package mmeent.java.main.connection.game;
 
+import mmeent.java.main.connection.ConnectClient;
 import mmeent.java.main.connection.ConnectServer;
 import mmeent.java.main.connection.connection.server.ServerPacket;
 import mmeent.java.main.connection.exception.ConnectFourException;
@@ -58,7 +59,7 @@ public class Game{
     /**
      * Constructor of <code>Game</code> with custom <code>Board</code> size en custom row length
      * @param players Array of Players that will join the game
-     * @param width WIdth of the <code>Board</code>
+     * @param width Width of the <code>Board</code>
      * @param height Height of the <code>Board</code>
      * @param length Length of the row needed to win the <code>Game</code>
      */
@@ -81,7 +82,7 @@ public class Game{
      */
     public Game(Player[] players, Board board){
         this.board = board.deepCopy();
-        this.renderer = new TextBoardRenderer(this.board);
+        this.renderer = ConnectClient.isClient ? ConnectClient.get().getRenderer() : new TextBoardRenderer(this.board);
         this.players = new HashMap<Byte, Player>();
         this.playerAmount = players.length;
         byte i = 0;
@@ -130,7 +131,7 @@ public class Game{
             a = a && !this.getBoard().hasWinner();
         }
         this.renderer.render();
-        System.out.println("The winner of the game is: " + players.get(this.board.getWinner()).getName());
+        ConnectClient.get().getRenderer().addMessage("The winner of the game is: " + players.get(this.board.getWinner()).getName());
     }
     
     public static void main(String[] args) {

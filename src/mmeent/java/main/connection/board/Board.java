@@ -8,12 +8,12 @@ import java.util.List;
 
 /**
  * Created by Matthias on 20/12/2014.
+ * @author mmeent
  */
 public class Board {
     /*@
         public_invariant width > 3;
         public_invariant height > 3;
-        public_invariant usedSpaces >= 0;
         public invariant fields.length >= 9;
         public invariant heights.length >= 9;
      */
@@ -22,8 +22,6 @@ public class Board {
     public static final int STANDARD_LENGTH = 4;
     private final short width;
     private final short height;
-
-    private int usedSpaces;
 
     private byte winner;
 
@@ -48,8 +46,6 @@ public class Board {
         this.height = height;
 
         this.fields = new byte[width * height];
-
-        this.usedSpaces = 0;
 
         this.heights = new int[width];
         this.rowLength = rowLength;
@@ -237,7 +233,6 @@ public class Board {
         int y = this.heights[x];
         this.fields[x + (y * this.width)] = player;
         this.heights[x] += 1;
-        this.usedSpaces++;
         this.checkAround(x, y, player);
         return true;
     }

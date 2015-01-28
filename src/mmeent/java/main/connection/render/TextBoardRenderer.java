@@ -31,6 +31,8 @@ public class TextBoardRenderer implements Renderer {
     @Override
     public void setBoard(Board board) {
         this.board = board;
+        this.screen_width = this.board.getWidth();
+        this.screen_height = this.board.getHeight();
     }
 
     /**
@@ -57,7 +59,6 @@ public class TextBoardRenderer implements Renderer {
             }
             s += row + "\n";
         }
-
         System.out.println(s);
     }
 
