@@ -144,8 +144,10 @@ public class Connection {
      * @param chars the CharSequence that has to be sent.
      */
     public synchronized void sendCharSequence(CharSequence chars){
-        if(this.side == Side.SERVER) System.out.print(this.client.getName());
-        System.out.println(" <: " + chars);
+        if(ConnectServer.debug || ConnectClient.debug) {
+            if (this.side == Side.SERVER) System.out.print(this.client.getName());
+            System.out.print(" <: " + chars);
+        }
         this.out.append(chars);
         this.out.flush();
     }

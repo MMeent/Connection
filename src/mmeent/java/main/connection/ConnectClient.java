@@ -22,8 +22,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ConnectClient {
     private String username;
     private Renderer renderer;
-    private Boolean debug;
-    public final Connection connection;
+    public static Boolean debug = false;
+    private Connection connection;
     public boolean shutdown;
     private static ConnectClient get;
     public static boolean isClient = false;
@@ -38,7 +38,7 @@ public class ConnectClient {
     public ConnectClient(String username, Renderer renderer, Boolean debug){
         this.username = username;
         this.renderer = renderer;
-        this.debug = debug;
+        ConnectClient.debug = debug;
 
         Packets.registerServerPackets();
         Packets.registerClientPackets();
@@ -49,32 +49,34 @@ public class ConnectClient {
         System.out.println("Port to connect to: ");
         int port = in.hasNextInt() ? Integer.parseInt(in.nextLine()) : Protocol.Settings.DEFAULT_PORT;
         System.out.println("Connecting to " + IP + " on port " + port);
-        Socket s = null;
+        Socket s;
         try {
             s = new Socket(IP, port);
-        } catch (IOException e) {
-            e.printStackTrace(System.out);
-        }
-        this.connection = new Connection(s, Side.CLIENT);
+            this.connection = new Connection(s, Side.CLIENT);
 
-        Thread packetHandler = new Thread(){
-            public void run(){
-                while(true){
-                    try{
-                        Packet p = packets.take();
-                        p.onReceive();
-                    } catch (InterruptedException e){
-                        e.printStackTrace(System.out);
+            Thread packetHandler = new Thread() {
+                public void run() {
+                    while (true) {
+                        try {
+                            Packet p = packets.take();
+                            p.onReceive();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace(System.out);
+                        }
                     }
                 }
-            }
-        };
+            };
 
-        packetHandler.setDaemon(true);
-        packetHandler.start();
+            packetHandler.setDaemon(true);
+            packetHandler.start();
 
-        String[] options = {Protocol.Features.CHAT, Protocol.Features.CUSTOM_BOARD_SIZE, Protocol.Features.LEADERBOARD};
-        this.connection.send(new ClientPacket.ConnectPacket(this.connection, username, options));
+            String[] options = {Protocol.Features.CHAT, Protocol.Features.CUSTOM_BOARD_SIZE, Protocol.Features.LEADERBOARD};
+            this.connection.send(new ClientPacket.ConnectPacket(this.connection, username, options));
+
+        } catch (IOException e) {
+            e.printStackTrace(System.out);
+            this.renderer.addErrorMessage("", e.getStackTrace().toString());
+        }
     }
 
     public void run(){
@@ -131,6 +133,10 @@ public class ConnectClient {
         ConnectClient.isClient = true;
         ConnectClient.get = new ConnectClient(username, new TextBoardRenderer(null), debug);
         ConnectClient.get.run();
+    }
+
+    public Connection getConnection(){
+        return this.connection;
     }
 
     /**

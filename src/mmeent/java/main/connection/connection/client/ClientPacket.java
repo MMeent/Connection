@@ -234,11 +234,15 @@ public class ClientPacket implements Packet {
             c.sendBuffer();
         }
 
-        public void onReceive(){
-            Player invited = this.getClient();
-            Player inviter = Player.get(this.username);
-            Game g = ((Invite) Invite.invites.get(inviter).get(invited)).startGame();
-            g.getActivePlayer().getConnection().send(new ServerPacket.RequestMovePacket(g.getActivePlayer().getConnection()));
+        public synchronized void onReceive(){
+            try{
+                Player invited = this.getClient();
+                Player inviter = Player.get(this.username);
+                Game g = Invite.invites.get(inviter).get(invited).startGame();
+                g.getActivePlayer().getConnection().send(new ServerPacket.RequestMovePacket(g.getActivePlayer().getConnection()));
+            } catch (Exception e){
+                e.printStackTrace(System.out);
+            }
         }
     }
 

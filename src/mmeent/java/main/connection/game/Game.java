@@ -1,6 +1,7 @@
 package mmeent.java.main.connection.game;
 
-import mmeent.java.main.connection.Protocol;
+import mmeent.java.main.connection.ConnectServer;
+import mmeent.java.main.connection.connection.server.ServerPacket;
 import mmeent.java.main.connection.exception.ConnectFourException;
 import mmeent.java.main.connection.player.*;
 import mmeent.java.main.connection.board.Board;
@@ -152,11 +153,17 @@ public class Game{
     public void move(Move move) throws ConnectFourException{
         if(!move.isValid()) throw new ConnectFourException("You have to be the active player");
         move.makeMove();
-        ServerPacket.MoveOkPacket packet = new ServerPacket.MoveOkPacket(null, move.getSymbol(), move.getColumn(), move.getPlayer());
-        for(Player p: this.players.values()){
-            p.getConnection().send(packet);
+        if(ConnectServer.isServer) {
+            ServerPacket.MoveOkPacket packet = new ServerPacket.MoveOkPacket(this.getActivePlayer().getConnection(), move.getSymbol(), move.getColumn(), move.getPlayer());
+            for(Player p: this.players.values()){
+                p.getConnection().send(packet);
+            }
+            if(this.board.hasWinner()) for(Player p: this.players.values()){
+                p.getConnection().send(new ServerPacket.GameEndPacket(p.getConnection(), "Game has been won", this.getActivePlayer().getName()));
+            }
+            this.turn++;
+            if(!this.board.hasWinner()) this.players.get((byte) ((this.turn % this.players.size()) + 1)).getConnection().send(new ServerPacket.RequestMovePacket(null));
         }
-        if(!this.board.hasWinner()) this.players.get((byte) ((this.turn % this.players.size()) + 1)).getConnection().send(new ServerPacket.RequestMovePacket(null));
     }
 
     public Player getActivePlayer(){

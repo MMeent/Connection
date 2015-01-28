@@ -277,7 +277,7 @@ public class ServerPacket implements Packet {
         @Override
         public void onReceive(){
             ConnectClient.get().getRenderer().setBoard(this.board);
-            if(ConnectClient.get().connection.getClient().getGame() != null) ConnectClient.get().connection.getClient().getGame().setBoard(this.board);
+            if(ConnectClient.get().getConnection().getClient().getGame() != null) ConnectClient.get().getConnection().getClient().getGame().setBoard(this.board);
         }
     }
 
@@ -485,7 +485,7 @@ public class ServerPacket implements Packet {
 
         @Override
         public void onReceive() {
-            System.out.println("Make a move: MOVE <column number>");
+            ConnectClient.get().getRenderer().addMessage("Make a move: MOVE <column number>");
         }
     }
 
@@ -517,7 +517,7 @@ public class ServerPacket implements Packet {
             super.write(c);
             c.writePartial(Byte.toString(this.playerid));
             c.writePartial(Short.toString(this.column));
-            c.writePartial(this.player.getName());
+            c.writePartial(this.getClient().getName());
             c.stopPacket();
             c.sendBuffer();
         }

@@ -1,5 +1,6 @@
 package mmeent.java.main.connection.connection;
 
+import mmeent.java.main.connection.ConnectClient;
 import mmeent.java.main.connection.ConnectServer;
 import mmeent.java.main.connection.Protocol;
 import mmeent.java.main.connection.connection.client.ClientPacket;
@@ -63,7 +64,9 @@ public class Packets {
      * @return a packet if possible, otherwise null;
      */
     public static ServerPacket readServerPacket(Connection c, String msg){
-        System.out.println(" :> " + msg);
+        if(ConnectServer.debug || ConnectClient.debug){
+            System.out.println(" :> " + msg);
+        }
         try {
             String[] args = msg.split(" ");
             return (ServerPacket) Packets.serverpackets.get(args[0]).getMethod("read", Connection.class, String[].class).invoke(null, c, args);
@@ -86,8 +89,10 @@ public class Packets {
      * @return A packet instance that can be used by the system, if fail then null
      */
     public static ClientPacket readClientPacket(Connection c, String msg){
-        if(ConnectServer.isServer && c.getClient() != null) System.out.print(c.getClient().getName());
-        System.out.println(" :> " + msg);
+        if(ConnectServer.debug || ConnectClient.debug){
+            if(ConnectServer.isServer) System.out.print(c.getClient().getName());
+            System.out.println(" :> " + msg);
+        }
         try {
             String[] args = msg.split(" ");
             return (ClientPacket) Packets.clientpackets.get(args[0]).getMethod("read", Connection.class, String[].class).invoke(null, c, args);
