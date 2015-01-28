@@ -94,7 +94,7 @@ public class Move {
         ensures \result == (this.column >= 0 && this.column < this.board.getWidth() && !this.board.colIsFull(this.column));
      */
     public boolean isValid() {
-        return (this.column >= 0 && this.column < this.board.getWidth() && !this.board.colIsFull(this.column));
+        return (this.column >= 0 && this.column < this.board.getWidth() && !this.board.colIsFull(this.column) && !this.board.hasWinner());
     }
 
     /**
@@ -104,7 +104,7 @@ public class Move {
         ensures board.getField(column,board.getColumnHeight(column) - 1) == this.symbol;
      */
     public void makeMove() {
-        board.move((short) column, this.symbol);
+        board.move(column, this.symbol);
     }
 
     /**
