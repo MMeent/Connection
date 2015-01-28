@@ -121,7 +121,6 @@ public class ConnectClient {
             switch(args[i]){
                 case "-u": username = args[++i];
                 case "-d": debug = true;
-                case "-g": graphical = true;
             }
         }
         if(username == null){

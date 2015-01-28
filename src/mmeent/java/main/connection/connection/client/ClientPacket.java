@@ -237,9 +237,12 @@ public class ClientPacket implements Packet {
         public synchronized void onReceive(){
             try{
                 Player invited = this.getClient();
+                if(invited.getGame() != null) throw new ConnectFourException("You should not accept a game when in a game");
                 Player inviter = Player.get(this.username);
                 Game g = Invite.invites.get(inviter).get(invited).startGame();
                 g.getActivePlayer().getConnection().send(new ServerPacket.RequestMovePacket(g.getActivePlayer().getConnection()));
+            } catch(ConnectFourException e){
+                this.returnError(e.getMessage());
             } catch (Exception e){
                 e.printStackTrace(System.out);
             }
