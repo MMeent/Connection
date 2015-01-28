@@ -25,7 +25,6 @@ public class Connection {
      * Default constructor for a connection.
      * @param socket the socket over which the connection is sent
      * @param side the side this part of the connection is on
-     * @throws IOException throws exception if invalid package comes in
      */
     public Connection(Socket socket, Side side){
         this.socket = socket;

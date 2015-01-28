@@ -37,8 +37,8 @@ public interface Player {
 
     /**
      * Get a player by just the name. This function is preferred, since the ID is not checked at any of the functions.
-     * @param name
-     * @return
+     * @param name Name of the new <code>Player</code>
+     * @return Returns the player
      */
     public static Player get(String name){
         return Player.get(name, (byte) 0);

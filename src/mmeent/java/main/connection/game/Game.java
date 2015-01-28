@@ -1,7 +1,6 @@
 package mmeent.java.main.connection.game;
 
 import mmeent.java.main.connection.Protocol;
-import mmeent.java.main.connection.connection.server.ServerPacket;
 import mmeent.java.main.connection.exception.ConnectFourException;
 import mmeent.java.main.connection.player.*;
 import mmeent.java.main.connection.board.Board;
@@ -115,7 +114,7 @@ public class Game{
     }
 
     /**
-     * Function that starts the <code>Game</code.>
+     * Function that starts the game loop.
      */
     /*@
         ensures turn >= 0;
@@ -132,7 +131,7 @@ public class Game{
         this.renderer.render();
         System.out.println("The winner of the game is: " + players.get(this.board.getWinner()).getName());
     }
-
+    
     public static void main(String[] args) {
         Player player1 = new LocalPlayer("Henk", (byte) 1);
         Player player2 = new ComputerPlayerSmart("Sjaak", (byte) 2);
@@ -148,7 +147,7 @@ public class Game{
     /**
      * Make a move
      * @param move the move to be made
-     * @throws ConnectFourException
+     * @throws ConnectFourException throws exception if it is not the players turn or the move is not valid.
      */
     public void move(Move move) throws ConnectFourException{
         if(!move.isValid()) throw new ConnectFourException("You have to be the active player");

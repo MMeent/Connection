@@ -37,10 +37,10 @@ public class ConnectServer {
     public final List<Connection> connections = new ArrayList<Connection>();
 
     /**
-     * Default constructor for Connectserver
-     * @param port the port the server is listening to
+     * Default constructor for </username>Connectserver
+     * @param port the port the server is li stening to
      * @param debug whether to get debug or not
-     * @throws IOException
+     * @throws IOException throws exception when incorrect format is used.
      */
     public ConnectServer(int port, boolean debug) throws IOException{
         ConnectServer.isServer = true;
