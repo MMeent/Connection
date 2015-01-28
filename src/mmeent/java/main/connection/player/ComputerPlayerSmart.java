@@ -16,7 +16,7 @@ public class ComputerPlayerSmart implements Player {
     private String name;
     private byte id;
     private Game game;
-    private static final int searchDepth = 13;
+    private static final int searchDepth = 10;
     private static final int outputDepth = 3;
 
     /**
@@ -49,7 +49,7 @@ public class ComputerPlayerSmart implements Player {
             move.makeMove();
             int score = -negamax(move, 0, 1, this.game.getPlayers().values().toArray(new Player[this.game.getPlayers().size()]), this.game.getTurn() + 1);
             System.out.println("Score: " + score +  " for col " + row);
-            if(score >= best){
+            if(score > best){
                 best = score;
                 v = row;
             }

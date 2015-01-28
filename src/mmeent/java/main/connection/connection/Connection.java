@@ -10,6 +10,7 @@ import java.net.Socket;
 
 /**
  * Created by Matthias on 14/01/2015.
+ * @author mmeent
  */
 public class Connection {
     private Socket socket;
@@ -17,8 +18,8 @@ public class Connection {
     private PrintWriter out;
     private StringBuilder privBuffer;
     private Side side;
-    private Connection connection = this;
-    private Player client = null;
+    private Connection c;
+    private Player client = Player.get("New");
 
     /**
      * Default constructor for a connection.
@@ -28,6 +29,7 @@ public class Connection {
      */
     public Connection(Socket socket, Side side){
         this.socket = socket;
+        this.c = this;
         this.side = side;
         if(socket == null) return;
         try {
@@ -45,7 +47,7 @@ public class Connection {
                 while(!done){
                     try{
                         String msg = in.readLine();
-                        ConnectServer.packets.put(Packets.readClientPacket(connection, msg));
+                        ConnectServer.packets.put(Packets.readClientPacket(c, msg));
                     } catch (IOException e){
                         e.printStackTrace(System.out);
                         try{
@@ -74,7 +76,7 @@ public class Connection {
                 while(!done){
                     try{
                         String msg = in.readLine();
-                        ConnectClient.packets.put(Packets.readServerPacket(connection, msg));
+                        ConnectClient.packets.put(Packets.readServerPacket(c, msg));
                     } catch (IOException e){
                         e.printStackTrace(System.out);
                         try{
@@ -143,6 +145,8 @@ public class Connection {
      * @param chars the CharSequence that has to be sent.
      */
     public synchronized void sendCharSequence(CharSequence chars){
+        if(this.side == Side.SERVER) System.out.print(this.client.getName());
+        System.out.println(" <: " + chars);
         this.out.append(chars);
         this.out.flush();
     }
@@ -151,7 +155,7 @@ public class Connection {
      * Sent the given packet over this connection
      * @param packet the packet to be sent.
      */
-    public void send(Packet packet){
+    public synchronized void send(Packet packet){
         packet.write(this);
     }
 
@@ -159,7 +163,7 @@ public class Connection {
      * Set the corresponding player to the given player
      * @param client the player that will be the owner of the connection.
      */
-    public void setClient(Player client){
+    public synchronized void setClient(Player client){
         this.client = client;
     }
 
@@ -167,7 +171,15 @@ public class Connection {
      * Get the player that corresponds with this
      * @return the player that corresponds to the client side of this connection
      */
-    public Player getClient(){
+    public synchronized Player getClient(){
         return this.client;
+    }
+
+    public synchronized void quit(){
+        try{
+            this.socket.close();
+        } catch (IOException e) {
+            e.printStackTrace(System.out);
+        }
     }
 }

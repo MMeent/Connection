@@ -178,7 +178,7 @@ public class ClientPacket implements Packet {
 
         public static InvitePacket read(Connection c, String[] args) throws InvalidPacketException{
             String playername = args[1];
-            if(args.length == 2) return new InvitePacket(c, playername);
+            if(args.length < 4) return new InvitePacket(c, playername);
             return new InvitePacket(c, playername, Short.parseShort(args[2]), Short.parseShort(args[3]));
         }
 
@@ -229,6 +229,7 @@ public class ClientPacket implements Packet {
 
         public synchronized void write(Connection c){
             super.write(c);
+            c.writePartial(this.username);
             c.stopPacket();
             c.sendBuffer();
         }
@@ -237,7 +238,7 @@ public class ClientPacket implements Packet {
             Player invited = this.getClient();
             Player inviter = Player.get(this.username);
             Game g = ((Invite) Invite.invites.get(inviter).get(invited)).startGame();
-            g.getActivePlayer().getMove(g.getTurn());
+            g.getActivePlayer().getConnection().send(new ServerPacket.RequestMovePacket(g.getActivePlayer().getConnection()));
         }
     }
 
@@ -290,6 +291,7 @@ public class ClientPacket implements Packet {
 
         public synchronized void write(Connection c){
             super.write(c);
+            c.writePartial(Short.toString(this.column));
             c.stopPacket();
             c.sendBuffer();
         }
@@ -300,6 +302,7 @@ public class ClientPacket implements Packet {
             try{
                 sender.getGame().move(new Move(sender, column, sender.getGame().getTurn()));
             } catch (ConnectFourException e){
+                e.printStackTrace();
                 this.returnError(e.getMessage());
             }
         }
@@ -334,6 +337,7 @@ public class ClientPacket implements Packet {
 
         public void onReceive(){
             ConnectServer.server.removePlayer(this.getClient());
+            this.getConnection().quit();
         }
     }
 

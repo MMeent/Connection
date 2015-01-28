@@ -33,8 +33,8 @@ public class ConnectServer {
 
     private ServerSocket socket;
     private HashMap<String, Player> players = new HashMap<String, Player>();
-    private HashMap<Player, Connection> playerconnections = new HashMap<Player, Connection>();
-    private List<Connection> connections = new ArrayList<Connection>();
+    public final HashMap<Player, Connection> playerconnections = new HashMap<Player, Connection>();
+    public final List<Connection> connections = new ArrayList<Connection>();
 
     /**
      * Default constructor for Connectserver
@@ -43,6 +43,7 @@ public class ConnectServer {
      * @throws IOException
      */
     public ConnectServer(int port, boolean debug) throws IOException{
+        ConnectServer.isServer = true;
         ConnectServer.server = this;
         ConnectServer.debug = debug;
 
@@ -56,7 +57,7 @@ public class ConnectServer {
                 while(true){
                     try{
                         Socket s = socket.accept();
-                        connections.add(new Connection(s, Side.SERVER));
+                        ConnectServer.server.connections.add(new Connection(s, Side.SERVER));
                     } catch(IOException e){
                         e.printStackTrace();
                     }
@@ -150,8 +151,8 @@ public class ConnectServer {
      * @param connection the connection of that player
      */
     public void addPlayerConnection(Player player, Connection connection){
-        if(!this.playerconnections.containsKey(player)) this.playerconnections.put(player, connection);
-        if(!this.players.containsKey(player.getName())) this.players.put(player.getName(), player);
+        if(!(this.players.containsKey(player.getName()))) this.players.put(player.getName(), player);
+        if(!(this.playerconnections.containsKey(player))) this.playerconnections.put(player, connection);
     }
 
     /**

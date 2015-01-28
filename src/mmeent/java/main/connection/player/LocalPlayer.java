@@ -37,6 +37,7 @@ public class LocalPlayer implements Player {
      * @return the move the player will do
      */
     public Move getMove(int turn){
+
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Make a move: ");

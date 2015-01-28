@@ -1,5 +1,6 @@
 package mmeent.java.main.connection.game;
 
+import mmeent.java.main.connection.connection.server.ServerPacket;
 import mmeent.java.main.connection.player.Player;
 
 import java.util.HashMap;
@@ -46,6 +47,9 @@ public class Invite {
         players[0] = player1;
         players[1] = player2;
         Invite.invites.get(player1).remove(player2);
+        ServerPacket.GameStartPacket p = new ServerPacket.GameStartPacket(null, player1, player2);
+        player1.getConnection().send(p);
+        player2.getConnection().send(p);
         return new Game(players, this.boardWidth, this.boardHeight);
     }
 }

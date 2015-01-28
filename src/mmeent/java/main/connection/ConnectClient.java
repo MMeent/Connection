@@ -82,8 +82,8 @@ public class ConnectClient {
         while(!this.shutdown){
             String s = in.nextLine();
             this.shutdown = s.toUpperCase().startsWith("QUIT");
-            String[] args = s.toUpperCase().split(" ");
-            switch(args[0]) {
+            String[] args = s.split(" ");
+            switch(args[0].toUpperCase()) {
                 case "INVITE": this.connection.send(args.length > 2
                         ? new ClientPacket.InvitePacket(this.connection, args[1], Short.parseShort(args[2]), Short.parseShort(args[3]))
                         : new ClientPacket.InvitePacket(this.connection, args[1]));break;
@@ -91,7 +91,8 @@ public class ConnectClient {
                 case "DECLINE": this.connection.send(new ClientPacket.DeclineInvitePacket(this.connection, args[1]));break;
                 case "PING": this.connection.send(new ClientPacket.PingPacket(this.connection)); break;
                 case "QUIT": this.connection.send(new ClientPacket.QuitPacket(this.connection, s.replaceFirst(args[0], "")));break;
-                case "MOVE": this.connection.send(new ClientPacket.MovePacket(this.connection, Short.parseShort(args[1])));break;
+                case "MOVE": System.out.println(Short.parseShort(args[1]));
+                    this.connection.send(new ClientPacket.MovePacket(this.connection, Short.parseShort(args[1])));break;
                 default: this.connection.send(new ClientPacket.ChatPacket(this.connection, s));break;
             }
         }

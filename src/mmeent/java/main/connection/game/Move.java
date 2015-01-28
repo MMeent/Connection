@@ -117,22 +117,29 @@ public class Move {
      */
     public int getValue(byte id){
         Board b = this.board.deepCopy();
-        int[] values = {0, 0, 0, 0};
+        int[] posValues = {0, 0, 0, 0};
+        int[] negValues = {0, 0, 0, 0};
         int actValue = 0;
         for(int x = 0; x < b.getWidth() - 4; x++){
             for(int y = 0; y < b.getHeight() - 4; y++){
                 for(int i = 0; i < 4; i++){
-                    values[0] = board.getField(x + i, y) == id ? ++values[0] : 0;
-                    values[1] = board.getField(x + i, y + i) == id ? ++values[1] : 0;
-                    values[2] = board.getField(x, y + i) == id ? ++values[2] : 0;
-                    values[3] = board.getField(x + i, y + 3 - i) == id ? ++values[3] : 0;
-                    for(int j = 0; j < values.length; j++){
-                        actValue += values[j];
-                    }
+                    posValues[0] = board.getField(x + i, y) == 1 || board.getField(x + i, y) == 0  ? ++posValues[0] : 0;
+                    posValues[1] = board.getField(x + i, y + 1) == 1 || board.getField(x + i, y + 1) == 0  ? ++posValues[1] : 0;
+                    posValues[2] = board.getField(x, y + 1) == 1 || board.getField(x, y + 1) == 0  ? ++posValues[2] : 0;
+                    posValues[3] = board.getField(x + i, y - i) == 1 || board.getField(x + i, y - i) == 0  ? ++posValues[3] : 0;
+
+                    negValues[0] = board.getField(x + i, y) == 2 || board.getField(x + i, y) == 0  ? ++negValues[0] : 0;
+                    negValues[1] = board.getField(x + i, y + i) == 2 || board.getField(x + i, y + i) == 0  ? ++negValues[1] : 0;
+                    negValues[2] = board.getField(x, y + i) == 2 || board.getField(x, y + i) == 0  ? ++negValues[2] : 0;
+                    negValues[3] = board.getField(x + i, y - i) == 2 || board.getField(x + i, y - i) == 0  ? ++negValues[3] : 0;
+                }
+                for(int i = 0; i < posValues.length; i++){
+                    actValue += negValues[i] == 0 ? Math.pow(2, posValues[i]) : 0;
+                    actValue -= posValues[i] == 0 ? Math.pow(2, negValues[i]) : 0;
                 }
             }
         }
-        return actValue;
+        return (id == 1) ? actValue : -actValue;
     }
 
     /**

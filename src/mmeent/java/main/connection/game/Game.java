@@ -1,6 +1,7 @@
 package mmeent.java.main.connection.game;
 
 import mmeent.java.main.connection.Protocol;
+import mmeent.java.main.connection.connection.server.ServerPacket;
 import mmeent.java.main.connection.exception.ConnectFourException;
 import mmeent.java.main.connection.player.*;
 import mmeent.java.main.connection.board.Board;
@@ -15,7 +16,7 @@ import java.util.Map;
 /**
  * Created by Matthias on 20/12/2014.
  */
-public class Game extends Thread{
+public class Game{
     /*@
         public_invariant players.length >= 2;
         public_invariant playerAmount >= 2;
@@ -132,10 +133,6 @@ public class Game extends Thread{
         System.out.println("The winner of the game is: " + players.get(this.board.getWinner()).getName());
     }
 
-    public void run(){
-        this.play();
-    }
-
     public static void main(String[] args) {
         Player player1 = new LocalPlayer("Henk", (byte) 1);
         Player player2 = new ComputerPlayerSmart("Sjaak", (byte) 2);
@@ -156,9 +153,19 @@ public class Game extends Thread{
     public void move(Move move) throws ConnectFourException{
         if(!move.isValid()) throw new ConnectFourException("You have to be the active player");
         move.makeMove();
+        ServerPacket.MoveOkPacket packet = new ServerPacket.MoveOkPacket(null, move.getSymbol(), move.getColumn(), move.getPlayer());
+        for(Player p: this.players.values()){
+            p.getConnection().send(packet);
+        }
+        if(!this.board.hasWinner()) this.players.get((byte) ((this.turn % this.players.size()) + 1)).getConnection().send(new ServerPacket.RequestMovePacket(null));
     }
 
     public Player getActivePlayer(){
-        return this.players.get((byte) (this.turn % this.playerAmount));
+        return this.players.get((byte) (this.turn % this.playerAmount + 1));
+    }
+
+    public void setBoard(Board board){
+        this.board = board;
+        this.renderer.setBoard(board);
     }
 }

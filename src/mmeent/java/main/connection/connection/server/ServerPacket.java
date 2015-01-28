@@ -485,7 +485,7 @@ public class ServerPacket implements Packet {
 
         @Override
         public void onReceive() {
-            this.respond(new ClientPacket.MovePacket(this.getConnection(), this.getClient().getMove(this.getClient().getGame().getTurn()).getColumn()));
+            System.out.println("Make a move: MOVE <column number>");
         }
     }
 
