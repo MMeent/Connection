@@ -8,7 +8,7 @@ import mmeent.java.main.connection.player.Player;
 public interface Packet {
 
     /**
-     * Return an error coused by the packet to the player that sent the message.
+     * Return an error caused by the packet to the player that sent the message.
      *
      * @param extras some extra stuff that can be sent back
      */
