@@ -63,8 +63,8 @@ public class Packets {
      * @param msg the actual packet that was sent
      * @return a packet if possible, otherwise null;
      */
-    public static ServerPacket readServerPacket(Connection c, String msg){
-        if(ConnectServer.debug || ConnectClient.debug){
+    public static ServerPacket readServerPacket(Connection c, String msg) {
+        if(ConnectServer.debug || ConnectClient.debug) {
             System.out.println(" :> " + msg);
         }
         try {
@@ -72,11 +72,11 @@ public class Packets {
             return (ServerPacket) Packets.serverpackets.get(args[0]).getMethod("read", Connection.class, String[].class).invoke(null, c, args);
         } catch (NoSuchMethodException e) {
             e.printStackTrace(System.out);
-        } catch (InvocationTargetException e){
+        } catch (InvocationTargetException e) {
             if(e.getCause() instanceof InvalidPacketException)
                 c.send(new ClientPacket.ErrorPacket(c, msg.split(" ")[0], "Your message does not comply with Protocol v1.3: " + e.getCause().getMessage()));
             e.printStackTrace();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace(System.out);
         }
         return null;
@@ -88,8 +88,8 @@ public class Packets {
      * @param msg the packet that was sent
      * @return A packet instance that can be used by the system, if fail then null
      */
-    public static ClientPacket readClientPacket(Connection c, String msg){
-        if(ConnectServer.debug || ConnectClient.debug){
+    public static ClientPacket readClientPacket(Connection c, String msg) {
+        if(ConnectServer.debug || ConnectClient.debug) {
             if(ConnectServer.isServer) System.out.print(c.getClient().getName());
             System.out.println(" :> " + msg);
         }
@@ -98,11 +98,11 @@ public class Packets {
             return (ClientPacket) Packets.clientpackets.get(args[0]).getMethod("read", Connection.class, String[].class).invoke(null, c, args);
         } catch (NoSuchMethodException e) {
             e.printStackTrace(System.out);
-        } catch (InvocationTargetException e){
+        } catch (InvocationTargetException e) {
             if(e.getCause() instanceof InvalidPacketException)
                 c.send(new ServerPacket.ErrorPacket(c, msg.split(" ")[0], "Your message does not comply with Protocol v1.3: " + e.getCause().getMessage()));
             e.printStackTrace();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace(System.out);
         }
         return null;

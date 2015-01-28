@@ -3,7 +3,6 @@ package mmeent.java.main.connection.board;
 import mmeent.java.main.connection.game.Move;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -31,7 +30,9 @@ public class Board {
     private final int rowLength;
 
     /**
-     * Constructor of <code>Board</code> for a <code>Board</code> with custom dimensions and custom row length.
+     * Constructor of <code>Board</code> for a
+     * <code>Board</code> with
+     * custom dimensions and custom row length.
      * @param width Width of the <code>Board</code>.
      * @param height Height of the <code>Board</code>.
      * @param rowLength Length of the continuous row needed to win.
@@ -41,14 +42,14 @@ public class Board {
         requires width > 0 && heigth > 0 && rowLength > 0;
         ensures this.getWidth() == width && this.getHeight() == height;
      */
-    public Board(short width, short height, int rowLength){
-        this.width = width;
-        this.height = height;
+    public Board(short argWidth, short argHeight, int argRowLength) {
+        this.width = argWidth;
+        this.height = argHeight;
 
         this.fields = new byte[width * height];
 
         this.heights = new int[width];
-        this.rowLength = rowLength;
+        this.rowLength = argRowLength;
         this.winner = 0;
     }
 
@@ -62,7 +63,7 @@ public class Board {
        requires height > 0 && width > 0;
        ensures this.getWidth() == width && this.getHeight() == height;
      */
-    public Board(short width, short height){
+    public Board(short width, short height) {
         this(width, height, STANDARD_LENGTH);
     }
 
@@ -72,7 +73,7 @@ public class Board {
     /*@
         ensures this.getWidth() == STANDARD_WIDTH && this.getHeight() == height;
      */
-    public Board(){
+    public Board() {
         this(STANDARD_WIDTH, STANDARD_HEIGHT, STANDARD_LENGTH);
     }
 
@@ -83,7 +84,7 @@ public class Board {
     /*@
         ensures \result > 0;
      */
-    /*@ pure */public short getWidth(){
+    /*@ pure */public short getWidth() {
         return this.width;
     }
 
@@ -94,7 +95,7 @@ public class Board {
     /*@
         ensures \result > 0;
      */
-    /*@ pure */public short getHeight(){
+    /*@ pure */public short getHeight() {
         return this.height;
     }
 
@@ -103,7 +104,7 @@ public class Board {
      * @param i index of the field that has to be returned
      * @return The content of the field of which the index is given.
      */
-    /*@ pure */public byte getField(int i){
+    /*@ pure */public byte getField(int i) {
         return this.isField(i) ? this.fields[i] : 0;
     }
 
@@ -113,7 +114,7 @@ public class Board {
      * @param y The row of the field that has to be returned.
      * @return The contents of the field corresponding to the given coordinates.
      */
-    /*@ pure */public byte getField(int x, int y){
+    /*@ pure */public byte getField(int x, int y) {
         return this.isField(x, y) ? this.fields[x + y * this.width] : 0;
     }
 
@@ -129,6 +130,7 @@ public class Board {
     /*@ pure */public int getIndex(int x, int y) {
         return x + y * this.width;
     }
+
 
     /**
      * Function that checks whether the given row is full or not.
@@ -163,7 +165,7 @@ public class Board {
     /*@
         requires x >= 0 && y >= 0;
      */
-    /*@ pure */public boolean isField(int x, int y){
+    /*@ pure */public boolean isField(int x, int y) {
         return 0 <= x && x < this.width && 0 <= y && y < this.height;
     }
 
@@ -175,7 +177,7 @@ public class Board {
     /*@
         requires i >= 0;
      */
-    /*@ pure */public boolean isField(int i){
+    /*@ pure */public boolean isField(int i) {
         return 0 <= i && i < this.fields.length;
     }
 
@@ -187,13 +189,13 @@ public class Board {
      * @param dy Vertical length of the field that has to be returned
      * @return Returns a specified part of the <code>Board</code>
      */
-    public byte[] getFieldsRange(int start_x, int start_y, int dx, int dy){
+    public byte[] getFieldsRange(int start_x, int start_y, int dx, int dy) {
         if(dx < 0 || dy < 0) return null;
 
         byte[] r = new byte[(dx + 1) * (dy + 1)];
 
         for (int i = 0; i < dx; i++) {
-            for(int j = 0; j < dy; j++){
+            for(int j = 0; j < dy; j++) {
                 r[i + j * (dy + 1)] = this.getField(start_x + i, start_y + j);
             }
         }
@@ -205,7 +207,7 @@ public class Board {
      * @return Returns an array with the fields on this <code>Board</code>
      */
     //@ensures \result.length() == this.getWidth() * this.getHeight();
-    /*@ pure */public byte[] getFields(){
+    /*@ pure */public byte[] getFields() {
         return this.fields;
     }
 
@@ -228,7 +230,7 @@ public class Board {
         requires player >= 0;
         ensures this.getField(x,this.getColumnHeight(x) - 1) == player;
      */
-    public boolean move(short x, byte player){
+    public boolean move(short x, byte player) {
         if(this.heights[x] >= this.height) return false;
         int y = this.heights[x];
         this.fields[x + (y * this.width)] = player;
@@ -246,7 +248,7 @@ public class Board {
         requires player >= 0
         ensures \result == (\exists int i,j; 0 <= i && i < this.getWidth() && 0 <= j && j < this.getHeight(); checkAround(i,j,player) == true);
      */
-    /*@ pure */public boolean hasFour(byte player){
+    /*@ pure */public boolean hasFour(byte player) {
         //@loop_invariant 0 <= i && i <= this.getWidth();
         for(int i = 0; i < width; i++) {
             //@loop_invariant 0 <= i <= this.getHeight();
@@ -269,15 +271,15 @@ public class Board {
     /*@
         requires x >= 0 && y >= 0 && player >= 0;
      */
-    /*@ pure */public boolean checkAround(int x, int y, byte player){
+    /*@ pure */public boolean checkAround(int x, int y, byte player) {
         int[] towin = {this.rowLength,this.rowLength,this.rowLength,this.rowLength};
-        for(int i = -this.rowLength + 1; i < this.rowLength; i++){
+        for(int i = -this.rowLength + 1; i < this.rowLength; i++) {
             towin[0] = this.getField(x + i,y) == player || towin[0] <= 0 ? --towin[0] : this.rowLength;
             towin[1] = this.getField(x + i, y + i) == player || towin[1] <= 0 ? --towin[1] : this.rowLength;
             towin[2] = this.getField(x, y + i) == player || towin[2] <= 0 ? --towin[2] : this.rowLength;
             towin[3] = this.getField(x - i, y + i) == player || towin[3] <= 0 ? --towin[3] : this.rowLength;
         }
-        for(int i: towin){
+        for(int i: towin) {
             if(i <= 0) {
                 this.winner = player;
                 return true;
@@ -295,7 +297,7 @@ public class Board {
         ensures \result.getFields().length == this.getFields().length;
         ensures \forall int i; 0 <= i && i < this.getFields().length; \result.getField(i) == this.getField(i);
      */
-    /*@ pure */public Board deepCopy(){
+    /*@ pure */public Board deepCopy() {
         Board board = new Board(this.width, this.height, this.rowLength);
         for (int i = 0; i < this.fields.length; i++) {
             board.move(i, this.fields[i]);
@@ -312,7 +314,7 @@ public class Board {
         requires i >= 0 && val >= 0;
         ensures this.getField(i) == val;
      */
-    public void move(int i, byte val){
+    public void move(int i, byte val) {
         if(isField(i)) this.fields[i] = val;
     }
 
@@ -324,7 +326,7 @@ public class Board {
         requires i >= 0 && isField(i);
         ensures this.getField(i) == 0;
      */
-    public void remove(int i){
+    public void remove(int i) {
         if(isField(i)) this.fields[i] = 1;
     }
 
@@ -332,7 +334,7 @@ public class Board {
      * Check whether there is a winner or not
      * @return true if there is a winner;
      */
-    /*@ pure */public boolean hasWinner(){
+    /*@ pure */public boolean hasWinner() {
         return this.winner != 0;
     }
 
@@ -343,7 +345,7 @@ public class Board {
     /*@
         ensures \result == winner;
      */
-    /*@ pure */public byte getWinner(){
+    /*@ pure */public byte getWinner() {
         return this.winner;
     }
 
@@ -356,7 +358,7 @@ public class Board {
         requires 0 <= column && column < this.getWidth();
         ensures \result = this.heights[column];
      */
-    /*@ pure */public int getColumnHeight(short column){
+    /*@ pure */public int getColumnHeight(short column) {
         return this.heights[column];
     }
 }
