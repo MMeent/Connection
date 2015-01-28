@@ -23,10 +23,13 @@ public class ComputerPlayer implements Player {
     private byte id;
 
     /**
-     *
-     * @param name
-     * @param game
-     * @param id
+     * Constructor of <code>ComputerPlayer</code>
+     * @param name Name of the <code>ComputerPlayer</code>
+     * @param game <code>Game</code> of the <code>ComputerPlayer</code>
+     * @param id Id of the <code>ComputerPlayer</code>
+     */
+    /*@
+        ensures this.getId() = id && this.getName() == name; && this.getGame == game;
      */
     public ComputerPlayer(String name, Game game, byte id){
         this.id = id;
@@ -35,22 +38,34 @@ public class ComputerPlayer implements Player {
     }
 
     /**
-     *
-     * @param name
-     * @param game
+     * Constructor of <code>ComputerPlayer</code>
+     * @param name Name of the <code>ComputerPlayer</code>
+     * @param game <code>Game</code> of the <code>ComputerPlayer</code>
      */
     public ComputerPlayer(String name, Game game){
         this(name, game, (byte) 0);
     }
 
     /**
-     *
-     * @param name
+     * Constructor of <code>ComputerPlayer</code>
+     * @param name Name of the <code>ComputerPlayer</code>
      */
     public ComputerPlayer(String name){
         this(name, null, (byte) 0);
     }
 
+    /**
+     * Constructor of <code>ComputerPlayer</code>
+     */
+    public ComputerPlayer() {
+        super();
+    }
+
+    /**
+     * Function that asks the ComputerPlayer for a <code>Move</code>
+     * @param turn the turn they are in
+     * @return returns the next <code>Move</code> of the <code>ComputerPlayer</code>
+     */
     @Override
     public Move getMove(int turn) {
         Random randomGenerator = new Random();
@@ -60,34 +75,64 @@ public class ComputerPlayer implements Player {
         return new Move(this,(short) choice,turn);
     }
 
+    /**
+     * Get the name of the player
+     *
+     * @return the name of the player
+     */
     @Override
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Get the ID of the player
+     *
+     * @return the ID of the player
+     */
     @Override
     public byte getId() {
         return this.id;
     }
 
+    /**
+     * Set the id of the player
+     *
+     * @param id the id that will be given to the player
+     */
     @Override
-    public void setId(byte id){
+    public void setId(byte id) {
         this.id = id;
     }
 
+    /**
+     * Get the game the player is currently playing
+     *
+     * @return the game the player is playing
+     */
     @Override
-    @Nullable
     public Game getGame() {
         return this.game;
     }
 
+    /**
+     * Set the game the player is playing
+     *
+     * @param game the game the player will be playing
+     */
     @Override
     public void setGame(Game game) {
         this.game = game;
     }
 
+    /**
+     * Get the connection of the player
+     *
+     * @return the player's connection
+     */
     @Override
     public Connection getConnection() {
         return null;
     }
+
 }

@@ -114,7 +114,7 @@ public class Game extends Thread{
     }
 
     /**
-     * Function that starts the <code>Game</code.>
+     * Function that starts the game loop.
      */
     /*@
         ensures turn >= 0;
@@ -136,14 +136,6 @@ public class Game extends Thread{
         this.play();
     }
 
-    public static void main(String[] args) {
-        Player player1 = new LocalPlayer("Henk", (byte) 1);
-        Player player2 = new ComputerPlayerSmart("Sjaak", (byte) 2);
-        Player[] players = {player1,player2};
-        Game game = new Game(players);
-        game.play();
-    }
-
     public int getTurn(){
         return this.turn;
     }
@@ -151,7 +143,7 @@ public class Game extends Thread{
     /**
      * Make a move
      * @param move the move to be made
-     * @throws ConnectFourException
+     * @throws ConnectFourException throws exception if it is not the players turn or the move is not valid.
      */
     public void move(Move move) throws ConnectFourException{
         if(!move.isValid()) throw new ConnectFourException("You have to be the active player");

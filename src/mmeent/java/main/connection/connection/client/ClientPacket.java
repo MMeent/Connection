@@ -40,7 +40,7 @@ public class ClientPacket implements Packet {
      * @param c the connection over which the packet was sent
      * @param args the resulting <code>String[]</code> of arguments when the packet is split on spaces.
      * @return null if no packet can be constructed using the given arguments, else the new packet.
-     * @throws InvalidPacketException
+     * @throws InvalidPacketException throws exception if the incoming package is not valid.
      */
     public static ClientPacket read(Connection c, String[] args) throws InvalidPacketException{
         return new ClientPacket(c, "CLIENTPACKET");

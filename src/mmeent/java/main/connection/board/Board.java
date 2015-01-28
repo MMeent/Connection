@@ -184,12 +184,12 @@ public class Board {
     }
 
     /**
-     *
-     * @param start_x
-     * @param start_y
-     * @param dx
-     * @param dy
-     * @return
+     * Function that returns a specified part of the <code>Board</code>
+     * @param start_x Horizontal start point of the field that has to be returned
+     * @param start_y Vertical start point of the field that has to be returned
+     * @param dx Horizontal length of the field that has to be returned
+     * @param dy Vertical length of the field that has to be returned
+     * @return Returns a specified part of the <code>Board</code>
      */
     public byte[] getFieldsRange(int start_x, int start_y, int dx, int dy){
         if(dx < 0 || dy < 0) return null;

@@ -108,7 +108,7 @@ public class ConnectClient {
 
     /**
      * Start the ConnectClient
-     * @param args -u <username> for username, -d for debug, -g for GUI
+     * @param args -u 'username' for username, -d for debug, -g for GUI
      */
     public static void main(String[] args){
         String username = null;
