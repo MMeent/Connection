@@ -1,8 +1,6 @@
 package mmeent.java.main.connection.game;
 
-import mmeent.java.main.connection.ConnectClient;
-import mmeent.java.main.connection.ConnectServer;
-import mmeent.java.main.connection.connection.server.ServerPacket;
+import mmeent.java.main.connection.Protocol;
 import mmeent.java.main.connection.exception.ConnectFourException;
 import mmeent.java.main.connection.player.*;
 import mmeent.java.main.connection.board.Board;
@@ -17,7 +15,7 @@ import java.util.Map;
 /**
  * Created by Matthias on 20/12/2014.
  */
-public class Game{
+public class Game extends Thread{
     /*@
         public_invariant players.length >= 2;
         public_invariant playerAmount >= 2;
@@ -38,7 +36,7 @@ public class Game{
         requires players.length == 2;
         ensures this.players == players && board.getWidth() == 7 && board.getHeight() == 6;
      */
-    public Game(Player[] players){
+    public Game(Player[] players) {
         this(players, (short) 7, (short) 6);
     }
 
@@ -52,14 +50,14 @@ public class Game{
         requires players.length == 2;
         ensures this.players == players && board.getWidth() == width && board.getHeight() == height;
      */
-    public Game(Player[] players, short width, short height){
+    public Game(Player[] players, short width, short height) {
         this(players, width, height, (short) 4);
     }
 
     /**
      * Constructor of <code>Game</code> with custom <code>Board</code> size en custom row length
      * @param players Array of Players that will join the game
-     * @param width Width of the <code>Board</code>
+     * @param width WIdth of the <code>Board</code>
      * @param height Height of the <code>Board</code>
      * @param length Length of the row needed to win the <code>Game</code>
      */
@@ -67,7 +65,7 @@ public class Game{
         requires players.length == 2;
         ensures this.players == players && board.getWidth() == width && board.getHeight() == height;
      */
-    public Game(Player[] players, short width, short height, short length){
+    public Game(Player[] players, short width, short height, short length) {
         this(players, new Board(width, height, length));
     }
 
@@ -80,13 +78,13 @@ public class Game{
         requires players.length == 2;
         ensures this.players == players && board.getWidth() == width && board.getHeight() == height;
      */
-    public Game(Player[] players, Board board){
+    public Game(Player[] players, Board board) {
         this.board = board.deepCopy();
-        this.renderer = ConnectClient.isClient ? ConnectClient.get().getRenderer() : new TextBoardRenderer(this.board);
+        this.renderer = new TextBoardRenderer(this.board);
         this.players = new HashMap<Byte, Player>();
         this.playerAmount = players.length;
         byte i = 0;
-        for(Player player: players){
+        for(Player player: players) {
             player.setId(++i);
             player.setGame(this);
             this.players.put(i, player);
@@ -115,6 +113,10 @@ public class Game{
         return players;
     }
 
+    public void setBoard(Board argBoard) {
+        this.board = argBoard;
+    }
+
     /**
      * Function that starts the game loop.
      */
@@ -131,7 +133,7 @@ public class Game{
             a = a && !this.getBoard().hasWinner();
         }
         this.renderer.render();
-        ConnectClient.get().getRenderer().addMessage("The winner of the game is: " + players.get(this.board.getWinner()).getName());
+        System.out.println("The winner of the game is: " + players.get(this.board.getWinner()).getName());
     }
     
     public static void main(String[] args) {
@@ -142,7 +144,7 @@ public class Game{
         game.play();
     }
 
-    public int getTurn(){
+    public int getTurn() {
         return this.turn;
     }
 
@@ -154,25 +156,9 @@ public class Game{
     public void move(Move move) throws ConnectFourException{
         if(!move.isValid()) throw new ConnectFourException("You have to be the active player");
         move.makeMove();
-        if(ConnectServer.isServer) {
-            ServerPacket.MoveOkPacket packet = new ServerPacket.MoveOkPacket(this.getActivePlayer().getConnection(), move.getSymbol(), move.getColumn(), move.getPlayer());
-            for(Player p: this.players.values()){
-                p.getConnection().send(packet);
-            }
-            if(this.board.hasWinner()) for(Player p: this.players.values()){
-                p.getConnection().send(new ServerPacket.GameEndPacket(p.getConnection(), "Game has been won", this.getActivePlayer().getName()));
-            }
-            this.turn++;
-            if(!this.board.hasWinner()) this.players.get((byte) ((this.turn % this.players.size()) + 1)).getConnection().send(new ServerPacket.RequestMovePacket(null));
-        }
     }
 
-    public Player getActivePlayer(){
-        return this.players.get((byte) (this.turn % this.playerAmount + 1));
-    }
-
-    public void setBoard(Board board){
-        this.board = board;
-        this.renderer.setBoard(board);
+    public Player getActivePlayer() {
+        return this.players.get((byte) (this.turn % this.playerAmount));
     }
 }

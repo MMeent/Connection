@@ -20,7 +20,7 @@ public class Move {
      * @param column the column the move will be made in
      * @param turn the turn the move is made in
      */
-    public Move(Player player, short column, int turn){
+    public Move(Player player, short column, int turn) {
         this.column = column;
         this.turn = turn;
         this.player = player;
@@ -35,7 +35,7 @@ public class Move {
      * @param turn the turn the move is made in
      * @param board the board the move is made on
      */
-    public Move(byte id, short column, int turn, Board board){
+    public Move(byte id, short column, int turn, Board board) {
         this.column = column;
         this.turn = turn;
         this.symbol = id;
@@ -49,7 +49,7 @@ public class Move {
     /*@
         ensures \result = this.symbol;
      */
-    public byte getSymbol(){
+    public byte getSymbol() {
         return this.symbol;
     }
 
@@ -60,7 +60,7 @@ public class Move {
     /*@
         ensures \result == this.player;
      */
-    public Player getPlayer(){
+    public Player getPlayer() {
         return this.player;
     }
 
@@ -71,7 +71,7 @@ public class Move {
     /*@
         ensures \result == this.turn;
      */
-    public int getTurn(){
+    public int getTurn() {
         return this.turn;
     }
 
@@ -82,7 +82,7 @@ public class Move {
     /*@
         ensures \result == this.column;
      */
-    public short getColumn(){
+    public short getColumn() {
         return this.column;
     }
 
@@ -115,14 +115,14 @@ public class Move {
     /*@
 
      */
-    public int getValue(byte id){
+    public int getValue(byte id) {
         Board b = this.board.deepCopy();
         int[] posValues = {0, 0, 0, 0};
         int[] negValues = {0, 0, 0, 0};
         int actValue = 0;
-        for(int x = 0; x < b.getWidth() - 4; x++){
-            for(int y = 0; y < b.getHeight() - 4; y++){
-                for(int i = 0; i < 4; i++){
+        for(int x = 0; x < b.getWidth() - 4; x++) {
+            for(int y = 0; y < b.getHeight() - 4; y++) {
+                for(int i = 0; i < 4; i++) {
                     posValues[0] = board.getField(x + i, y) == 1 || board.getField(x + i, y) == 0  ? ++posValues[0] : 0;
                     posValues[1] = board.getField(x + i, y + 1) == 1 || board.getField(x + i, y + 1) == 0  ? ++posValues[1] : 0;
                     posValues[2] = board.getField(x, y + 1) == 1 || board.getField(x, y + 1) == 0  ? ++posValues[2] : 0;
@@ -133,7 +133,7 @@ public class Move {
                     negValues[2] = board.getField(x, y + i) == 2 || board.getField(x, y + i) == 0  ? ++negValues[2] : 0;
                     negValues[3] = board.getField(x + i, y - i) == 2 || board.getField(x + i, y - i) == 0  ? ++negValues[3] : 0;
                 }
-                for(int i = 0; i < posValues.length; i++){
+                for(int i = 0; i < posValues.length; i++) {
                     actValue += negValues[i] == 0 ? Math.pow(2, posValues[i]) : 0;
                     actValue -= posValues[i] == 0 ? Math.pow(2, negValues[i]) : 0;
                 }
@@ -146,7 +146,7 @@ public class Move {
      * Get the <code>Board</code> of the move
      * @return the board
      */
-    public Board getBoard(){
+    public Board getBoard() {
         return this.board;
     }
 }

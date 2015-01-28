@@ -29,7 +29,7 @@ public class Invite {
      * @param boardHeight the height of the board
      * @param boardWidth the width of the board
      */
-    public Invite(Player player1, Player player2, short boardHeight, short boardWidth){
+    public Invite(Player player1, Player player2, short boardHeight, short boardWidth) {
         this.player1 = player1;
         this.player2 = player2;
         this.boardWidth = boardWidth;
@@ -42,7 +42,7 @@ public class Invite {
      * Start a game that has the properties given in the invite properties
      * @return a <code>Game</code> object with preset values.
      */
-    public Game startGame(){
+    public Game startGame() {
         Player[] players = new Player[2];
         players[0] = player1;
         players[1] = player2;

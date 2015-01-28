@@ -7,11 +7,11 @@ package mmeent.java.main.connection.exception;
  * The general self-defined exception in our programme
  */
 public class ConnectFourException extends Exception{
-    public ConnectFourException(String errMsg){
+    public ConnectFourException(String errMsg) {
         super(errMsg);
     }
 
-    public ConnectFourException(){
+    public ConnectFourException() {
         this("General 4Connect Exception");
     }
 }
