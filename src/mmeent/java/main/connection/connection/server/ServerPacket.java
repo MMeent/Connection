@@ -544,7 +544,7 @@ public class ServerPacket implements Packet {
             super.write(c);
             c.writePartial(Byte.toString(this.playerid));
             c.writePartial(Short.toString(this.column));
-            c.writePartial(this.getClient().getName());
+            c.writePartial(this.player.getName());
             c.stopPacket();
             c.sendBuffer();
         }
