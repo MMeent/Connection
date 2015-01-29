@@ -16,8 +16,8 @@ public class ComputerPlayerSmart implements Player {
     private String name;
     private byte id;
     private Game game;
-    private static final int SEARCHDEPTH = 10;
-    private static final int OUTPUTDEPTH = 3;
+    public static int searchDepth = 10;
+    public static int outputDepth = 0;
 
     /**
      * Default constructor for ComputerPlayerSmart.
@@ -62,7 +62,7 @@ public class ComputerPlayerSmart implements Player {
     }
 
     /**
-     * Negamax the move, up do depth SEARCHDEPTH.
+     * Negamax the move, up do depth searchDepth.
      *
      * @param move the last move made
      * @param argDepth the depth it has searched
@@ -74,7 +74,7 @@ public class ComputerPlayerSmart implements Player {
     public int negamax(Move move, int argDepth, int color, Player[] ps, int turn) {
         int depth = argDepth;
         Board board = move.getBoard();
-        if (depth >= SEARCHDEPTH || board.hasWinner()) {
+        if (depth >= searchDepth || board.hasWinner()) {
             return color * move.getValue(ps[turn % ps.length].getId());
         }
         Board bc = board.deepCopy();
@@ -95,7 +95,7 @@ public class ComputerPlayerSmart implements Player {
                 b = val;
             }
         }
-        if (depth <= OUTPUTDEPTH) {
+        if (depth <= outputDepth) {
             System.out.println("R: " + b + " at depth " + depth);
         }
         return b;

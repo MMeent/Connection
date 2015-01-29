@@ -96,7 +96,8 @@ public class Move {
      */
     public boolean isValid() {
         return this.column >= 0 && this.column < this.board.getWidth() &&
-                !board.colIsFull(this.column) && !board.hasWinner() &&
+                !board.colIsFull(this.column) && 
+                !board.hasWinner() &&
                 !board.colIsFull(this.column);
     }
 

@@ -5,6 +5,9 @@ import mmeent.java.main.connection.connection.Packet;
 import mmeent.java.main.connection.connection.Packets;
 import mmeent.java.main.connection.connection.Side;
 import mmeent.java.main.connection.connection.client.ClientPacket;
+import mmeent.java.main.connection.player.ComputerPlayerRandom;
+import mmeent.java.main.connection.player.ComputerPlayerSmart;
+import mmeent.java.main.connection.player.Player;
 import mmeent.java.main.connection.render.Renderer;
 import mmeent.java.main.connection.render.TextBoardRenderer;
 
@@ -18,7 +21,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author mmeent
  */
 public class ConnectClient {
-    private String username;
+    private Player user;
     private Renderer renderer;
     public static Boolean debug = false;
     private Connection connection;
@@ -34,7 +37,7 @@ public class ConnectClient {
      * @param argDebug whether there has to be debug output or not
      */
     public ConnectClient(String argUsername, Renderer argRenderer , Boolean argDebug) {
-        this.username = argUsername;
+        this.user = Player.get(argUsername);
         this.renderer = argRenderer;
         ConnectClient.debug = argDebug;
 
@@ -73,7 +76,7 @@ public class ConnectClient {
                                 Protocol.Features.CUSTOM_BOARD_SIZE,
                                 Protocol.Features.LEADERBOARD};
             this.connection.send(new ClientPacket.ConnectPacket(this.connection,
-                                                                username,
+                                                                argUsername,
                                                                 options));
 
         } catch (IOException e) {
@@ -99,7 +102,7 @@ public class ConnectClient {
                     this.connection.send(new ClientPacket.AcceptInvitePacket(this.connection,
                             args[1]));
                     break;
-                case "DECLINE" :
+                case "DECLINE":
                     this.connection.send(new ClientPacket.DeclineInvitePacket(this.connection,
                             args[1]));
                     break;
@@ -114,6 +117,28 @@ public class ConnectClient {
                     System.out.println(Short.parseShort(args[1]));
                     this.connection.send(new ClientPacket.MovePacket(this.connection,
                             Short.parseShort(args[1])));
+                    break;
+                case "HINT":
+                    ComputerPlayerRandom p = new ComputerPlayerRandom(this.user.getName(),
+                            (byte) 0);
+                    p.setGame(Player.get(this.user.getName()).getGame());
+                    System.out.println("HINT: you can move into column " + 
+                            p.getMove(p.getGame().getTurn()).getColumn());
+                    break;
+                case "INTELLIGENCE":
+                    ComputerPlayerSmart.searchDepth = Math.max(0, Math.min(15, 
+                            Integer.parseInt(args[2])));
+                    break;
+                case "AI": // Artificial Intelligence
+                    this.user = new ComputerPlayerSmart(this.user.getName(), this.user.getId());
+                    break;
+                case "HI": // Human Intelligence
+                    this.user = Player.get(this.user.getName());
+                    break;
+                case "HELP":
+                    this.renderer.addMessage("The following commands are available: ");
+                    this.renderer.addMessage("Accept, Ai, Decline, Help, Hi, Hint, " + 
+                            "Intelligence, Invite, Move, Ping and Quit");
                     break;
                 default:
                     this.connection.send(new ClientPacket.ChatPacket(this.connection, s));
