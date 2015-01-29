@@ -1,5 +1,8 @@
 package mmeent.java.main.connection.game;
 
+import mmeent.java.main.connection.ConnectServer;
+import mmeent.java.main.connection.connection.Packet;
+import mmeent.java.main.connection.connection.server.ServerPacket;
 import mmeent.java.main.connection.exception.ConnectFourException;
 import mmeent.java.main.connection.player.*;
 import mmeent.java.main.connection.board.Board;
@@ -14,7 +17,7 @@ import java.util.Map;
 /**
  * Created by Matthias on 20/12/2014.
  */
-public class Game extends Thread {
+public class Game {
     /*@
         public_invariant PLAYER_MAP.length >= 2;
         public_invariant playerAmount >= 2;
@@ -159,11 +162,22 @@ public class Game extends Thread {
     public void move(Move move) throws ConnectFourException {
         if (!move.isValid()) {
             throw new ConnectFourException("You have to be the active player");
+        } else {
+            move.makeMove();
+            if (ConnectServer.isServer) {
+                Packet packet = new ServerPacket.MoveOkPacket(null, move.getSymbol(), 
+                        move.getColumn(), move.getPlayer());
+                for (Player p: this.getPlayers().values()) {
+                    p.getConnection().send(packet);
+                }
+                this.turn++;
+                this.getActivePlayer().getConnection().send(
+                        new ServerPacket.RequestMovePacket(null));
+            }
         }
-        move.makeMove();
     }
 
     public Player getActivePlayer() {
-        return this.players.get((byte) (this.turn % this.playerAmount));
+        return this.players.get((byte) (this.turn % this.playerAmount + 1));
     }
 }
