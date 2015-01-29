@@ -12,7 +12,8 @@ import java.util.Map;
  * @author lars
  * @author mmeent
  *
- * This interface includes the registry of players. If an non-registered user is requested, it will create a new one.
+ * This interface includes the registry of players.
+ * If an non-registered user is requested, it will create a new one.
  */
 public interface Player {
     public static Map<String, Player> players = new HashMap<String, Player>();
@@ -40,7 +41,7 @@ public interface Player {
      * @param name Name of the new <code>Player</code>
      * @return Returns the player
      */
-    public static Player get(String name){
+    public static Player get(String name) {
         return Player.get(name, (byte) 0);
     }
 

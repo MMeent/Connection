@@ -64,7 +64,7 @@ public class Packets {
      * @return a packet if possible, otherwise null;
      */
     public static ServerPacket readServerPacket(Connection c, String msg) {
-        if(ConnectServer.debug || ConnectClient.debug) {
+        if (ConnectServer.debug || ConnectClient.debug) {
             System.out.println(" :> " + msg);
         }
         try {
@@ -73,7 +73,7 @@ public class Packets {
         } catch (NoSuchMethodException e) {
             e.printStackTrace(System.out);
         } catch (InvocationTargetException e) {
-            if(e.getCause() instanceof InvalidPacketException)
+            if (e.getCause() instanceof InvalidPacketException)
                 c.send(new ClientPacket.ErrorPacket(c, msg.split(" ")[0], "Your message does not comply with Protocol v1.3: " + e.getCause().getMessage()));
             e.printStackTrace();
         } catch (Exception e) {
@@ -89,8 +89,8 @@ public class Packets {
      * @return A packet instance that can be used by the system, if fail then null
      */
     public static ClientPacket readClientPacket(Connection c, String msg) {
-        if(ConnectServer.debug || ConnectClient.debug) {
-            if(ConnectServer.isServer) System.out.print(c.getClient().getName());
+        if (ConnectServer.debug || ConnectClient.debug) {
+            if (ConnectServer.isServer) System.out.print(c.getClient().getName());
             System.out.println(" :> " + msg);
         }
         try {
@@ -99,7 +99,7 @@ public class Packets {
         } catch (NoSuchMethodException e) {
             e.printStackTrace(System.out);
         } catch (InvocationTargetException e) {
-            if(e.getCause() instanceof InvalidPacketException)
+            if (e.getCause() instanceof InvalidPacketException)
                 c.send(new ServerPacket.ErrorPacket(c, msg.split(" ")[0], "Your message does not comply with Protocol v1.3: " + e.getCause().getMessage()));
             e.printStackTrace();
         } catch (Exception e) {

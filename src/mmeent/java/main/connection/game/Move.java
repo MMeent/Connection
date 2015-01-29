@@ -15,31 +15,31 @@ public class Move {
     private byte symbol;
 
     /**
-     * General move constructor
-     * @param player the player that will make a move
-     * @param column the column the move will be made in
-     * @param turn the turn the move is made in
+     * General move constructor.
+     * @param argPlayer the player that will make a move
+     * @param argColumn the column the move will be made in
+     * @param argTurn the turn the move is made in
      */
-    public Move(Player player, short column, int turn) {
-        this.column = column;
-        this.turn = turn;
-        this.player = player;
+    public Move(Player argPlayer, short argColumn, int argTurn) {
+        this.column = argColumn;
+        this.turn = argTurn;
+        this.player = argPlayer;
         this.symbol = player.getId();
         this.board = player.getGame().getBoard();
     }
 
     /**
-     * Move constructor without using a player object
+     * Move constructor without using a player object.
      * @param id the id of the player
-     * @param column the column the move is made in
-     * @param turn the turn the move is made in
-     * @param board the board the move is made on
+     * @param argColumn the column the move is made in
+     * @param argTurn the turn the move is made in
+     * @param argBoard the board the move is made on
      */
-    public Move(byte id, short column, int turn, Board board) {
-        this.column = column;
-        this.turn = turn;
+    public Move(byte id, short argColumn, int argTurn, Board argBoard) {
+        this.column = argColumn;
+        this.turn = argTurn;
         this.symbol = id;
-        this.board = board;
+        this.board = argBoard;
     }
 
     /**
@@ -54,7 +54,7 @@ public class Move {
     }
 
     /**
-     * Get the player corresponding to the move
+     * Get the player corresponding to the move.
      * @return the player
      */
     /*@
@@ -91,10 +91,12 @@ public class Move {
      * @return true if the move is valid
      */
     /*@
-        ensures \result == (this.column >= 0 && this.column < this.board.getWidth() && !this.board.colIsFull(this.column));
+        ensures \result == (this.column >= 0 &&
+         this.column < this.board.getWidth() && !this.board.colIsFull(this.column));
      */
     public boolean isValid() {
-        return (this.column >= 0 && this.column < this.board.getWidth() && !this.board.colIsFull(this.column) && !this.board.hasWinner() && !this.board.colIsFull(this.column));
+        return this.column >= 0 && this.column < this.board.getWidth() &&
+                !this.board.colIsFull(this.column) && !this.board.hasWinner() && !this.board.colIsFull(this.column);
     }
 
     /**
@@ -120,20 +122,28 @@ public class Move {
         int[] posValues = {0, 0, 0, 0};
         int[] negValues = {0, 0, 0, 0};
         int actValue = 0;
-        for(int x = 0; x < b.getWidth() - 4; x++) {
-            for(int y = 0; y < b.getHeight() - 4; y++) {
-                for(int i = 0; i < 4; i++) {
-                    posValues[0] = board.getField(x + i, y) == 1 || board.getField(x + i, y) == 0  ? ++posValues[0] : 0;
-                    posValues[1] = board.getField(x + i, y + 1) == 1 || board.getField(x + i, y + 1) == 0  ? ++posValues[1] : 0;
-                    posValues[2] = board.getField(x, y + 1) == 1 || board.getField(x, y + 1) == 0  ? ++posValues[2] : 0;
-                    posValues[3] = board.getField(x + i, y - i) == 1 || board.getField(x + i, y - i) == 0  ? ++posValues[3] : 0;
+        for (int x = 0; x < b.getWidth() - 4; x++) {
+            for (int y = 0; y < b.getHeight() - 4; y++) {
+                for (int i = 0; i < 4; i++) {
+                    posValues[0] = board.getField(x + i, y) == 1 ||
+                            board.getField(x + i, y) == 0  ? ++posValues[0] : 0;
+                    posValues[1] = board.getField(x + i, y + 1) == 1 ||
+                            board.getField(x + i, y + 1) == 0  ? ++posValues[1] : 0;
+                    posValues[2] = board.getField(x, y + 1) == 1 ||
+                            board.getField(x, y + 1) == 0  ? ++posValues[2] : 0;
+                    posValues[3] = board.getField(x + i, y - i) == 1 ||
+                            board.getField(x + i, y - i) == 0  ? ++posValues[3] : 0;
 
-                    negValues[0] = board.getField(x + i, y) == 2 || board.getField(x + i, y) == 0  ? ++negValues[0] : 0;
-                    negValues[1] = board.getField(x + i, y + i) == 2 || board.getField(x + i, y + i) == 0  ? ++negValues[1] : 0;
-                    negValues[2] = board.getField(x, y + i) == 2 || board.getField(x, y + i) == 0  ? ++negValues[2] : 0;
-                    negValues[3] = board.getField(x + i, y - i) == 2 || board.getField(x + i, y - i) == 0  ? ++negValues[3] : 0;
+                    negValues[0] = board.getField(x + i, y) == 2 ||
+                            board.getField(x + i, y) == 0  ? ++negValues[0] : 0;
+                    negValues[1] = board.getField(x + i, y + i) == 2 ||
+                            board.getField(x + i, y + i) == 0  ? ++negValues[1] : 0;
+                    negValues[2] = board.getField(x, y + i) == 2 ||
+                            board.getField(x, y + i) == 0  ? ++negValues[2] : 0;
+                    negValues[3] = board.getField(x + i, y - i) == 2 ||
+                            board.getField(x + i, y - i) == 0  ? ++negValues[3] : 0;
                 }
-                for(int i = 0; i < posValues.length; i++) {
+                for (int i = 0; i < posValues.length; i++) {
                     actValue += negValues[i] == 0 ? Math.pow(2, posValues[i]) : 0;
                     actValue -= posValues[i] == 0 ? Math.pow(2, negValues[i]) : 0;
                 }

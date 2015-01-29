@@ -16,21 +16,21 @@ public class ComputerPlayerSmart implements Player {
     private String name;
     private byte id;
     private Game game;
-    private static final int searchDepth = 10;
-    private static final int outputDepth = 3;
+    private static final int SEARCHDEPTH = 10;
+    private static final int OUTPUTDEPTH = 3;
 
     /**
-     * Default constructor for ComputerPlayerSmart
-     * @param name the name of the computerplayer
-     * @param id the id it has to play with
+     * Default constructor for ComputerPlayerSmart.
+     * @param argName the name of the computerplayer
+     * @param argId the id it has to play with
      */
-    public ComputerPlayerSmart(String name, byte id) {
-        this.name = name;
-        this.id = id;
+    public ComputerPlayerSmart(String argName, byte argId) {
+        this.name = argName;
+        this.id = argId;
     }
 
     /**
-     * Get the move to play from the computerplayer
+     * Get the move to play from the computerplayer.
      * @param turn the turn they are in now
      * @return the move the computerplayer is doing
      */
@@ -43,13 +43,15 @@ public class ComputerPlayerSmart implements Player {
         int best = Integer.MIN_VALUE;
         short v = 0;
         System.out.println(rows.size());
-        for(short row: rows) {
+        for (short row: rows) {
             Board b = boardCopy.deepCopy();
             Move move = new Move(players.get(turn % players.size()), row, turn, b);
             move.makeMove();
-            int score = -negamax(move, 0, 1, this.game.getPlayers().values().toArray(new Player[this.game.getPlayers().size()]), this.game.getTurn() + 1);
+            int score = -negamax(move, 0, 1,
+                    game.getPlayers().values().toArray(new Player[this.game.getPlayers().size()]),
+                    game.getTurn() + 1);
             System.out.println("Score: " + score +  " for col " + row);
-            if(score > best){
+            if (score > best) {
                 best = score;
                 v = row;
             }
@@ -60,7 +62,7 @@ public class ComputerPlayerSmart implements Player {
     }
 
     /**
-     * Negamax the move, up do depth searchdepth;
+     * Negamax the move, up do depth SEARCHDEPTH.
      *
      * @param move the last move made
      * @param depth the depth it has searched
@@ -69,24 +71,33 @@ public class ComputerPlayerSmart implements Player {
      * @param turn the turn it is playing
      * @return the value of the node
      */
-    public int negamax(Move move, int depth, int color, Player[] ps, int turn){
+    public int negamax(Move move, int argDepth, int color, Player[] ps, int turn) {
+        int depth = argDepth;
         Board board = move.getBoard();
-        if(depth >= searchDepth || board.hasWinner()){
+        if (depth >= SEARCHDEPTH || board.hasWinner()) {
             return color * move.getValue(ps[turn % ps.length].getId());
         }
         Board bc = board.deepCopy();
         List<Short> cols = board.availableCols();
-        if(cols.size() == 0) return color * move.getValue(ps[turn % ps.length].getId());
+        if (cols.size() == 0) {
+            return color * move.getValue(ps[turn % ps.length].getId());
+        }
         int b = Integer.MIN_VALUE;
-        ++depth;
-        for(short i: cols){
+        depth = depth + 1;
+        for (short i: cols) {
             Move m = new Move(ps[turn % ps.length].getId(), i, turn, bc);
-            if(!m.isValid()) continue;
+            if (!m.isValid()) {
+                continue;
+            }
             m.makeMove();
             int val = -negamax(m, depth, -color, ps, turn + 1);
-            if(val >= b) b = val;
+            if (val >= b) {
+                b = val;
+            }
         }
-        if(depth <= outputDepth) System.out.println("R: " + b + " at depth " + depth);
+        if (depth <= OUTPUTDEPTH) {
+            System.out.println("R: " + b + " at depth " + depth);
+        }
         return b;
     }
 /*
@@ -94,13 +105,13 @@ public class ComputerPlayerSmart implements Player {
         Board boardCopy = board.deepCopy();
         int in = 0;
 
-        for(int i = 0; i < board.getWidth(); i ++) {
+        for (int i = 0; i < board.getWidth(); i ++) {
             Move move = new Move(players.get(turn % players.size()), (short) i, turn, boardCopy);
-            if(!move.isValid()) continue;
+            if (!move.isValid()) continue;
             move.makeMove();
-            if(boardCopy.hasWinner() || depth == 0){
+            if (boardCopy.hasWinner() || depth == 0) {
 
-            } else if(depth > 0){
+            } else if (depth > 0) {
                 in += determineMove(players, ++turn, boardCopy, --depth);
             }
             boardCopy = board.deepCopy();
@@ -110,7 +121,7 @@ public class ComputerPlayerSmart implements Player {
 */
 
     /**
-     * Get the name of the computerplayer
+     * Get the name of the computerplayer.
      * @return the name of the player
      */
     @Override
@@ -119,7 +130,7 @@ public class ComputerPlayerSmart implements Player {
     }
 
     /**
-     * Get the ID of the player
+     * Get the ID of the player.
      * @return the id of the player
      */
     @Override
@@ -128,16 +139,16 @@ public class ComputerPlayerSmart implements Player {
     }
 
     /**
-     * set the ID of the player to <code>id</code>
+     * set the ID of the player to <code>id</code>.
      * @param id the id that is being set
      */
     @Override
-    public void setId(byte id) {
-        this.id = id;
+    public void setId(byte argId) {
+        this.id = argId;
     }
 
     /**
-     * Get the game the computerplayer is currently playing
+     * Get the game the computerplayer is currently playing.
      * @return the game the player is playing
      */
     @Override
@@ -146,22 +157,26 @@ public class ComputerPlayerSmart implements Player {
     }
 
     /**
-     * Set the game of the player to <code>game</code>
-     * @param game the game that the player will be playing
+     * Set the game of the player to <code>game</code>.
+     * @param argGame the game that the player will be playing
      */
     @Override
-    public void setGame(Game game) {
-        this.game = game;
+    public void setGame(Game argGame) {
+        this.game = argGame;
     }
 
     /**
-     * Get the connection of this player
+     * Get the connection of this player.
      * @return the connection
      */
     @Override
-    public Connection getConnection(){
-        if(ConnectServer.isServer) return ConnectServer.server.getConnection(this);
-        if(ConnectClient.isClient) return ConnectClient.get().getConnection();
+    public Connection getConnection() {
+        if (ConnectServer.isServer) {
+            return ConnectServer.server.getConnection(this);
+        }
+        if (ConnectClient.isClient) {
+            return ConnectClient.get().getConnection();
+        }
         return null;
     }
 }

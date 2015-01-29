@@ -5,8 +5,6 @@ import mmeent.java.main.connection.connection.Packet;
 import mmeent.java.main.connection.connection.Packets;
 import mmeent.java.main.connection.connection.Side;
 import mmeent.java.main.connection.connection.client.ClientPacket;
-import mmeent.java.main.connection.exception.ConnectFourException;
-import mmeent.java.main.connection.game.Game;
 import mmeent.java.main.connection.render.Renderer;
 import mmeent.java.main.connection.render.TextBoardRenderer;
 
@@ -30,28 +28,29 @@ public class ConnectClient {
     public static LinkedBlockingQueue<Packet> packets = new LinkedBlockingQueue<Packet>();
 
     /**
-     * Default constructor of ConnectClient
-     * @param username the username of the player that will be playing
-     * @param renderer the renderer that will be used to render the different parts of client
-     * @param debug whether there has to be debug output or not
+     * Default constructor of ConnectClient.
+     * @param argUsername the username of the player that will be playing
+     * @param argRenderer the renderer that will be used to render the different parts of client
+     * @param argDebug whether there has to be debug output or not
      */
-    public ConnectClient(String username, Renderer renderer, Boolean debug){
-        this.username = username;
-        this.renderer = renderer;
-        ConnectClient.debug = debug;
+    public ConnectClient(String argUsername, Renderer argRenderer , Boolean argDebug) {
+        this.username = argUsername;
+        this.renderer = argRenderer;
+        ConnectClient.debug = argDebug;
 
         Packets.registerServerPackets();
         Packets.registerClientPackets();
 
         Scanner in = new Scanner(System.in);
         System.out.println("IP to connect to: ");
-        String IP = in.nextLine();
+        String iP = in.nextLine();
         System.out.println("Port to connect to: ");
-        int port = in.hasNextInt() ? Integer.parseInt(in.nextLine()) : Protocol.Settings.DEFAULT_PORT;
-        System.out.println("Connecting to " + IP + " on port " + port);
+        int port = in.hasNextInt() ?
+                Integer.parseInt(in.nextLine()) : Protocol.Settings.DEFAULT_PORT;
+        System.out.println("Connecting to " + iP + " on port " + port);
         Socket s;
         try {
-            s = new Socket(IP, port);
+            s = new Socket(iP, port);
             this.connection = new Connection(s, Side.CLIENT);
 
             Thread packetHandler = new Thread() {
@@ -70,8 +69,12 @@ public class ConnectClient {
             packetHandler.setDaemon(true);
             packetHandler.start();
 
-            String[] options = {Protocol.Features.CHAT, Protocol.Features.CUSTOM_BOARD_SIZE, Protocol.Features.LEADERBOARD};
-            this.connection.send(new ClientPacket.ConnectPacket(this.connection, username, options));
+            String[] options = {Protocol.Features.CHAT,
+                                Protocol.Features.CUSTOM_BOARD_SIZE,
+                                Protocol.Features.LEADERBOARD};
+            this.connection.send(new ClientPacket.ConnectPacket(this.connection,
+                                                                username,
+                                                                options));
 
         } catch (IOException e) {
             e.printStackTrace(System.out);
@@ -79,51 +82,75 @@ public class ConnectClient {
         }
     }
 
-    public void run(){
+    public void run() {
         Scanner in = new Scanner(System.in);
-        while(!this.shutdown){
+        while (!this.shutdown) {
             String s = in.nextLine();
             this.shutdown = s.toUpperCase().startsWith("QUIT");
             String[] args = s.split(" ");
-            switch(args[0].toUpperCase()) {
+            switch (args[0].toUpperCase()) {
                 case "INVITE": this.connection.send(args.length > 2
-                        ? new ClientPacket.InvitePacket(this.connection, args[1], Short.parseShort(args[2]), Short.parseShort(args[3]))
-                        : new ClientPacket.InvitePacket(this.connection, args[1]));break;
-                case "ACCEPT": this.connection.send(new ClientPacket.AcceptInvitePacket(this.connection, args[1]));break;
-                case "DECLINE": this.connection.send(new ClientPacket.DeclineInvitePacket(this.connection, args[1]));break;
-                case "PING": this.connection.send(new ClientPacket.PingPacket(this.connection)); break;
-                case "QUIT": this.connection.send(new ClientPacket.QuitPacket(this.connection, s.replaceFirst(args[0], "")));break;
-                case "MOVE": System.out.println(Short.parseShort(args[1]));
-                    this.connection.send(new ClientPacket.MovePacket(this.connection, Short.parseShort(args[1])));break;
-                default: this.connection.send(new ClientPacket.ChatPacket(this.connection, s));break;
+                                    ? new ClientPacket.InvitePacket(this.connection, args[1],
+                                                                  Short.parseShort(args[2]),
+                                                                  Short.parseShort(args[3]))
+                                    : new ClientPacket.InvitePacket(this.connection, args[1]));
+                    break;
+                case "ACCEPT" :
+                    this.connection.send(new ClientPacket.AcceptInvitePacket(this.connection,
+                            args[1]));
+                    break;
+                case "DECLINE" :
+                    this.connection.send(new ClientPacket.DeclineInvitePacket(this.connection,
+                            args[1]));
+                    break;
+                case "PING":
+                    this.connection.send(new ClientPacket.PingPacket(this.connection));
+                    break;
+                case "QUIT":
+                    this.connection.send(new ClientPacket.QuitPacket(this.connection,
+                            s.replaceFirst(args[0], "")));
+                    break;
+                case "MOVE":
+                    System.out.println(Short.parseShort(args[1]));
+                    this.connection.send(new ClientPacket.MovePacket(this.connection,
+                            Short.parseShort(args[1])));
+                    break;
+                default:
+                    this.connection.send(new ClientPacket.ChatPacket(this.connection, s));
+                    break;
             }
         }
         this.connection.send(new ClientPacket.QuitPacket(this.connection, "Leave"));
     }
 
     /**
-     * Get the renderer used in the ConnectClient
+     * Get the renderer used in the ConnectClient.
      * @return the renderer used
      */
-    public Renderer getRenderer(){
+    public Renderer getRenderer() {
         return this.renderer;
     }
 
     /**
-     * Start the ConnectClient
+     * Start the ConnectClient.
      * @param args -u 'username' for username, -d for debug, -g for GUI
      */
-    public static void main(String[] args){
+    public static void main(String[] args) {
         String username = null;
-        Boolean debug = false;
-        Boolean graphical = false;
-        for(int i = 0; i < args.length; i++){
-            switch(args[i]){
-                case "-u": username = args[++i];
+        ConnectClient.debug = false;
+
+        int offset = 0;
+        for (int i = 0; i + offset < args.length; i++) {
+            switch (args[i + offset]) {
+                case "-u": username = args[i + offset + 1];
+                    offset++;
+                    break;
                 case "-d": debug = true;
+                    break;
             }
+
         }
-        if(username == null){
+        if (username == null) {
             Scanner s = new Scanner(System.in);
             System.out.println("Username: ");
             String un = s.next();
@@ -134,15 +161,15 @@ public class ConnectClient {
         ConnectClient.get.run();
     }
 
-    public Connection getConnection(){
+    public Connection getConnection() {
         return this.connection;
     }
 
     /**
-     * Get the ConnectClient
+     * Get the ConnectClient.
      * @return the connect client
      */
-    public static ConnectClient get(){
+    public static ConnectClient get() {
         return ConnectClient.get;
     }
 }

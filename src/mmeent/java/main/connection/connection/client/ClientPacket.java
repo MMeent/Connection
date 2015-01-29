@@ -26,23 +26,27 @@ public class ClientPacket implements Packet {
     /**
      * Default constructor for the client-sent packets.
      *
-     * @param connection the connection the packet was sent over
-     * @param prefix the header of the packet, as defined by the protocol.
+     * @param argConnection the connection the packet was sent over
+     * @param argPrefix the header of the packet, as defined by the protocol.
      */
-    public ClientPacket(Connection connection, String prefix) {
-        this.connection = connection;
-        if(connection != null) this.client = connection.getClient();
-        this.prefix = prefix;
+    public ClientPacket(Connection argConnection, String argPrefix) {
+        this.connection = argConnection;
+        if (argConnection != null) {
+            this.client = connection.getClient();
+        }
+        this.prefix = argPrefix;
     }
 
     /**
-     * The method called by <code>mmeent.java.main.connection.connection.Packets</code> via reflection to create a new packet.
+     * The method called by <code>mmeent.java.main.connection.connection.Packets</code>
+     * reflection to create a new packet.
      * @param c the connection over which the packet was sent
-     * @param args the resulting <code>String[]</code> of arguments when the packet is split on spaces.
+     * @param args the resulting <code>String[]</code> of arguments
+     *             when the packet is split on spaces.
      * @return null if no packet can be constructed using the given arguments, else the new packet.
      * @throws InvalidPacketException throws exception if the incoming package is not valid.
      */
-    public static ClientPacket read(Connection c, String[] args) throws InvalidPacketException{
+    public static ClientPacket read(Connection c, String[] args) throws InvalidPacketException {
         return new ClientPacket(c, "CLIENTPACKET");
     }
 
@@ -87,7 +91,7 @@ public class ClientPacket implements Packet {
     }
 
     /**
-     * An easy way to get the corresponding client for the sent packet
+     * An easy way to get the corresponding client for the sent packet.
      * @return the client corresponding to the packet.
      */
     public Player getClient() {
@@ -95,13 +99,13 @@ public class ClientPacket implements Packet {
     }
 
     /**
-     * The client CHAT packet
+     * The client CHAT packet.
      * PROTOCOL: Protocol.Client.CHAT
      */
-    public static class ChatPacket extends ClientPacket{
+    public static class ChatPacket extends ClientPacket {
         private String message = "";
 
-        public static ChatPacket read(Connection c, String[] args) throws InvalidPacketException{
+        public static ChatPacket read(Connection c, String[] args) throws InvalidPacketException {
             String message = "";
             for (int i = 1; i < args.length; i++) {
                 message += " " + args[i];
@@ -109,9 +113,9 @@ public class ClientPacket implements Packet {
             return new ChatPacket(c, message);
         }
 
-        public ChatPacket(Connection c, String message) {
+        public ChatPacket(Connection c, String argMessage) {
             super(c, Protocol.Client.CHAT);
-            this.message = message;
+            this.message = argMessage;
         }
 
         public synchronized void write(Connection c) {
@@ -127,30 +131,32 @@ public class ClientPacket implements Packet {
     }
 
     /**
-     * The client CONNECT packet
+     * The client CONNECT packet.
      * PROTOCOL: Protocol.Client.CONNECT
      */
-    public static class ConnectPacket extends ClientPacket{
+    public static class ConnectPacket extends ClientPacket {
         private String username;
         private String[] options;
 
-        public static ConnectPacket read(Connection c, String[] args) throws InvalidPacketException{
+        public static ConnectPacket read(Connection c, String[] args)
+                throws InvalidPacketException {
             String username = args[1];
-            String[] options = (args.length > 1) ? Arrays.copyOfRange(args, 2, args.length) : new String[0];
+            String[] options = (args.length > 1) ?
+                    Arrays.copyOfRange(args, 2, args.length) : new String[0];
             return new ConnectPacket(c, username, options);
         }
 
-        public ConnectPacket(Connection c, String username, String[] options) {
+        public ConnectPacket(Connection c, String argUsername, String[] argOptions) {
             super(c, Protocol.Client.CONNECT);
-            this.username = username;
-            this.options = options;
-            c.setClient(Player.get(username));
+            this.username = argUsername;
+            this.options = argOptions;
+            c.setClient(Player.get(argUsername));
         }
 
         public synchronized void write(Connection c) {
             super.write(c);
             c.writePartial(username);
-            for(String opt: this.options) {
+            for (String opt: this.options) {
                 c.writePartial(opt);
             }
             c.stopPacket();
@@ -159,38 +165,43 @@ public class ClientPacket implements Packet {
 
         public void onReceive() {
             this.getConnection().setClient(Player.get(this.username));
-            ConnectServer.server.addPlayerConnection(Player.get(this.username), this.getConnection());
+            ConnectServer.server.addPlayerConnection(Player.get(this.username),
+                    this.getConnection());
             this.respond(new ServerPacket.AcceptConnectPacket(this.getConnection()));
             Player[] players = new Player[ConnectServer.server.getPlayers().size()];
             players = ConnectServer.server.getPlayers().toArray(players);
-            ConnectServer.server.notifyAll(new ServerPacket.LobbyPacket(this.getConnection(), players));
+            ConnectServer.server.notifyAll(new ServerPacket.LobbyPacket(this.getConnection(),
+                    players));
         }
     }
 
     /**
-     * The client INVITE packet
+     * The client INVITE packet.
      * PROTOCOL: Protocol.Client.INVITE
      */
-    public static class InvitePacket extends ClientPacket{
+    public static class InvitePacket extends ClientPacket {
         private String playername;
         private short boardwidth;
         private short boardheight;
 
-        public static InvitePacket read(Connection c, String[] args) throws InvalidPacketException{
+        public static InvitePacket read(Connection c, String[] args) throws InvalidPacketException {
             String playername = args[1];
-            if(args.length < 4) return new InvitePacket(c, playername);
-            return new InvitePacket(c, playername, Short.parseShort(args[2]), Short.parseShort(args[3]));
+            if (args.length < 4) {
+                return new InvitePacket(c, playername);
+            }
+            return new InvitePacket(c, playername,
+                    Short.parseShort(args[2]), Short.parseShort(args[3]));
         }
 
-        public InvitePacket(Connection c, String playername) {
-            this(c, playername, (short) 7, (short) 6);
+        public InvitePacket(Connection c, String argPlayername) {
+            this(c, argPlayername, (short) 7, (short) 6);
         }
 
-        public InvitePacket(Connection c, String playername, short width, short height) {
+        public InvitePacket(Connection c, String argPlayername, short argWidth, short argHeight) {
             super(c, Protocol.Client.INVITE);
-            this.playername = playername;
-            this.boardwidth = width;
-            this.boardheight = height;
+            this.playername = argPlayername;
+            this.boardwidth = argWidth;
+            this.boardheight = argHeight;
         }
 
         public synchronized void write(Connection c) {
@@ -206,25 +217,27 @@ public class ClientPacket implements Packet {
             Player invited = Player.get(this.playername);
             Player inviter = this.getClient();
             new Invite(inviter, invited, this.boardwidth, this.boardheight);
-            invited.getConnection().send(new ServerPacket.InvitePacket(invited.getConnection(), inviter, this.boardwidth, this.boardheight));
+            invited.getConnection().send(new ServerPacket.InvitePacket(invited.getConnection(),
+                    inviter, this.boardwidth, this.boardheight));
         }
     }
 
     /**
-     * The client ACCEPT_INVITE packet
+     * The client ACCEPT_INVITE packet.
      * PROTOCOL: Protocol.Client.ACCEPT_INVITE
      */
-    public static class AcceptInvitePacket extends ClientPacket{
+    public static class AcceptInvitePacket extends ClientPacket {
         private String username;
 
-        public static AcceptInvitePacket read(Connection c, String[] args) throws InvalidPacketException{
+        public static AcceptInvitePacket read(Connection c, String[] args)
+                throws InvalidPacketException {
             String username = args[1];
             return new AcceptInvitePacket(c, username);
         }
 
-        public AcceptInvitePacket(Connection c, String username) {
+        public AcceptInvitePacket(Connection c, String argUsername) {
             super(c, Protocol.Client.ACCEPT_INVITE);
-            this.username = username;
+            this.username = argUsername;
         }
 
         public synchronized void write(Connection c) {
@@ -235,32 +248,34 @@ public class ClientPacket implements Packet {
         }
 
         public synchronized void onReceive() {
-            try{
+            try {
                 Player invited = this.getClient();
                 Player inviter = Player.get(this.username);
                 Game g = Invite.invites.get(inviter).get(invited).startGame();
-                g.getActivePlayer().getConnection().send(new ServerPacket.RequestMovePacket(g.getActivePlayer().getConnection()));
-            } catch (Exception e) {
+                g.getActivePlayer().getConnection().send(new
+                        ServerPacket.RequestMovePacket(g.getActivePlayer().getConnection()));
+            } catch (NullPointerException e) {
                 e.printStackTrace(System.out);
             }
         }
     }
 
     /**
-     * The client DECLINE_INVITE packet
+     * The client DECLINE_INVITE packet.
      * PROTOCOL: Protocol.Client.DECLINE_INVITE
      */
-    public static class DeclineInvitePacket extends ClientPacket{
+    public static class DeclineInvitePacket extends ClientPacket {
         private String username;
 
-        public static DeclineInvitePacket read(Connection c, String[] args) throws InvalidPacketException{
+        public static DeclineInvitePacket read(Connection c, String[] args)
+                throws InvalidPacketException {
             String username = args[1];
             return new DeclineInvitePacket(c, username);
         }
 
-        public DeclineInvitePacket(Connection c, String username) {
+        public DeclineInvitePacket(Connection c, String argUsername) {
             super(c, Protocol.Client.DECLINE_INVITE);
-            this.username = username;
+            this.username = argUsername;
         }
 
         public synchronized void write(Connection c) {
@@ -277,20 +292,20 @@ public class ClientPacket implements Packet {
     }
 
     /**
-     * The client MOVE packet
+     * The client MOVE packet.
      * PROTOCOL: Protocol.Client.MOVE
      */
-    public static class MovePacket extends ClientPacket{
+    public static class MovePacket extends ClientPacket {
         private short column;
 
-        public static MovePacket read(Connection c, String[] args) throws InvalidPacketException{
+        public static MovePacket read(Connection c, String[] args) throws InvalidPacketException {
             short column = Short.valueOf(args[1]);
             return new MovePacket(c, column);
         }
 
-        public MovePacket(Connection c, short column) {
+        public MovePacket(Connection c, short argColumn) {
             super(c, Protocol.Client.MOVE);
-            this.column = column;
+            this.column = argColumn;
         }
 
         public synchronized void write(Connection c) {
@@ -302,8 +317,10 @@ public class ClientPacket implements Packet {
 
         public void onReceive() {
             Player sender = this.getClient();
-            if(sender.getGame() == null) return;
-            try{
+            if (sender.getGame() == null) {
+                return;
+            }
+            try {
                 sender.getGame().move(new Move(sender, column, sender.getGame().getTurn()));
             } catch (ConnectFourException e) {
                 e.printStackTrace();
@@ -313,23 +330,25 @@ public class ClientPacket implements Packet {
     }
 
     /**
-     * The client QUIT packet
+     * The client QUIT packet.
      * PROTOCOL: Protocol.Client.QUIT
      */
-    public static class QuitPacket extends ClientPacket{
+    public static class QuitPacket extends ClientPacket {
         private String reason = "";
 
-        public static QuitPacket read(Connection c, String[] args) throws InvalidPacketException{
+        public static QuitPacket read(Connection c, String[] args) throws InvalidPacketException {
             String reason = "";
-            if(args.length > 1) for (int i = 1; i < args.length; i++) {
-                reason += args[i];
+            if (args.length > 1) {
+                for (int i = 1; i < args.length; i++) {
+                    reason += args[i];
+                }
             }
             return new QuitPacket(c, reason);
         }
 
-        public QuitPacket(Connection c, String reason) {
+        public QuitPacket(Connection c, String argReason) {
             super(c, Protocol.Client.QUIT);
-            this.reason = reason;
+            this.reason = argReason;
         }
 
         public synchronized void write(Connection c) {
@@ -346,11 +365,12 @@ public class ClientPacket implements Packet {
     }
 
     /**
-     * The client REQUEST_BOARD packet
+     * The client REQUEST_BOARD packet.
      * PROTOCOL: Protocol.Client.REQUEST_BOARD
      */
-    public static class RequestBoardPacket extends ClientPacket{
-        public static RequestBoardPacket read(Connection c, String[] args) throws InvalidPacketException{
+    public static class RequestBoardPacket extends ClientPacket {
+        public static RequestBoardPacket read(Connection c, String[] args)
+                throws InvalidPacketException {
             return new RequestBoardPacket(c);
         }
 
@@ -365,17 +385,22 @@ public class ClientPacket implements Packet {
         }
 
         public void onReceive() {
-            if(this.getClient().getGame() != null) this.respond(new ServerPacket.BoardPacket(this.getConnection(), this.getClient().getGame().getBoard()));
-            else this.returnError("You have to be in a game to get a board");
+            if (this.getClient().getGame() != null) {
+                this.respond(new ServerPacket.BoardPacket(this.getConnection(),
+                        this.getClient().getGame().getBoard()));
+            } else {
+                this.returnError("You have to be in a game to get a board");
+            }
         }
     }
 
     /**
-     * The client REQUEST_LEADERBOARD packet
+     * The client REQUEST_LEADERBOARD packet.
      * PROTOCOL: Protocol.Client.REQUEST_LEADERBOARD
      */
-    public static class RequestLeaderboardPacket extends ClientPacket{
-        public static RequestLeaderboardPacket read(Connection c, String[] args) throws InvalidPacketException {
+    public static class RequestLeaderboardPacket extends ClientPacket {
+        public static RequestLeaderboardPacket read(Connection c, String[] args)
+                throws InvalidPacketException {
             return new RequestLeaderboardPacket(c);
         }
 
@@ -395,11 +420,12 @@ public class ClientPacket implements Packet {
     }
 
     /**
-     * The client REQUEST_LOBBY packet
+     * The client REQUEST_LOBBY packet.
      * PROTOCOL: Protocol.Client.REQUEST_LOBBY
      */
-    public static class RequestLobbyPacket extends ClientPacket{
-        public static RequestLobbyPacket read(Connection c, String[] args) throws InvalidPacketException{
+    public static class RequestLobbyPacket extends ClientPacket {
+        public static RequestLobbyPacket read(Connection c, String[] args)
+                throws InvalidPacketException {
             return new RequestLobbyPacket(c);
         }
 
@@ -414,31 +440,32 @@ public class ClientPacket implements Packet {
         }
 
         public void onReceive() {
-            this.respond(new ServerPacket.LobbyPacket(this.getConnection(), (Player[]) ConnectServer.server.getPlayers().toArray()));
+            this.respond(new ServerPacket.LobbyPacket(this.getConnection(),
+                    (Player[]) ConnectServer.server.getPlayers().toArray()));
         }
     }
 
     /**
-     * The client ERROR packet
+     * The client ERROR packet.
      * PROTOCOL: Protocol.Client.ERROR
      */
-    public static class ErrorPacket extends ClientPacket{
+    public static class ErrorPacket extends ClientPacket {
         private String code;
         private String message;
 
-        public static ErrorPacket read(Connection c, String[] args) throws InvalidPacketException{
+        public static ErrorPacket read(Connection c, String[] args) throws InvalidPacketException {
             String code = args[1];
             String message = "";
-            for(int i = 2; i < args.length; i++) {
+            for (int i = 2; i < args.length; i++) {
                 message += args[i];
             }
             return new ErrorPacket(c, code, message);
         }
 
-        public ErrorPacket(Connection c, String prefix, String message) {
+        public ErrorPacket(Connection c, String prefix, String argMessage) {
             super(c, Protocol.Client.ERROR);
             this.code = prefix;
-            this.message = message;
+            this.message = argMessage;
         }
 
         public synchronized void write(Connection c) {
@@ -455,11 +482,11 @@ public class ClientPacket implements Packet {
     }
 
     /**
-     * The client PING packet
+     * The client PING packet.
      * PROTOCOL: Protocol.Client.PING
      */
-    public static class PingPacket extends ClientPacket{
-        public static PingPacket read(Connection c, String[] args) throws InvalidPacketException{
+    public static class PingPacket extends ClientPacket {
+        public static PingPacket read(Connection c, String[] args) throws InvalidPacketException {
             return new PingPacket(c);
         }
 

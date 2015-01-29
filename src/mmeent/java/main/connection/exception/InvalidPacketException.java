@@ -8,7 +8,8 @@ package mmeent.java.main.connection.exception;
  */
 public class InvalidPacketException extends ConnectFourException {
     public InvalidPacketException() {
-        super("This packet is not valid. This is possibly becouse your implementation of the protocol is not done correctly.");
+        super("This packet is not valid. This is possibly " +
+                "becouse your implementation of the protocol is not done correctly.");
     }
 
     public InvalidPacketException(String msg) {

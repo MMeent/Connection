@@ -1,6 +1,5 @@
 package mmeent.java.main.connection.player;
 
-import com.sun.istack.internal.Nullable;
 import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.game.Game;
 import mmeent.java.main.connection.game.Move;
@@ -24,45 +23,45 @@ public class ComputerPlayer implements Player {
 
     /**
      * Constructor of <code>ComputerPlayer</code>
-     * @param name Name of the <code>ComputerPlayer</code>
-     * @param game <code>Game</code> of the <code>ComputerPlayer</code>
-     * @param id Id of the <code>ComputerPlayer</code>
+     * @param argName Name of the <code>ComputerPlayer</code>
+     * @param argGame <code>Game</code> of the <code>ComputerPlayer</code>
+     * @param argId Id of the <code>ComputerPlayer</code>
      */
     /*@
-        ensures this.getId() = id && this.getName() == name; && this.getGame == game;
+        ensures this.getId() = id && this.getName() == argName; && this.getGame == argGame;
      */
-    public ComputerPlayer(String name, Game game, byte id){
-        this.id = id;
-        this.name = name;
-        this.game = game;
+    public ComputerPlayer(String argName, Game argGame, byte argId) {
+        this.id = argId;
+        this.name = argName;
+        this.game = argGame;
     }
 
     /**
-     * Constructor of <code>ComputerPlayer</code>
-     * @param name Name of the <code>ComputerPlayer</code>
-     * @param game <code>Game</code> of the <code>ComputerPlayer</code>
+     * Constructor of <code>ComputerPlayer</code>.
+     * @param argName Name of the <code>ComputerPlayer</code>
+     * @param argGame <code>Game</code> of the <code>ComputerPlayer</code>
      */
-    public ComputerPlayer(String name, Game game){
-        this(name, game, (byte) 0);
+    public ComputerPlayer(String argName, Game argGame) {
+        this(argName, argGame, (byte) 0);
     }
 
     /**
-     * Constructor of <code>ComputerPlayer</code>
-     * @param name Name of the <code>ComputerPlayer</code>
+     * Constructor of <code>ComputerPlayer</code>.
+     * @param argName Name of the <code>ComputerPlayer</code>
      */
-    public ComputerPlayer(String name){
-        this(name, null, (byte) 0);
+    public ComputerPlayer(String argName) {
+        this(argName, null, (byte) 0);
     }
 
     /**
-     * Constructor of <code>ComputerPlayer</code>
+     * Constructor of <code>ComputerPlayer</code>.
      */
     public ComputerPlayer() {
         super();
     }
 
     /**
-     * Function that asks the ComputerPlayer for a <code>Move</code>
+     * Function that asks the ComputerPlayer for a <code>Move</code>.
      * @param turn the turn they are in
      * @return returns the next <code>Move</code> of the <code>ComputerPlayer</code>
      */
@@ -71,12 +70,12 @@ public class ComputerPlayer implements Player {
         Random randomGenerator = new Random();
         List<Short> availableRows = game.getBoard().availableCols();
         int index = randomGenerator.nextInt(availableRows.size());
-        int choice= availableRows.get(index);
-        return new Move(this,(short) choice,turn);
+        int choice = availableRows.get(index);
+        return new Move(this, (short) choice, turn);
     }
 
     /**
-     * Get the name of the player
+     * Get the name of the player.
      *
      * @return the name of the player
      */
@@ -86,7 +85,7 @@ public class ComputerPlayer implements Player {
     }
 
     /**
-     * Get the ID of the player
+     * Get the ID of the player.
      *
      * @return the ID of the player
      */
@@ -96,17 +95,17 @@ public class ComputerPlayer implements Player {
     }
 
     /**
-     * Set the id of the player
+     * Set the id of the player.
      *
-     * @param id the id that will be given to the player
+     * @param argId the id that will be given to the player
      */
     @Override
-    public void setId(byte id) {
-        this.id = id;
+    public void setId(byte argId) {
+        this.id = argId;
     }
 
     /**
-     * Get the game the player is currently playing
+     * Get the game the player is currently playing.
      *
      * @return the game the player is playing
      */
@@ -116,17 +115,17 @@ public class ComputerPlayer implements Player {
     }
 
     /**
-     * Set the game the player is playing
+     * Set the game the player is playing.
      *
-     * @param game the game the player will be playing
+     * @param argGame the game the player will be playing
      */
     @Override
-    public void setGame(Game game) {
+    public void setGame(Game argGame) {
         this.game = game;
     }
 
     /**
-     * Get the connection of the player
+     * Get the connection of the player.
      *
      * @return the player's connection
      */

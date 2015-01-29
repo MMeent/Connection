@@ -15,9 +15,9 @@ public class TextBoardRenderer implements Renderer {
      * Default constructor for Textboardrenderer
      * @param board the board it has to render
      */
-    public TextBoardRenderer(Board board){
+    public TextBoardRenderer(Board board) {
         this.board = board;
-        if(board != null) {
+        if (board != null) {
             this.screen_width = board.getWidth();
             this.screen_height = board.getHeight();
         }
@@ -77,11 +77,11 @@ public class TextBoardRenderer implements Renderer {
      * @param msg the message to add
      */
     @Override
-    public void addMessage(String msg){
+    public void addMessage(String msg) {
         System.out.println(msg);
     }
 
-    public void addMessage(String msg, int color){
+    public void addMessage(String msg, int color) {
         System.out.println(msg);
     }
     /**

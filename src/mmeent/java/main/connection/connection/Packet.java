@@ -15,14 +15,14 @@ public interface Packet {
     public void returnError(String extras);
 
     /**
-     * Write a packet to the given Connection
+     * Write a packet to the given Connection.
      *
      * @param connection the connection over whom the packet has to be sent.
      */
     public void write(Connection connection);
 
     /**
-     * Respond to a player with the given packet
+     * Respond to a player with the given packet.
      *
      * @param packet the packet you are responding with
      */
@@ -41,7 +41,7 @@ public interface Packet {
     public Connection getConnection();
 
     /**
-     * Easy way to get the player that sent the packet
+     * Easy way to get the player that sent the packet.
      *
      * @return the player that sent the packet
      */
