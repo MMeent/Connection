@@ -5,7 +5,6 @@ import mmeent.java.main.connection.Protocol;
 import mmeent.java.main.connection.board.Board;
 import mmeent.java.main.connection.connection.Connection;
 import mmeent.java.main.connection.connection.Packet;
-import mmeent.java.main.connection.connection.client.ClientPacket;
 import mmeent.java.main.connection.exception.ConnectFourException;
 import mmeent.java.main.connection.exception.InvalidPacketException;
 import mmeent.java.main.connection.game.Game;
@@ -29,35 +28,37 @@ public class ServerPacket implements Packet {
     /**
      * Default and superconstructor for all server-sent packets.
      * @param c the connection of the packet
-     * @param prefix the header of the packet
+     * @param argPrefix the header of the packet
      */
-    public ServerPacket(Connection c, String prefix){
+    public ServerPacket(Connection c, String argPrefix) {
         this.connection = c;
-        if(c != null) this.client = c.getClient();
-        this.prefix = prefix;
+        if (c != null) {
+            this.client = c.getClient();
+        }
+        this.prefix = argPrefix;
     }
 
     /**
      * The method to be called when a packet has to be sent to the client.
      * @param c the connection the packet has to be sent over
      */
-    public synchronized void write(Connection c){
+    public synchronized void write(Connection c) {
         c.startPacket();
         c.writePartial(this.prefix);
     }
 
     /**
-     * An easy way to respond to a packet
+     * An easy way to respond to a packet.
      * @param packet the packet you are responding with
      */
-    public void respond(Packet packet){
+    public void respond(Packet packet) {
         this.connection.send(packet);
     }
 
     /**
      * The method called when a packet has been received and processed
      */
-    public void onReceive(){
+    public void onReceive() {
 
     }
 
@@ -76,7 +77,7 @@ public class ServerPacket implements Packet {
      * An easy way to send an error to the other side of the connection, if something went wrong.
      * @param e the error message.
      */
-    public void returnError(String e){
+    public void returnError(String e) {
         this.connection.send(new ServerPacket.ErrorPacket(this.connection, this.prefix, e));
     }
 
@@ -84,7 +85,7 @@ public class ServerPacket implements Packet {
      * Get the connection the packet was sent over. Null if no connection available for that packet.
      * @return the connection of the packet
      */
-    public Connection getConnection(){
+    public Connection getConnection() {
         return this.connection;
     }
 
@@ -92,7 +93,7 @@ public class ServerPacket implements Packet {
      * Get the client <code>Player</code> corresponding to the connection
      * @return the Player corresponding with the connection
      */
-    public Player getClient(){
+    public Player getClient() {
         return this.client;
     }
 
@@ -101,7 +102,7 @@ public class ServerPacket implements Packet {
      * PROTOCOL: Protocol.Server.PONG
      */
     public static class PongPacket extends ServerPacket{
-        public PongPacket(Connection c){
+        public PongPacket(Connection c) {
             super(c, Protocol.Server.PONG);
         }
 
@@ -110,7 +111,7 @@ public class ServerPacket implements Packet {
         }
 
         @Override
-        public synchronized void write(Connection c){
+        public synchronized void write(Connection c) {
             super.write(c);
             c.stopPacket();
             c.sendBuffer();
@@ -125,7 +126,7 @@ public class ServerPacket implements Packet {
         private String id;
         private String msg;
 
-        public ErrorPacket(Connection c, String prefix, String msg){
+        public ErrorPacket(Connection c, String prefix, String msg) {
             super(c, Protocol.Server.ERROR);
             this.id = prefix;
             this.msg = msg;
@@ -133,15 +134,15 @@ public class ServerPacket implements Packet {
 
         public static ErrorPacket read(Connection c, String[] args) throws InvalidPacketException{
             String msg = "";
-            for(int i = 2; i < args.length; i++){
+            for (int i = 2; i < args.length; i++) {
                 msg += args[i] + " ";
             }
-            if(msg.length() > 256) throw new InvalidPacketException("The message length is too long");
+            if (msg.length() > 256) throw new InvalidPacketException("The message length is too long");
             return new ErrorPacket(c, args[1], msg);
         }
 
         @Override
-        public synchronized void write(Connection c){
+        public synchronized void write(Connection c) {
             super.write(c);
             c.writePartial(this.id);
             c.writePartial(this.msg);
@@ -150,7 +151,7 @@ public class ServerPacket implements Packet {
         }
 
         @Override
-        public void onReceive(){
+        public void onReceive() {
             ConnectClient.get().getRenderer().addErrorMessage(this.id, this.msg);
         }
     }
@@ -160,7 +161,7 @@ public class ServerPacket implements Packet {
      * PROTOCOL: Protocol.Server.ACCEPT_CONNECT
      */
     public static class AcceptConnectPacket extends ServerPacket{
-        public AcceptConnectPacket(Connection c){
+        public AcceptConnectPacket(Connection c) {
             super(c, Protocol.Server.ACCEPT_CONNECT);
         }
 
@@ -169,14 +170,14 @@ public class ServerPacket implements Packet {
         }
 
         @Override
-        public synchronized void write(Connection c){
+        public synchronized void write(Connection c) {
             super.write(c);
             c.stopPacket();
             c.sendBuffer();
         }
 
         @Override
-        public void onReceive(){
+        public void onReceive() {
             ConnectClient.get().getRenderer().addMessage("Connected");
         }
     }
@@ -190,21 +191,21 @@ public class ServerPacket implements Packet {
 
         public static LobbyPacket read(Connection c, String[] args) throws InvalidPacketException{
             Player[] players = new Player[args.length - 1];
-            for(int i = 1; i < args.length; i++){
+            for (int i = 1; i < args.length; i++) {
                 players[i - 1] = Player.get(args[i]);
             }
             return new LobbyPacket(c, players);
         }
 
-        public LobbyPacket(Connection c, Player[] players){
+        public LobbyPacket(Connection c, Player[] players) {
             super(c, Protocol.Server.LOBBY);
             this.players = players;
         }
 
         @Override
-        public synchronized void write(Connection c){
+        public synchronized void write(Connection c) {
             super.write(c);
-            for(Player localPlayer : this.players){
+            for (Player localPlayer : this.players) {
                 c.writePartial(localPlayer.getName());
             }
             c.stopPacket();
@@ -212,21 +213,21 @@ public class ServerPacket implements Packet {
         }
 
         @Override
-        public void onReceive(){
+        public void onReceive() {
             ConnectClient c = ConnectClient.get();
             Renderer r = c.getRenderer();
             r.addMessage("There are now " + this.players.length + " players online: ");
             StringBuilder b = new StringBuilder();
-            for(Player player: this.players){
-                if(b.length() > 0) b.append(", ");
+            for (Player player: this.players) {
+                if (b.length() > 0) b.append(", ");
                 b.append(player.getName());
             }
             r.addMessage(b.toString());
             /*
             List<char[]> playernames = new ArrayList<char[]>();
-            for(Player player: this.players){
-                if(b.length() > 0) b.append(", ");
-                if(b.length() > 155){
+            for (Player player: this.players) {
+                if (b.length() > 0) b.append(", ");
+                if (b.length() > 155) {
                     char[] pnames = new char[b.length()];
                     b.getChars(0, b.length() - 1, pnames, 0);
                     playernames.add(pnames);
@@ -235,7 +236,7 @@ public class ServerPacket implements Packet {
                 b.append(player.getName());
             }
 
-            for(char[] chars: playernames){
+            for (char[] chars: playernames) {
                 r.addMessage(String.valueOf(chars));
             }*/
         }
@@ -251,23 +252,23 @@ public class ServerPacket implements Packet {
             int width = Short.parseShort(args[1]);
             int height = Short.parseShort(args[2]);
             Board board = new Board((short) width, (short) height);
-            for(int i = 0; i <width * height; i++){
-                if(!args[i + 3].equals("0")) board.move((short) (i % width), Byte.parseByte(args[i + 3]));
+            for (int i = 0; i <width * height; i++) {
+                if (!args[i + 3].equals("0")) board.move((short) (i % width), Byte.parseByte(args[i + 3]));
             }
             return new BoardPacket(c, board);
         }
 
-        public BoardPacket(Connection c, Board board){
+        public BoardPacket(Connection c, Board board) {
             super(c, Protocol.Server.BOARD);
             this.board = board;
         }
 
         @Override
-        public synchronized void write(Connection c){
+        public synchronized void write(Connection c) {
             super.write(c);
             c.writePartial(Short.toString(this.board.getWidth()));
             c.writePartial(Short.toString(this.board.getHeight()));
-            for(byte b: this.board.getFields()){
+            for (byte b: this.board.getFields()) {
                 c.writePartial(Byte.toString(b));
             }
             c.stopPacket();
@@ -275,9 +276,9 @@ public class ServerPacket implements Packet {
         }
 
         @Override
-        public void onReceive(){
+        public void onReceive() {
             ConnectClient.get().getRenderer().setBoard(this.board);
-            if(ConnectClient.get().getConnection().getClient().getGame() != null) ConnectClient.get().getConnection().getClient().getGame().setBoard(this.board);
+            if (ConnectClient.get().getConnection().getClient().getGame() != null) ConnectClient.get().getConnection().getClient().getGame().setBoard(this.board);
         }
     }
 
@@ -294,7 +295,7 @@ public class ServerPacket implements Packet {
             int loss;
             int total;
             int ranking;
-            for(int i = 1; i < args.length; i++){
+            for (int i = 1; i < args.length; i++) {
                 name = args[i++];
                 wins = Integer.parseInt(args[i++]);
                 loss = Integer.parseInt(args[i++]);
@@ -305,15 +306,15 @@ public class ServerPacket implements Packet {
             return new LeaderBoardPacket(c, entries);
         }
 
-        public LeaderBoardPacket(Connection c, List<LeaderboardEntry> entries){
+        public LeaderBoardPacket(Connection c, List<LeaderboardEntry> entries) {
             super(c, Protocol.Server.LEADERBOARD);
             this.entries = entries;
         }
 
         @Override
-        public synchronized void write(Connection c){
+        public synchronized void write(Connection c) {
             super.write(c);
-            for(LeaderboardEntry entry: this.entries){
+            for (LeaderboardEntry entry: this.entries) {
                 c.writePartial(entry.getPlayer().getName());
                 c.writePartial(Integer.toString(entry.getWins()));
                 c.writePartial(Integer.toString(entry.getLoss()));
@@ -325,10 +326,10 @@ public class ServerPacket implements Packet {
         }
 
         @Override
-        public void onReceive(){
+        public void onReceive() {
             Renderer r = ConnectClient.get().getRenderer();
             r.addMessage("   Player name   | Wins | Loss | Play | Rank ");
-            for(LeaderboardEntry e: this.entries){
+            for (LeaderboardEntry e: this.entries) {
                 StringBuilder s = new StringBuilder();
                 s.append(e.getPlayer().getName()).setLength(16);
                 s.append("| ").append(e.getWins()).setLength(23);
@@ -353,7 +354,7 @@ public class ServerPacket implements Packet {
             return new InvitePacket(c, player, Short.parseShort(args[2]), Short.parseShort(args[3]));
         }
 
-        public InvitePacket(Connection c, Player player, short boardwidth, short boardheight){
+        public InvitePacket(Connection c, Player player, short boardwidth, short boardheight) {
             super(c, Protocol.Server.INVITE);
             this.player = player;
             this.boardwidth = boardwidth;
@@ -361,7 +362,7 @@ public class ServerPacket implements Packet {
         }
 
         @Override
-        public synchronized void write(Connection c){
+        public synchronized void write(Connection c) {
             super.write(c);
             c.writePartial(this.player.getName());
             c.writePartial(Short.toString(this.boardwidth));
@@ -371,7 +372,7 @@ public class ServerPacket implements Packet {
         }
 
         @Override
-        public void onReceive(){
+        public void onReceive() {
             Renderer r = ConnectClient.get().getRenderer();
             r.addMessage("You have been invited to a game by " + this.player.getName());
         }
@@ -390,25 +391,25 @@ public class ServerPacket implements Packet {
             Player p1 = Player.get(args[1]);
             Player p2 = Player.get(args[2]);
             StringBuilder options = new StringBuilder();
-            for(int i = 3; i < args.length; i++){
+            for (int i = 3; i < args.length; i++) {
                 options.append(' ').append(args[i]);
             }
             return new GameStartPacket(c, p1, p2, options.toString());
         }
 
-        public GameStartPacket(Connection c, Player p1, Player p2){
+        public GameStartPacket(Connection c, Player p1, Player p2) {
             super(c, Protocol.Server.GAME_START);
             this.player1 = p1;
             this.player2 = p2;
         }
 
-        public GameStartPacket(Connection c, Player p1, Player p2, String options){
+        public GameStartPacket(Connection c, Player p1, Player p2, String options) {
             this(c, p1, p2);
             this.options = options;
         }
 
         @Override
-        public synchronized void write(Connection c){
+        public synchronized void write(Connection c) {
             super.write(c);
             c.writePartial(this.player1.getName());
             c.writePartial(this.player2.getName());
@@ -418,7 +419,7 @@ public class ServerPacket implements Packet {
         }
 
         @Override
-        public void onReceive(){
+        public void onReceive() {
             Player[] players = {this.player1, this.player2};
             Game game = new Game(players);
             Renderer r = ConnectClient.get().getRenderer();
@@ -440,14 +441,14 @@ public class ServerPacket implements Packet {
             return new GameEndPacket(c, args[1], args[2]);
         }
 
-        public GameEndPacket(Connection c, String reason, String extra){
+        public GameEndPacket(Connection c, String reason, String extra) {
             super(c, Protocol.Server.GAME_END);
             this.reason = reason;
             this.extra = extra;
         }
 
         @Override
-        public synchronized void write(Connection c){
+        public synchronized void write(Connection c) {
             super.write(c);
             c.writePartial(this.reason);
             c.writePartial(this.extra);
@@ -456,10 +457,10 @@ public class ServerPacket implements Packet {
         }
 
         @Override
-        public void onReceive(){
-            if(reason.equals("DISCONNECT")) ConnectClient.get().getRenderer().addMessage("You won: other client disconnected");
-            if(reason.equals("WIN")) ConnectClient.get().getRenderer().addMessage(extra + " won the game");
-            if(reason.equals("DRAW")) ConnectClient.get().getRenderer().addMessage("You both didn't win, it's a draw.");
+        public void onReceive() {
+            if (reason.equals("DISCONNECT")) ConnectClient.get().getRenderer().addMessage("You won: other client disconnected");
+            if (reason.equals("WIN")) ConnectClient.get().getRenderer().addMessage(extra + " won the game");
+            if (reason.equals("DRAW")) ConnectClient.get().getRenderer().addMessage("You both didn't win, it's a draw.");
             this.getClient().setGame(null);
         }
     }
@@ -473,12 +474,12 @@ public class ServerPacket implements Packet {
             return new RequestMovePacket(c);
         }
 
-        public RequestMovePacket(Connection c){
+        public RequestMovePacket(Connection c) {
             super(c, Protocol.Server.REQUEST_MOVE);
         }
 
         @Override
-        public synchronized void write(Connection c){
+        public synchronized void write(Connection c) {
             super.write(c);
             c.stopPacket();
             c.sendBuffer();
@@ -506,7 +507,7 @@ public class ServerPacket implements Packet {
             return new MoveOkPacket(c, playerid, column, player);
         }
 
-        public MoveOkPacket(Connection c, byte playerid, short column, Player player){
+        public MoveOkPacket(Connection c, byte playerid, short column, Player player) {
             super(c, Protocol.Server.MOVE_OK);
             this.playerid = playerid;
             this.column = column;
@@ -514,7 +515,7 @@ public class ServerPacket implements Packet {
         }
 
         @Override
-        public synchronized void write(Connection c){
+        public synchronized void write(Connection c) {
             super.write(c);
             c.writePartial(Byte.toString(this.playerid));
             c.writePartial(Short.toString(this.column));
@@ -524,11 +525,11 @@ public class ServerPacket implements Packet {
         }
 
         @Override
-        public void onReceive(){
-            try{
+        public void onReceive() {
+            try {
                 this.getClient().getGame().move(new Move(this.playerid, this.column, this.getClient().getGame().getTurn(), this.getClient().getGame().getBoard()));
                 ConnectClient.get().getRenderer().render();
-            } catch(ConnectFourException e){
+            } catch(ConnectFourException e) {
                 e.printStackTrace(System.out);
             }
         }
@@ -567,7 +568,7 @@ public class ServerPacket implements Packet {
         }
 
         @Override
-        public void onReceive(){
+        public void onReceive() {
             ConnectClient.get().getRenderer().addChatMessage("<" + this.player.getName() + "> " + this.msg);
         }
     }

@@ -15,7 +15,8 @@ public class Invite {
     /**
      * This registers all invites.
      */
-    public static HashMap<Player, HashMap<Player, Invite>> invites = new HashMap<Player, HashMap<Player, Invite>>();
+    public static HashMap<Player, HashMap<Player, Invite>> invites =
+            new HashMap<Player, HashMap<Player, Invite>>();
 
     private Player player1;
     private Player player2;
@@ -23,23 +24,25 @@ public class Invite {
     private short boardHeight;
 
     /**
-     * An general invite object
-     * @param player1 the player that invites player 2
-     * @param player2 the player that is invited to a game
-     * @param boardHeight the height of the board
-     * @param boardWidth the width of the board
+     * An general invite object.
+     * @param argPlayer1 the player that invites player 2
+     * @param argPlayer2 the player that is invited to a game
+     * @param argBoardHeight the height of the board
+     * @param argBoardWidth the width of the board
      */
-    public Invite(Player player1, Player player2, short boardHeight, short boardWidth) {
-        this.player1 = player1;
-        this.player2 = player2;
-        this.boardWidth = boardWidth;
-        this.boardHeight = boardHeight;
-        if(!Invite.invites.containsKey(player1)) Invite.invites.put(player1, new HashMap<Player, Invite>());
+    public Invite(Player argPlayer1, Player argPlayer2, short argBoardHeight, short argBoardWidth) {
+        this.player1 = argPlayer1;
+        this.player2 = argPlayer2;
+        this.boardWidth = argBoardWidth;
+        this.boardHeight = argBoardHeight;
+        if (!Invite.invites.containsKey(player1))  {
+            Invite.invites.put(player1, new HashMap<Player, Invite>());
+        }
         Invite.invites.get(player1).put(player2, this);
     }
 
     /**
-     * Start a game that has the properties given in the invite properties
+     * Start a game that has the properties given in the invite properties.
      * @return a <code>Game</code> object with preset values.
      */
     public Game startGame() {

@@ -7,7 +7,7 @@ import mmeent.java.main.connection.board.Board;
  */
 public interface Renderer {
     /**
-     * Changes the <code>Board</code> it renders
+     * Changes the <code>Board</code> it renders.
      * @param board <code>Board</code> that it has to render.
      */
     public void setBoard(Board board);
@@ -24,14 +24,14 @@ public interface Renderer {
     public void render();
 
     /**
-     * Function that displays an error message
+     * Function that displays an error message.
      * @param id Id of the error
      * @param msg String containing an errormessage that should be displayed
      */
     public void addErrorMessage(String id, String msg);
 
     /**
-     * Function that shows a message
+     * Function that shows a message.
      * @param msg String containing a message that should be displayed.
      */
     public void addMessage(String msg);
