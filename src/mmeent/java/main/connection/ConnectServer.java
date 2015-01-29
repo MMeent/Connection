@@ -177,8 +177,8 @@ public class ConnectServer {
     }
 
     /**
-     * Notify all players with packet p.
-     * @param packet the packet to be sent to all players
+     * Notify all PLAYER_MAP with packet p.
+     * @param packet the packet to be sent to all PLAYER_MAP
      */
     public void notifyAll(Packet packet) {
         for (Connection c: this.connections) {
@@ -187,15 +187,15 @@ public class ConnectServer {
     }
 
     /**
-     * Get all players currently online.
-     * @return all players online
+     * Get all PLAYER_MAP currently online.
+     * @return all PLAYER_MAP online
      */
     public List<Player> getPlayers() {
         return new ArrayList<Player>(this.players.values());
     }
 
     /**
-     * Get all the names of the players currently online.
+     * Get all the names of the PLAYER_MAP currently online.
      * @return a list of playernames
      */
     public List<String> getPlayernames() {

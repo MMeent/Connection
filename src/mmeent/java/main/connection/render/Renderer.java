@@ -19,7 +19,7 @@ public interface Renderer {
     public void addChatMessage(String msg);
 
     /**
-     * Function that renders the current status of the <code>Board</code>
+     * Function that renders the current status of the <code>Board</code>.
      */
     public void render();
 

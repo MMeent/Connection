@@ -96,7 +96,8 @@ public class Move {
      */
     public boolean isValid() {
         return this.column >= 0 && this.column < this.board.getWidth() &&
-                !this.board.colIsFull(this.column) && !this.board.hasWinner() && !this.board.colIsFull(this.column);
+                !board.colIsFull(this.column) && !board.hasWinner() &&
+                !board.colIsFull(this.column);
     }
 
     /**
@@ -153,7 +154,7 @@ public class Move {
     }
 
     /**
-     * Get the <code>Board</code> of the move
+     * Get the <code>Board</code> of the move.
      * @return the board
      */
     public Board getBoard() {

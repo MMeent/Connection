@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class Game extends Thread {
     /*@
-        public_invariant players.length >= 2;
+        public_invariant PLAYER_MAP.length >= 2;
         public_invariant playerAmount >= 2;
         public invariant turn >= 0;
      */
@@ -29,11 +29,11 @@ public class Game extends Thread {
 
     /**
      * Constructor of <code>Game</code>
-     * @param argPlayers Array of players that will join the <code>Game</code>
+     * @param argPlayers Array of PLAYER_MAP that will join the <code>Game</code>
      */
     /*@
-        requires players.length == 2;
-        ensures this.players == argPlayers && board.getWidth() == 7 && board.getHeight() == 6;
+        requires PLAYER_MAP.length == 2;
+        ensures this.PLAYER_MAP == argPlayers && board.getWidth() == 7 && board.getHeight() == 6;
      */
     public Game(Player[] argPlayers) {
         this(argPlayers, (short) 7, (short) 6);
@@ -46,8 +46,8 @@ public class Game extends Thread {
      * @param argHeight Height of the board
      */
      /*@
-        requires players.length == 2;
-        ensures this.players == argPlayers && board.getWidth() == argWidth
+        requires PLAYER_MAP.length == 2;
+        ensures this.PLAYER_MAP == argPlayers && board.getWidth() == argWidth
         && board.getHeight() == argHeight;
      */
     public Game(Player[] argPlayers, short argWidth, short argHeight) {
@@ -56,14 +56,15 @@ public class Game extends Thread {
 
     /**
      * Constructor of <code>Game</code> with custom <code>Board</code> size en custom row length
-     * @param players Array of Players that will join the game
+     * @param argPlayers Array of Players that will join the game
      * @param argWidth WIdth of the <code>Board</code>
      * @param argHeight Height of the <code>Board</code>
      * @param argLength Length of the row needed to win the <code>Game</code>
      */
      /*@
-        requires players.length == 2;
-        ensures this.players == players && board.getWidth() == width && board.getHeight() == height;
+        requires PLAYER_MAP.length == 2;
+        ensures PLAYER_MAP == PLAYER_MAP &&
+        board.getWidth()==argWidth && board.getHeight() == argHeight;
      */
     public Game(Player[] argPlayers, short argWidth, short argHeight, short argLength) {
         this(argPlayers, new Board(argWidth, argHeight, argLength));
@@ -71,12 +72,12 @@ public class Game extends Thread {
 
     /**
      * Constructor of <code>Game</code> with a <code>Board</code> as parameter
-     * @param argPlayers Array of players that will join the <code>Game</code>
+     * @param argPlayers Array of PLAYER_MAP that will join the <code>Game</code>
      * @param argBoard The <code>Board</code> on which the <code>Game</code> will be played
      */
      /*@
-        requires players.length == 2;
-        ensures this.players == players && board.getWidth() == width && board.getHeight() == height;
+        requires PLAYER_MAP.length == 2;
+        ensures PLAYER_MAP == PLAYER_MAP && board.getWidth()==width && board.getHeight() == height;
      */
     public Game(Player[] argPlayers, Board argBoard) {
         this.board = argBoard.deepCopy();
@@ -107,7 +108,7 @@ public class Game extends Thread {
      * @return Returns a Map with the <code>Player</code>
      */
     /*@
-        ensures \result == this.players;
+        ensures \result == this.PLAYER_MAP;
      */
     public Map<Byte, Player> getPlayers() {
         return players;
@@ -153,7 +154,7 @@ public class Game extends Thread {
      * Make a move.
      * @param move the move to be made
      * @throws ConnectFourException throws exception if
-     * it is not the players turn or the move is not valid.
+     * it is not the PLAYER_MAP turn or the move is not valid.
      */
     public void move(Move move) throws ConnectFourException {
         if (!move.isValid()) {

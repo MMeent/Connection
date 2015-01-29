@@ -65,9 +65,9 @@ public class ComputerPlayerSmart implements Player {
      * Negamax the move, up do depth SEARCHDEPTH.
      *
      * @param move the last move made
-     * @param depth the depth it has searched
+     * @param argDepth the depth it has searched
      * @param color the color the computerplayer is playing with
-     * @param ps an array with players
+     * @param ps an array with PLAYER_MAP
      * @param turn the turn it is playing
      * @return the value of the node
      */
@@ -100,25 +100,6 @@ public class ComputerPlayerSmart implements Player {
         }
         return b;
     }
-/*
-    public int determineMove(List<Byte> players, int turn, Board board, int depth) {
-        Board boardCopy = board.deepCopy();
-        int in = 0;
-
-        for (int i = 0; i < board.getWidth(); i ++) {
-            Move move = new Move(players.get(turn % players.size()), (short) i, turn, boardCopy);
-            if (!move.isValid()) continue;
-            move.makeMove();
-            if (boardCopy.hasWinner() || depth == 0) {
-
-            } else if (depth > 0) {
-                in += determineMove(players, ++turn, boardCopy, --depth);
-            }
-            boardCopy = board.deepCopy();
-        }
-        return -in;
-    }
-*/
 
     /**
      * Get the name of the computerplayer.
@@ -140,7 +121,7 @@ public class ComputerPlayerSmart implements Player {
 
     /**
      * set the ID of the player to <code>id</code>.
-     * @param id the id that is being set
+     * @param argId the id that is being set
      */
     @Override
     public void setId(byte argId) {

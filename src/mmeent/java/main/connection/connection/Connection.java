@@ -23,8 +23,8 @@ public class Connection {
 
     /**
      * Default constructor for a connection.
-     * @param socket the socket over which the connection is sent
-     * @param side the side this part of the connection is on
+     * @param argSocket the socket over which the connection is sent
+     * @param argSide the side this part of the connection is on
      */
     public Connection(Socket argSocket, Side argSide) {
         this.socket = argSocket;

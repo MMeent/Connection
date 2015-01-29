@@ -63,7 +63,7 @@ public class ComputerPlayerRandom implements Player {
 
     /**
      * Function that changes the id of this<code>ComputerPlayerRandom</code> to the given id.
-     * @param id A byte containing the new id for this<code>ComputerPlayerRandom</code>
+     * @param argId A byte containing the new id for this<code>ComputerPlayerRandom</code>
      */
     @Override
     public void setId(byte argId) {

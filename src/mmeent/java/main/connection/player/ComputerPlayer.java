@@ -121,7 +121,7 @@ public class ComputerPlayer implements Player {
      */
     @Override
     public void setGame(Game argGame) {
-        this.game = game;
+        this.game = argGame;
     }
 
     /**
