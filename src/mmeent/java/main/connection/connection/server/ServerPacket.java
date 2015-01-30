@@ -600,4 +600,32 @@ public class ServerPacket implements Packet {
                     this.player.getName() + "> " + this.msg);
         }
     }
+    
+    public static class DeclineInvitePacket extends ServerPacket {
+        private Player player;
+        
+        public static DeclineInvitePacket read(Connection c, String[] args) throws InvalidPacketException {
+            return new DeclineInvitePacket(c, Player.get(args[1]));
+        }
+        
+        public DeclineInvitePacket(Connection c, Player declined) {
+            super(c, Protocol.Server.DECLINE_INVITE);
+            this.player = declined;
+        }
+        
+        @Override
+        public void write(Connection c) {
+            super.write(c);
+            c.writePartial(this.player.getName());
+            c.stopPacket();
+            c.sendBuffer();
+        }
+        
+        @Override
+        public void onReceive() {
+            ConnectClient.get().getRenderer().addMessage("Your invitation to " + 
+                    player.getName() + 
+                    " has been declined");
+        }
+    }
 }
