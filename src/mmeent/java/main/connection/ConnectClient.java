@@ -81,6 +81,7 @@ public class ConnectClient {
 
         } catch (IOException e) {
             e.printStackTrace(System.out);
+            this.shutdown = true;
             this.renderer.addErrorMessage("", e.getStackTrace().toString());
         }
     }
