@@ -117,10 +117,10 @@ public class PacketsTest extends TestCase {
                         Protocol.Server.ERROR + " CONNECT hi") instanceof
                         ServerPacket.ErrorPacket);
         assertTrue("Packet '" +
-                        Protocol.Server.INVITE + " m" +
+                        Protocol.Server.INVITE + " m 7 6" +
                         "' should return Invite packet",
                 Packets.readServerPacket(c,
-                        Protocol.Server.INVITE + " m") instanceof
+                        Protocol.Server.INVITE + " m 7 6") instanceof
                         ServerPacket.InvitePacket);
         assertTrue("Packet '" +
                         Protocol.Server.LEADERBOARD + " m 1 1 3 1" +
