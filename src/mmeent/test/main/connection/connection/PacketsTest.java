@@ -17,11 +17,11 @@ public class PacketsTest extends TestCase {
     }
     
     public void testRegisterServerPackets() throws Exception {
-        assertEquals("Server packet list must be clear when started",
-                Packets.serverPackets.size(), 0);
+        assertEquals("Server packet list must be clear when started", 0,
+                Packets.serverPackets.size());
         Packets.registerServerPackets();
         assertEquals("Server packet list must contain 13 packets after registering",
-                Packets.serverPackets.size(), 13);
+                13, Packets.serverPackets.size());
         
         assertTrue("Accept Connect should be in server packet list", 
                 Packets.serverPackets.containsKey(Protocol.Server.ACCEPT_CONNECT));
@@ -52,11 +52,11 @@ public class PacketsTest extends TestCase {
     }
 
     public void testRegisterClientPackets() throws Exception {
-        assertEquals("Client packet list must be clear when started",
-                Packets.clientPackets.size(), 0);
+        assertEquals("Client packet list must be clear when started", 0,
+                Packets.clientPackets.size());
         Packets.registerClientPackets();
-        assertEquals("Client packet list must contain 12 packets after registering",
-                Packets.clientPackets.size(), 12);
+        assertEquals("Client packet list must contain 12 packets after registering", 12,
+                Packets.clientPackets.size());
         
         assertTrue("Accept Invite should be in the client packets list",
                 Packets.clientPackets.containsKey(Protocol.Client.ACCEPT_INVITE));

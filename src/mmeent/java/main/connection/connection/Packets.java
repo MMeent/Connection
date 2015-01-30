@@ -34,6 +34,8 @@ public class Packets {
                 ServerPacket.BoardPacket.class);
         Packets.serverPackets.put(Protocol.Server.CHAT,
                 ServerPacket.ChatPacket.class);
+        Packets.serverPackets.put(Protocol.Server.DECLINE_INVITE,
+                ServerPacket.DeclineInvitePacket.class);
         Packets.serverPackets.put(Protocol.Server.ERROR,
                 ServerPacket.ErrorPacket.class);
         Packets.serverPackets.put(Protocol.Server.GAME_END,
