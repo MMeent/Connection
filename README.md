@@ -24,3 +24,6 @@ De client heeft de volgende mogelijkheden:
 De server heeft de volgende mogelijkheid:
 
 * <code>-d</code> : geef deze tag mee voor debugmodus (alle packets worden geprint)
+
+    
+test
